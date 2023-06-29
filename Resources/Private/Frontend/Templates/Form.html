@@ -1,8 +1,8 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers" data-namespace-typo3-fluid="true">
 <formvh:renderRenderable renderable="{form}">
-<f:comment><!-- TODO: Remove attribute novalidate --></f:comment>
+<f:comment><!-- TODO: Remove attribute novalidate or use {twforms:form()} if possible. --></f:comment>
     <formvh:renderRenderable renderable="{form}">
-        <twforms:form
+        <formvh:form
             pageUid="{f:if(condition: form.renderingOptions.pageUid, then: form.renderingOptions.pageUid, else: 0)}"
             object="{form}"
             pluginName="{form.renderingOptions.pluginName}"
@@ -21,7 +21,7 @@
             <f:render partial="{form.currentPage.templateName}"
                       arguments="{form: form, page: form.currentPage}"/>
             <f:render partial="Form/Navigation" arguments="{form: form}"/>
-        </twforms:form>
+        </formvh:form>
     </formvh:renderRenderable>
 </formvh:renderRenderable>
 </html>
