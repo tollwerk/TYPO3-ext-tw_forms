@@ -35,6 +35,8 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
+namespace Tollwerk\TwForms\ViewHelpers\Format;
+
 use Closure as ClosureAlias;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface as RenderingContextInterfaceAlias;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;

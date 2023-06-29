@@ -61,6 +61,7 @@ class TextfieldViewHelper extends AbstractFormFieldViewHelper
     public function initializeArguments(): void
     {
         parent::initializeArguments();
+        $this->registerArgument('dontPrefixName', 'boolean', 'Suppress the name prefex', false, false);
         $this->registerTagAttribute('autofocus', 'string', 'Specifies that an input should automatically get focus when the page loads');
         $this->registerTagAttribute('disabled', 'string', 'Specifies that the input element should be disabled when the page loads');
         $this->registerTagAttribute('maxlength', 'int', 'The maxlength attribute of the input field (will not be validated)');

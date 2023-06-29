@@ -132,7 +132,8 @@ class AdditionalAttributesViewHelper extends AbstractViewHelper
                     // Run through all associated Extbase error codes
                     foreach ($errorCodes as $errorCode) {
                         // Try to get a translated error message
-                        $errorMessage = TranslationService::getInstance()->translateFormElementError(
+                        $translationService = GeneralUtility::makeInstance(TranslationService::class);
+                        $errorMessage = $translationService->translateFormElementError(
                             $element,
                             $errorCode,
                             [],
