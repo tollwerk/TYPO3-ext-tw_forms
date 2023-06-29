@@ -1,0 +1,41 @@
+TYPO3:
+  CMS:
+    Form:
+      prototypes:
+        standard:
+          formElementsDefinition:
+            Form:
+              persistenceManager:
+              renderingOptions:
+                templateRootPaths:
+                  20: 'EXT:tw_forms/Resources/Private/Frontend/Templates/'
+                partialRootPaths:
+                  20: 'EXT:tw_forms/Resources/Private/Frontend/Partials/'
+                elementClassAttribute: 'Form'
+                novalidate: 1
+                translation:
+                  translationFiles:
+                    10: 'EXT:form/Resources/Private/Language/locallang.xlf'
+                    20: 'EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf'
+            Email:
+              properties:
+                elementClassAttribute: 'FormEmail FormField__input'
+            Checkbox:
+              properties:
+                elementClassAttribute: 'FormCheckbox FormField__input'
+            SingleSelect:
+              properties:
+                elementClassAttribute: 'FormSelect'
+            Text:
+              properties:
+                elementClassAttribute: 'FormText FormField__input'
+            Textarea:
+              properties:
+                elementClassAttribute: 'FormTextarea FormField__textarea'
+            Password:
+              properties:
+                elementClassAttribute: 'FormPassword FormField__input'
+            RadioButton:
+              properties:
+                containerClassAttribute: 'FormRadioButton'
+                elementClassAttribute: ''

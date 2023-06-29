@@ -1,0 +1,47 @@
+<f:comment><!--
+
+    Render a linked checkbox label
+
+    @param GenericElement element       The form element
+    @param string label                 Language key for the label
+    @param int[] pages                  Page IDs or URLs for the link
+    @param string[] files               Files for the link
+
+--></f:comment>
+<html data-namespace-typo3-fluid="true"
+      xmlns:f="https://xsd.helhum.io/ns/typo3/cms-fluid/master/ViewHelpers"
+>
+    <f:if condition="{files}">
+        <f:then>
+            <f:variable name="links" value="{files}"/>
+        </f:then>
+        <f:else>
+            <f:for as="page" each="{pages}">
+                <f:variable name="link" value="{f:render(section: 'Link', arguments: '{page: page}')}"/>
+                <f:variable name="links" value="{twforms:collection.push(a: links, b: link)}"/>
+            </f:for>
+        </f:else>
+    </f:if>
+    <f:format.raw>
+        <f:translate arguments="{links}" key="{label}"/>
+    </f:format.raw>
+    <f:if condition="{element.required}">
+        <f:render arguments="{element: element}" partial="Field/Required"/>
+    </f:if>
+
+    <f:comment><!--
+
+        Render a linked page
+
+        @param int page                     Page ID or URL for the link
+
+    --></f:comment>
+    <f:section name="Link">
+        <f:variable name="linktext"
+                    value="{v:page.info(field: 'title', pageUid: page)}"/>
+        <f:variable name="linktitle"
+                    value="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:link.window.new')}"/>
+        {linktext -> twforms:format.trim() -> f:format.raw() -> f:link.page(pageUid: page, target: '_blank', title:
+        linktitle)}
+    </f:section>
+</html>

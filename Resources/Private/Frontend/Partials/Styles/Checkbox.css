@@ -1,0 +1,53 @@
+/* TODO: Migrate */
+.FormField__label.FormField__label--checkbox {
+    display: flex;
+    font-size: var(--font-size--uno);
+    margin-top: var(--spacing--tera);
+}
+
+.FormField--checkbox.FormField--has-error::after {
+    display: none;
+}
+
+[aria-invalid=true] + .FormField__label.FormField__label--checkbox {
+    margin-top: var(--spacing--nano);
+}
+
+.FormCheckbox__checkmark {
+    display: none;
+}
+
+.FormCheckbox:checked ~ .FormField__label .FormCheckbox__checkmark {
+    display: block;
+}
+
+.FormCheckbox__custom {
+    display: block;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid var(--color-black);
+    flex-shrink: 0;
+    margin-right: var(--spacing--uno);
+    position: relative;
+}
+
+.FormCheckbox__checkmark {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+}
+
+@media(--bp-medium--min) {
+    .FormCheckbox.form-check-label {
+        padding: 0;
+    }
+
+    .FormCheckbox__custom {
+        width: 3.75rem;
+        height: 3.75rem;
+        margin-right: var(--spacing--giga);
+    }
+}

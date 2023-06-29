@@ -1,0 +1,24 @@
+<f:comment><!--
+
+    Error messages for a form element (only if form uses custom validation)
+
+    @param element                      Form element
+    @param array validationResults      Validation results
+
+--></f:comment>
+<html xmlns:f="https://xsd.helhum.io/ns/typo3/cms-fluid/master/ViewHelpers"
+      xmlns:twforms="http://typo3.org/ns/Tollwerk/TwForms/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+    <f:if condition="{element.rootForm.renderingOptions.novalidate}">
+        <f:variable name="errorCount" value="{f:count(subject: validationResults.errors)}"/>
+        <f:variable name="errorContent">
+            <f:for each="{twforms:form.constraints(errors: validationResults.errors)}" as="constraint">
+                <span data-constraint="{constraint.constraint}">{formvh:translateElementError(element: element, error: constraint)}</span>
+            </f:for>
+        </f:variable>
+
+        <p id="{element.uniqueIdentifier}-error" class="Form__error"{f:if(condition: errorCount, else: 'hidden')}>
+            {errorContent -> twforms:format.trim() -> f:format.raw()}
+        </p>
+    </f:if>
+</html>

@@ -1,0 +1,35 @@
+<f:comment><!--
+
+    @param string type          Button type (defaults to "button")
+    @param string name          Button name
+    @param string property      Button property
+    @param string text          Button text (required)
+    @param string value         Button value (required)
+    @param string classes       Additional CSS classes
+    @param string style         Button style (defaults to "default")
+    @param string theme         Button theme (defaults to "default")
+    @param boolean novalidate   Disable form validation
+
+--></f:comment>
+<html xmlns:f="https://xsd.helhum.io/ns/typo3/cms-fluid/master/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+    <f:variable name="btnStyle" value="{f:if(condition: style, then: style, else: 'default')}"/>
+    <f:variable name="btnTheme" value="{f:if(condition: theme, then: theme, else: 'default')}"/>
+    <f:variable name="btnType" value="{f:if(condition: '{type}', then: '{type}', else: 'button')}"/>
+    <f:variable name="btnClasses" value="FormButton{f:if(condition: '{classes}', then: ' {classes}')} CallToAction CallToAction--{btnStyle} CallToAction--theme-{btnTheme}"/>
+    <f:if condition="{novalidate}">
+        <f:then>
+            <f:form.button name="{name}" value="{value}" property="{property}" type="{btnType}"
+                           class="CallToAction CallToAction-color--black"
+                           formnovalidate="formnovalidate">
+                {text -> f:format.raw()}
+            </f:form.button>
+        </f:then>
+        <f:else>
+            <f:form.button name="{name}" value="{value}" property="{property}" type="{btnType}"
+                           class="CallToAction CallToAction-color--black">
+                {text -> f:format.raw()}
+            </f:form.button>
+        </f:else>
+    </f:if>
+</html>

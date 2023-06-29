@@ -1,0 +1,27 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers" data-namespace-typo3-fluid="true">
+<formvh:renderRenderable renderable="{form}">
+<f:comment><!-- TODO: Remove attribute novalidate --></f:comment>
+    <formvh:renderRenderable renderable="{form}">
+        <twforms:form
+            pageUid="{f:if(condition: form.renderingOptions.pageUid, then: form.renderingOptions.pageUid, else: 0)}"
+            object="{form}"
+            pluginName="{form.renderingOptions.pluginName}"
+            action="{form.renderingOptions.controllerAction}"
+            actionUri="{form.renderingOptions.actionUri}"
+            method="{form.renderingOptions.httpMethod}"
+            id="{form.identifier}"
+            class="{form.renderingOptions.elementClassAttribute} Form--custom-validation"
+            section="{form.renderingOptions.section}"
+            enctype="{form.renderingOptions.httpEnctype}"
+            addQueryString="{form.renderingOptions.addQueryString}"
+            argumentsToBeExcludedFromQueryString="{form.renderingOptions.argumentsToBeExcludedFromQueryString}"
+            additionalParams="{form.renderingOptions.additionalParams}"
+            additionalAttributes="{form.renderingOptions.additionalAttributes}"
+            novalidate="1">
+            <f:render partial="{form.currentPage.templateName}"
+                      arguments="{form: form, page: form.currentPage}"/>
+            <f:render partial="Form/Navigation" arguments="{form: form}"/>
+        </twforms:form>
+    </formvh:renderRenderable>
+</formvh:renderRenderable>
+</html>

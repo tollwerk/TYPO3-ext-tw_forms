@@ -1,0 +1,88 @@
+/* TODO: Migrate */
+
+.Form__error {
+    color: var(--color-red);
+    font-weight: var(--font-weight--bold);
+}
+
+.FormField__input[aria-invalid=true] {
+    outline: 4px solid var(--color-red);
+    border-color: var(--color-red);
+
+    &:focus {
+        border-color: var(--color-red);
+        outline: 4px solid var(--color-red);
+    }
+}
+
+.FormField--has-error {
+    position: relative;
+
+    & .FormField__input {
+        padding-left: 4.5rem;
+    }
+
+    & .FormError__icon {
+        display: block;
+    }
+
+    &.FormField--checkbox .FormError__icon {
+        display: none;
+    }
+}
+
+.FormError__icon {
+    display: none;
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    fill: var(--color-red);
+    bottom: 9px;
+    left: 1rem;
+}
+
+.Form__error-navigation {
+    border: 4px solid var(--color-red);
+    background-color: var(--color-grey);
+    padding: var(--spacing--mega) var(--spacing--kilo);
+    color: var(--color-red);
+    margin-bottom: var(--spacing--mega);
+
+    & .Icon {
+        fill: var(--color-red);
+        margin-right: var(--spacing--uno);
+        flex-shrink: 0;
+    }
+
+    & .Heading {
+        margin: 0;
+        color: var(--color-red);
+        text-transform: uppercase;
+    }
+}
+
+.Form__error-navigation__content {
+    display: flex;
+}
+
+@media(--bp-medium--min) {
+    .FormField--has-error {
+        & .FormField__input {
+            padding-left: 6rem;
+        }
+    }
+
+    .FormError__icon {
+        left: 2.5rem;
+        bottom: 1rem;
+    }
+
+    .Form__error-navigation {
+        padding: var(--spacing--exa) var(--spacing--peta);
+
+        & .Icon {
+            margin-right: var(--spacing--giga);
+        }
+    }
+}

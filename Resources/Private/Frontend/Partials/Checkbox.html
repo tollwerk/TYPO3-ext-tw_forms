@@ -1,0 +1,110 @@
+<f:comment><!--
+
+    Render a checkbox
+
+    @param GenericFormElement element      _FormForm element
+
+--></f:comment>
+<html data-namespace-typo3-fluid="true"
+      xmlns:f="https://xsd.helhum.io/ns/typo3/cms-fluid/master/ViewHelpers"
+      xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers">
+    <formvh:renderRenderable renderable="{element}">
+        <f:form.validationResults for="{element.rootForm.identifier}.{element.identifier}">
+            <f:variable name="additionalAttributes"
+                        value="{twforms:form.field.additionalAttributes(element: element, validationResults: validationResults)}"/>
+            <f:variable name="labelType" value="{element.renderingOptions.label.labelType}"/>
+            <f:comment><!--
+
+            If ?
+
+            --></f:comment>
+            <f:if condition="{labelType} > 0">
+                <f:then>
+                    <f:render partial="Field/Field" contentAs="elementContent"
+                              arguments="{element: element, classes: 'FormCheckbox--with-label', labelType: labelType}">
+                        <f:render section="Checkbox" arguments="{
+                                element: element,
+                                additionalAttributes: additionalAttributes,
+                                multiple: multiple,
+                                id: element.uniqueIdentifier,
+                                value: element.properties.value
+                            }"/>
+                        <label for="{element.uniqueIdentifier}"
+                               class="FormField__label FormField__label--{element.type -> f:format.case(mode: 'lower')}">
+                            <f:render section="CheckboxCustom"/>
+                            <f:render section="InlineLabel" contentAs="label">
+                                <f:if condition="{element.renderingOptions.label.renderLabel.partial}">
+                                    <f:then>
+                                        <f:render partial="{element.renderingOptions.label.renderLabel.partial}"
+                                                  optional="1"
+                                                  arguments="{twforms:collection.merge(a: element.renderingOptions.label.renderLabel.arguments, b: '{element: element}')}"/>
+                                    </f:then>
+                                    <f:else>
+                                        <f:translate key="{element.renderingOptions.label.renderLabel}"/>
+                                    </f:else>
+                                </f:if>
+                            </f:render>
+                        </label>
+                    </f:render>
+                </f:then>
+                <f:else>
+                    <f:render partial="Field/Field" contentAs="elementContent"
+                              arguments="{element: element, classes: 'FormCheckbox--without-label', labelType: 1}">
+                        <f:render section="Checkbox" arguments="{
+                                element: element,
+                                additionalAttributes: additionalAttributes,
+                                multiple: 0,
+                                id: element.uniqueIdentifier,
+                                value: element.properties.value
+                            }"/>
+                        <label for="{element.uniqueIdentifier}"
+                               class="FormField__label FormField__label--{element.type -> f:format.case(mode: 'lower')}">
+                            <f:render section="InlineLabel" contentAs="label">
+                                {formvh:translateElementProperty(element: element, property: 'label')}
+                                <f:if condition="{element.required}">
+                                    <f:render partial="Field/Required"/>
+                                </f:if>
+                            </f:render>
+                        </label>
+                    </f:render>
+                </f:else>
+            </f:if>
+        </f:form.validationResults>
+    </formvh:renderRenderable>
+
+    <f:comment><!--
+
+    Render the checkbox
+
+    @param GenericFormElement element       Form element
+    @param array additionalAttributes       Additional attributes
+    @param boolean multiple                 Multiple checkboxes
+    @param string id                        ID
+    @param string value                     Value
+
+    --></f:comment>
+    <f:section name="Checkbox">
+        <f:form.checkbox
+            additionalAttributes="{additionalAttributes}"
+            multiple="{multiple}"
+            class="{element.properties.elementClassAttribute} hide-element"
+            errorClass="{element.properties.elementErrorClassAttribute}"
+            id="{id}"
+            property="{element.identifier}"
+            value="{value}"
+        />
+    </f:section>
+
+    <f:comment><!--
+
+    Render an inline label
+
+    @param string label         Label text
+
+    --></f:comment>
+    <f:section name="InlineLabel">
+        <f:if condition="{label -> twforms:format.trim()}">
+            <span class="FormField__label-wrap">{label -> twforms:format.trim() -> f:format.raw()}</span>
+        </f:if>
+    </f:section>
+</html>

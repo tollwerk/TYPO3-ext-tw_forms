@@ -1,0 +1,3 @@
+# Imports all files ending on .typoscript from the specified folder. It does however not import files from sub folders.
+@import 'EXT:tw_forms/Configuration/TypoScript/Setup/*.typoscript'
+@import 'EXT:tw_forms/Configuration/TypoScript/Setup/Plugin/*.typoscript'
