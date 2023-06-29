@@ -1,0 +1,39 @@
+{
+  "name": "tollwerk/tw-forms",
+  "type": "typo3-cms-extension",
+  "description": "TYPO3 extension for enhancing native forms",
+  "authors": [
+    {
+      "name": "Klaus Fiedler",
+      "role": "Developer",
+      "homepage": "https://tollwerk.dev"
+    }
+  ],
+  "require": {
+    "typo3/cms-core": "^12",
+    "typo3/cms-fluid-styled-content": "^12"
+  },
+  "homepage": "https://tollwerk.de",
+  "license": "MIT",
+  "keywords": [
+    "typo3",
+    "forms",
+    "form framework"
+  ],
+  "support": {
+    "issues": "https://tollwerk.de"
+  },
+  "autoload": {
+    "psr-4": {
+      "Tollwerk\\TwForms\\": "Classes/"
+    }
+  },
+  "extra": {
+    "typo3/cms": {
+      "extension-key": "tw_forms"
+    },
+    "branch-alias": {
+      "dev-master": "12.0.x-dev"
+    }
+  }
+}
