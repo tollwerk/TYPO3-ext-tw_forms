@@ -11,7 +11,8 @@
   ],
   "require": {
     "typo3/cms-core": "^12",
-    "typo3/cms-fluid-styled-content": "^12"
+    "typo3/cms-fluid-styled-content": "^12",
+    "typo3/cms-form": "^12"
   },
   "homepage": "https://tollwerk.de",
   "license": "MIT",
