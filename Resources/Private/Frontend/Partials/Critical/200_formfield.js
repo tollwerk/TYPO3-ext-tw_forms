@@ -1,5 +1,5 @@
 // TODO: Migrate
-/* global Flad */
+/* global tw_forms */
 /* eslint no-restricted-properties: [0, {"object": "Map", "property": "pow"}] */
 (function formFields(w, d) {
     let scrollIntoView = d.documentElement.scrollIntoView ? 'scrollIntoView' : null;
@@ -213,6 +213,6 @@
     };
 
     // Observing for form fields
-    Flad.Observer.register('.FormField__input, .FormField__textarea', (field) => new FormField(field));
+    tw_forms.Observer.register('.FormField__input, .FormField__textarea', (field) => new FormField(field));
 
 }(typeof global !== 'undefined' ? global : window, document));

@@ -1,4 +1,3 @@
-// TODO: Migrate
 (function formValidation(w, d) {
     const errorLinkHandler = function errorLinkHandler(e) {
         e.preventDefault();

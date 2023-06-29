@@ -1,14 +1,13 @@
 /**
- * TODO: Migrate
- * Flad namespace
+ * tw_forms namespace
  *
  * @type {Object}
  */
 // eslint-disable-next-line no-unused-vars
-const Flad = window.Flad || { has: {} };
+const tw_forms = window.tw_forms || { has: {} };
 
 (function (w, d) {
-    if (((typeof exports !== 'undefined') && exports.Observer) || w.Flad.Observer) {
+    if (((typeof exports !== 'undefined') && exports.Observer) || w.tw_forms.Observer) {
         return;
     }
 
@@ -68,6 +67,6 @@ const Flad = window.Flad || { has: {} };
         // Else create a global instance
     } else {
         // eslint-disable-next-line no-param-reassign
-        w.Flad.Observer = new Observer();
+        w.tw_forms.Observer = new Observer();
     }
 }(typeof global !== 'undefined' ? global : window, document));
