@@ -15,8 +15,10 @@
             <f:render partial="Form/Status" arguments="{form: form, page: page}"/>
         </f:if>
         <f:if condition="{page.label}">
-            <twforms:heading content="{formvh:translateElementProperty(element: page, property: 'label')}"
-                          class="Form__page-heading" id="{form.identifier}-{page.identifier}"/>
+            <f:comment><!-- TODO: Heading-Tag neccessary? --></f:comment>
+            <span class="Form__page-heading" id="{form.identifier}-{page.identifier}">
+                {formvh:translateElementProperty(element: page, property: 'label')}
+            </span>
         </f:if>
         <f:if condition="{form}">
             <f:render partial="Form/Validation" arguments="{form: form}"/>

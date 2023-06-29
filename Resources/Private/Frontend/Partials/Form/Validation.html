@@ -9,7 +9,6 @@
       xmlns:twforms="http://typo3.org/ns/Tollwerk/TwForms/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
-    <twforms:heading.context.shift by="1">
         <f:if condition="{form.formDefinition.renderingOptions.novalidate}">
             <f:form.validationResults>
                 <f:if condition="{validationResults.flattenedErrors}">
@@ -26,7 +25,6 @@
                 </f:if>
             </f:form.validationResults>
         </f:if>
-    </twforms:heading.context.shift>
 
     <f:comment><!--
 
@@ -52,28 +50,28 @@
             <f:variable name="headingContent" value="{f:if(condition: '{count} == 1', then: '{f:translate(key: headingKeySingle)}', else: '{f:translate(key: headingKeyMultiple, arguments: \'{0: count}\')}')}"/>
         <div class="Form__error-navigation__content">
 
-            <twforms:heading id="{form.identifier}-errors" content="{headingContent}" additionalAttributes="{
-                    data-heading-single: '{f:translate(key: headingKeySingle)}',
-                    data-heading-multiple: '{f:translate(key: headingKeyMultiple)}'
-                }">
-                <ol class="Form__error-summary">
-                    <f:for each="{validationResults.flattenedErrors}" as="propertyErrors" key="elementIdentifier">
-                        <f:variable name="element"
-                                    value="{twforms:form.element(form: form, element: elementIdentifier)}"/>
-                        <li class="Form__error-description">
-                            <a href="#{element.uniqueIdentifier}" class="Form__error-link">
-                                <f:for each="{twforms:form.constraints(errors: propertyErrors)}" as="constraint"
-                                       iteration="iter">
-                                    <f:if condition="{iter.isFirst}">
-                                        <f:else>;</f:else>
-                                    </f:if>
-                                    {formvh:translateElementError(element: element, error: constraint)}
-                                </f:for>
-                            </a>
-                        </li>
-                    </f:for>
-                </ol>
-            </twforms:heading>
+            <span id="{form.identifier}-errors"
+                  data-heading-single="{f:translate(key: headingKeySingle)}"
+                  data-heading-multiple="{f:translate(key: headingKeyMultiple)}">
+                {headingContent}
+            </span>
+            <ol class="Form__error-summary">
+                <f:for each="{validationResults.flattenedErrors}" as="propertyErrors" key="elementIdentifier">
+                    <f:variable name="element"
+                                value="{twforms:form.element(form: form, element: elementIdentifier)}"/>
+                    <li class="Form__error-description">
+                        <a href="#{element.uniqueIdentifier}" class="Form__error-link">
+                            <f:for each="{twforms:form.constraints(errors: propertyErrors)}" as="constraint"
+                                   iteration="iter">
+                                <f:if condition="{iter.isFirst}">
+                                    <f:else>;</f:else>
+                                </f:if>
+                                {formvh:translateElementError(element: element, error: constraint)}
+                            </f:for>
+                        </a>
+                    </li>
+                </f:for>
+            </ol>
         </div>
         </nav>
     </f:section>
