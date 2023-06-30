@@ -37,6 +37,7 @@
 
 namespace Tollwerk\TwForms\ViewHelpers\Script;
 
+use http\Env\Request;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 use WyriHaximus\HtmlCompress\Factory;
@@ -90,7 +91,9 @@ class WriteViewHelper extends AbstractTagBasedViewHelper
     public function render(): string
     {
         $excludeTypes = array_map('intval', GeneralUtility::trimExplode(',', $this->arguments['excludeTypes'], true));
-        if (empty($excludeTypes) || !in_array(intval($GLOBALS['TSFE']->type), $excludeTypes)) {
+        $pageType = $GLOBALS['TYPO3_REQUEST']->getAttribute('routing')->getPageType();
+
+        if (empty($excludeTypes) || !in_array(intval($pageType), $excludeTypes)) {
             $compressor = Factory::construct();
             $html       = trim($compressor->compress($this->renderChildren()));
 
