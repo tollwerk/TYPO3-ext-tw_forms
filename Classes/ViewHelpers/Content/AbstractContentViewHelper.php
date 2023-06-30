@@ -85,7 +85,8 @@ abstract class AbstractContentViewHelper extends AbstractViewHelper
     public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager)
     {
         $this->configurationManager = $configurationManager;
-        $this->contentObject        = $configurationManager->getContentObject();
+        // TODO: Deprecation 68748. Replaced $configurationManager->getContentObject(). Check if errors occur.
+        $this->contentObject        = $GLOBALS['TSFE']->cObj;
     }
 
     /**
@@ -228,9 +229,11 @@ abstract class AbstractContentViewHelper extends AbstractViewHelper
         if (1 > $pageUid) {
             $pageUid = (int)$GLOBALS['TSFE']->page['content_from_pid'];
         }
-        if (1 > $pageUid) {
-            $pageUid = (int)$GLOBALS['TSFE']->id;
-        }
+
+        // TODO: Deprecation 94958. Remove if no errors occur.
+//        if (1 > $pageUid) {
+//            $pageUid = (int)$GLOBALS['TSFE']->id;
+//        }
 
         return $pageUid;
     }
@@ -274,9 +277,11 @@ abstract class AbstractContentViewHelper extends AbstractViewHelper
     */
     protected static function renderRecord(array $row)
     {
-        if (0 < $GLOBALS['TSFE']->recordRegister['tt_content:' . $row['uid']]) {
-            return null;
-        }
+        // TODO: Deprecation 94958. Remove if no errors occur.
+//        if (0 < $GLOBALS['TSFE']->recordRegister['tt_content:' . $row['uid']]) {
+//            return null;
+//        }
+
         $conf   = [
             'tables'       => 'tt_content',
             'source'       => $row['uid'],
@@ -285,15 +290,18 @@ abstract class AbstractContentViewHelper extends AbstractViewHelper
         $parent = $GLOBALS['TSFE']->currentRecord;
         // If the currentRecord is set, we register, that this record has invoked this function.
         // It's should not be allowed to do this again then!!
-        if (false === empty($parent)) {
-            ++$GLOBALS['TSFE']->recordRegister[$parent];
-        }
+        // TODO: Deprecation 94958. Remove if no errors occur.
+//        if (false === empty($parent)) {
+//            ++$GLOBALS['TSFE']->recordRegister[$parent];
+//        }
+
         $html = $GLOBALS['TSFE']->cObj->cObjGetSingle('RECORDS', $conf);
 
         $GLOBALS['TSFE']->currentRecord = $parent;
-        if (false === empty($parent)) {
-            --$GLOBALS['TSFE']->recordRegister[$parent];
-        }
+        // TODO: Deprecation 94958. Remove if no errors occur.
+//        if (false === empty($parent)) {
+//            --$GLOBALS['TSFE']->recordRegister[$parent];
+//        }
 
         return $html;
     }
