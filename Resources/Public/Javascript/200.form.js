@@ -30,8 +30,6 @@
             }
         }
 
-        console.log('this.fields', this.fields);
-
         this.initializeErrorSummary(this.element.querySelector('.Form__error-summary'));
     }
 
@@ -102,6 +100,7 @@
      * @return {boolean} No errors / form is valid
      */
     FormValidation.prototype.updateErrorSummary = function updateErrorSummary(errorMessages) {
+
         let errorCount = 0;
 
         // Remove all present errors

@@ -40,6 +40,7 @@
                     value="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.title.errors')}"/>
         <f:variable name="count" value="{f:count(subject: validationResults.flattenedErrors)}"/>
         <f:variable name="title" value="{twforms:form.title(form: form, pattern: pattern, errors: count)}"/>
+
         <nav class="Form__error-navigation" aria-label="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.nav.errors')}" tabindex="-1"
              data-title-errors="{title.pattern}" data-title="{title.default} | tollwerk"
              {f:if(condition: hidden, then: ' hidden')}>

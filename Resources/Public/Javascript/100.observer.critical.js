@@ -46,7 +46,11 @@ window.tw_forms = tw_forms;
      * @param {Element} node Node
      */
     Observer.prototype.checkNode = function (node) {
-        this.observed.filter((observer) => node.matches(observer[0])).forEach((observer) => observer[1](node));
+        this.observed.filter((observer) => {
+            return node.matches(observer[0])
+        }).forEach((observer) => {
+                observer[1](node);
+            });
     };
 
     /**

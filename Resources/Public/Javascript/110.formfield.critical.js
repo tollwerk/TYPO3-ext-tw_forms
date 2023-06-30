@@ -13,9 +13,6 @@
      * @constructor
      */
     function FormField(element) {
-
-        console.log('new FormField() for', element);
-
         this.element = element;
         this.element.enhancer = this;
         this.wrapper = this.element.closest('.FormField');
