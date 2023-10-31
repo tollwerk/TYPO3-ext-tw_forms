@@ -62,7 +62,7 @@
                                 value="{twforms:form.element(form: form, element: elementIdentifier)}"/>
                     <li class="Form__error-description">
                         <a href="#{element.uniqueIdentifier}" class="Form__error-link">
-                            <f:for each="{twforms:form.constraints(errors: propertyErrors)}" as="constraint"
+                            <f:for each="{twforms:form.constraints(errors: propertyErrors, validationErrorMessages: element.properties.validationErrorMessages)}" as="constraint"
                                    iteration="iter">
                                 <f:if condition="{iter.isFirst}">
                                     <f:else>;</f:else>

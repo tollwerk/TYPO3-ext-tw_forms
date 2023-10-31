@@ -103,16 +103,32 @@ class Constraint extends Error
     /**
      * Instantiate a Constraint from an Error
      *
-     * @param Error $error Error
+     * @param Error $error                   Error
+     * @param array $validationErrorMessages Validation error messages like this:
+     *                                       [
+     *                                          ['code' => 12345, 'message' => 'Some helpful validation error message.'],
+     *                                          ['code' => 98765, 'message' => 'Another validation error message.'],
+     *                                       ]
      *
      * @return Constraint Constraint
      */
-    public static function fromError(Error $error): Constraint
+    public static function fromError(Error $error, array $validationErrorMessages = []): Constraint
     {
         $constraint = ValidationErrorMapper::mapErrorToConstraint($error);
         $code = $constraint ? self::CODES[$constraint] : $error->getCode();
+        $message = $error->getMessage();
 
-        return new self($error->getMessage(), $code, $error->getArguments(), $error->getTitle(), $constraint ?? '');
+        // Overwrite default error message with custom one, defined in form editor or YAML file etc.
+        foreach($validationErrorMessages as $validationErrorMessage) {
+            if ($validationErrorMessage['code'] === $error->getCode() && !empty($validationErrorMessage['message'])) {
+                $message = $validationErrorMessage['message'];
+
+                // We also have to rewind the error code to the default one from typo3/forms for proper translation.
+                $code = $error->getCode();
+            }
+        }
+
+        return new self($message, $code, $error->getArguments(), $error->getTitle(), $constraint ?? '');
     }
 
     /**

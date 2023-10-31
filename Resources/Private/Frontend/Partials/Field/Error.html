@@ -12,7 +12,7 @@
     <f:if condition="{element.rootForm.renderingOptions.novalidate}">
         <f:variable name="errorCount" value="{f:count(subject: validationResults.errors)}"/>
         <f:variable name="errorContent">
-            <f:for each="{twforms:form.constraints(errors: validationResults.errors)}" as="constraint">
+            <f:for each="{twforms:form.constraints(errors: validationResults.errors, validationErrorMessages: element.properties.validationErrorMessages)}" as="constraint">
                 <span data-constraint="{constraint.constraint}">{formvh:translateElementError(element: element, error: constraint)}</span>
             </f:for>
         </f:variable>

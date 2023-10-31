@@ -129,6 +129,9 @@ class AdditionalAttributesViewHelper extends AbstractViewHelper
 
             // Run through all  element validators
             foreach (array_keys($elementValidators) as $validatorClass) {
+
+                DebuggerUtility::var_dump(ValidationErrorMapper::getInverseMap($validatorClass), __CLASS__);
+
                 // Run through all potential constraints
                 foreach (ValidationErrorMapper::getInverseMap($validatorClass) as $constraint => $errorCodes) {
                     // Run through all associated Extbase error codes
