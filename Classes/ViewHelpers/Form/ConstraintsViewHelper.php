@@ -78,7 +78,7 @@ class ConstraintsViewHelper extends AbstractViewHelper
     ) {
         $constraints = [];
         foreach ($arguments['errors'] as $error) {
-            $constraint = Constraint::fromError($error, $arguments['validationErrorMessages']);
+            $constraint = Constraint::fromError($error, $arguments['validationErrorMessages'] ?? []);
             $constraints[get_class($error).':'.$error->getCode()] = $constraint;
         }
 

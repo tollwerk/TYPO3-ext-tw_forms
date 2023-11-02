@@ -127,32 +127,58 @@ class AdditionalAttributesViewHelper extends AbstractViewHelper
                 ->getViewHelperVariableContainer()
                 ->get(RenderRenderableViewHelper::class, 'formRuntime');
 
-            // Run through all  element validators
-            foreach (array_keys($elementValidators) as $validatorClass) {
+            // Get error codes and constraint name for JavaScript.
+            $errorCodesByConstraint = [];
+            $elementProperties = $element->getProperties();
+            if (!empty($elementProperties['validationErrorMessages'])) {
+                foreach($elementProperties['validationErrorMessages'] as $validationErrorMessage) {
+                    $constraint = ValidationErrorMapper::mapErrorCodeToConatraint($validationErrorMessage['code']);
+                    if (!$constraint) {
+                        continue;
+                    }
+                    if (!array_key_exists($constraint, $errorCodesByConstraint)) {
+                        $errorCodesByConstraint[$constraint] = [];
+                    }
 
-                DebuggerUtility::var_dump(ValidationErrorMapper::getInverseMap($validatorClass), __CLASS__);
+                    $errorCodesByConstraint[$constraint][] = $validationErrorMessage['code'];
+                }
+            } else {
+                // Run through all  element validators
+                foreach (array_keys($elementValidators) as $validatorClass) {
+                    // Run through all potential constraints
+                    foreach (ValidationErrorMapper::getInverseMap($validatorClass) as $constraint => $constraintErrorCodes) {
+                        if (!array_key_exists($constraint, $errorCodesByConstraint)) {
+                            $errorCodesByConstraint[$constraint] = [];
+                        }
 
-                // Run through all potential constraints
-                foreach (ValidationErrorMapper::getInverseMap($validatorClass) as $constraint => $errorCodes) {
-                    // Run through all associated Extbase error codes
-                    foreach ($errorCodes as $errorCode) {
-                        // Try to get a translated error message
-                        $translationService = GeneralUtility::makeInstance(TranslationService::class);
-                        $errorMessage = $translationService->translateFormElementError(
-                            $element,
-                            $errorCode,
-                            [],
-                            'default',
-                            $formRuntime
-                        );
-                        // Add as constraint error message attribute
-                        if (strlen($errorMessage)) {
-                            $additionalAttributes['data-errormsg-' . $constraint] = $errorMessage;
-                            break;
+                        // Run through all associated Extbase error codes
+                        foreach ($constraintErrorCodes as $errorCode) {
+                            $errorCodesByConstraint[$constraint][] = $errorCode;
                         }
                     }
                 }
             }
+
+            foreach($errorCodesByConstraint as $constraint => $errorCodes) {
+                foreach($errorCodes as $errorCode) {
+                    // Try to get a translated error message
+                    $translationService = GeneralUtility::makeInstance(TranslationService::class);
+                    $errorMessage = $translationService->translateFormElementError(
+                        $element,
+                        $errorCode,
+                        [],
+                        'default',
+                        $formRuntime
+                    );
+                    // Add as constraint error message attribute
+                    if (strlen($errorMessage)) {
+                        $additionalAttributes['data-errormsg-' . $constraint] = $errorMessage;
+                        break;
+                    }
+                }
+            }
+
+
         }
 
         return $additionalAttributes;

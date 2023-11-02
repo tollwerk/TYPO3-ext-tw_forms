@@ -30,6 +30,10 @@
                 <source>Please fill out this field</source>
                 <target></target>
             </trans-unit>
+            <trans-unit id="validation.error.1580509080" approved="yes">
+                <source>Please enter a valid email address</source>
+                <target></target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
