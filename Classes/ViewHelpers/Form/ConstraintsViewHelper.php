@@ -38,6 +38,8 @@
 namespace Tollwerk\TwForms\ViewHelpers\Form;
 
 use Tollwerk\TwForms\Error\Constraint;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
+use TYPO3\CMS\Form\Domain\Model\FormElements\GenericFormElement;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
@@ -75,10 +77,8 @@ class ConstraintsViewHelper extends AbstractViewHelper
         RenderingContextInterface $renderingContext
     ) {
         $constraints = [];
-
         foreach ($arguments['errors'] as $error) {
-
-            $constraint = Constraint::fromError($error);
+            $constraint = Constraint::fromError($error, $arguments['validationErrorMessages'] ?? []);
             $constraints[get_class($error).':'.$error->getCode()] = $constraint;
         }
 
@@ -95,5 +95,6 @@ class ConstraintsViewHelper extends AbstractViewHelper
     public function initializeArguments()
     {
         $this->registerArgument('errors', 'array', 'Form validation errors', true);
+        $this->registerArgument('validationErrorMessages', 'array', 'Array with values from {element.properties.validationErrorMessages}. Can be empty.', false, []);
     }
 }

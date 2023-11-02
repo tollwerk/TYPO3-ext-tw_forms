@@ -123,4 +123,24 @@ class ValidationErrorMapper
 
         return null;
     }
+
+    /**
+     * Map an Extbase error code to a JavaScript constraint
+     *
+     * @param int $errorCode Extbase error code
+     *
+     * @return string|null JavaScript constraint
+     */
+    public static function mapErrorCodeToConatraint(int $errorCode): ?string
+    {
+        foreach(self::ERROR_MAP as $errorTypeCodes) {
+            foreach($errorTypeCodes as $errorTypeCode => $constraint) {
+                if ($errorCode === $errorTypeCode) {
+                    return $constraint;
+                }
+            }
+        }
+
+        return null;
+    }
 }
