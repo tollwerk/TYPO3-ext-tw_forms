@@ -101,7 +101,7 @@ class WriteViewHelper extends AbstractTagBasedViewHelper
                 return '';
             }
 
-            $condition = trim($this->arguments['condition']);
+            $condition = isset($this->arguments['condition']) ? trim($this->arguments['condition']) : '';
             $condition = strlen($condition) ? "if($condition)" : '';
 
             $this->tag->setContent($condition . 'document.write(\'' . addcslashes($html, "'") . '\')');
