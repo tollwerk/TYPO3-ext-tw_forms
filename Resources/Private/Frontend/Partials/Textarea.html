@@ -7,10 +7,8 @@
       xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers"
       data-namespace-typo3-fluid="true">
     <formvh:renderRenderable renderable="{element}">
-        <f:variable name="additionalAttributes"
-                    value="{twforms:form.field.additionalAttributes(element: element, validationResults: validationResults)}" />
         <f:form.validationResults for="{element.rootForm.identifier}.{element.identifier}">
-            <f:render partial="Field/Field" arguments="{element: element, classes: 'text-input'}"
+            <f:render partial="Field/Field" arguments="{element: element}"
                       contentAs="elementContent">
                 <f:form.textarea
                         property="{element.identifier}"
@@ -19,7 +17,7 @@
                         rows="{element.properties.rows}"
                         cols="{element.properties.cols}"
                         errorClass="{element.properties.elementErrorClassAttribute}"
-                        additionalAttributes="{additionalAttributes}"/>
+                        additionalAttributes="{twforms:form.field.additionalAttributes(element: element, validationResults: validationResults)}"/>
             </f:render>
         </f:form.validationResults>
     </formvh:renderRenderable>
