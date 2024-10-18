@@ -1,6 +1,6 @@
 <f:comment><!--
 
-    Render a text input element
+    Render a number input element
 
     @param GenericFormElement element          Form element
 
@@ -13,23 +13,10 @@
         <f:form.validationResults for="{element.rootForm.identifier}.{element.identifier}">
             <f:variable name="additionalAttributes"
                         value="{twforms:form.field.additionalAttributes(element: element, validationResults: validationResults)}" />
-            <f:switch expression="{element.identifier}">
-                        <f:case value="name">
-                            <f:variable name="additionalAttributes" value="{twforms:collection.merge(a: '{additionalAttributes}', b: '{autocomplete: \'name\'}')}" />
-                </f:case>
-                <f:case value="title">
-                    <f:variable name="additionalAttributes" value="{twforms:collection.merge(a: '{additionalAttributes}', b: '{autocomplete: \'honorific-prefix\'}')}" />
-                </f:case>
-                <f:case value="telefon">
-                    <f:variable name="additionalAttributes" value="{twforms:collection.merge(a: '{additionalAttributes}', b: '{autocomplete: \'tel\'}')}" />
-                </f:case>
-                <f:defaultCase>
-
-                </f:defaultCase>
-            </f:switch>
-            <f:render partial="Field/Field" arguments="{element: element, classes: 'text-input'}"
+            <f:render partial="Field/Field" arguments="{element: element}"
                       contentAs="elementContent">
                 <twforms:form.textfield
+                        type="number"
                         property="{element.identifier}"
                         id="{element.uniqueIdentifier}"
                         dontPrefixName="{element.renderingOptions.dontPrefixName}"
