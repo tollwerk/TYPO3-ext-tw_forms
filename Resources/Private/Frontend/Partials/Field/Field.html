@@ -5,7 +5,6 @@
     @param GenericFormElement element           Form element
     @param string elementContent                Element content (HTML)
     @param string classes                       Addition CSS classes
-    @param int labelType                        Label type (checkboxes & radiobuttons)
     @param array data                           Data attributes
 
 --></f:comment>
@@ -24,7 +23,6 @@
                         elementContent: elementContent,
                         labelClasses: labelClasses,
                         label: label,
-                        labelType: labelType,
                         validationResults: validationResults
                     }"/>
             </f:then>
@@ -35,7 +33,6 @@
                         elementContent: elementContent,
                         labelClasses: labelClasses,
                         label: label,
-                        labelType: labelType,
                         validationResults: validationResults
                      }"/>
                 </div>
@@ -51,15 +48,34 @@
         @param string elementContent                Element content (HTML)
         @param string labelClasses                  Label CSS classes
         @param string label                         Label text
-        @param int labelType                        Label type (checkboxes)
         @param int validationResults                Validation results
 
     --></f:comment>
     <f:section name="LabelAndField">
-
         <f:if condition="{label}">
-            <f:if condition="1">
+            <f:comment><!-- Render fieldset with legend for radio buttons and multi checkboxes --></f:comment>
+            <f:if condition="{element.type} == 'RadioButton' || {element.type} == 'MultiCheckbox'">
                 <f:then>
+                    <f:variable name="labelContent">
+                        <f:format.raw>{label}</f:format.raw>
+                        <f:if condition="{element.required} || ({element.renderingOptions.hideOptionalLabel} == 1)">
+                            <f:else>
+                                <f:render partial="Field/Optional" arguments="{element: element}"/>
+                            </f:else>
+                        </f:if>
+                    </f:variable>
+                    <fieldset class="FormField__group">
+                        <legend class="FormField__label FormField__label--group {labelClasses}">{labelContent
+                            -> f:format.raw()}
+                            <f:if condition="{element.required}">
+                                <f:render partial="Field/Required"/>
+                            </f:if>
+                        </legend>
+                        <f:render section="Field"
+                                  arguments="{element: element, elementContent: elementContent, validationResults: validationResults}"/>
+                    </fieldset>
+                </f:then>
+                <f:else>
                     <f:variable name="labelContent">
                         <f:format.raw>{label}</f:format.raw>
                         <f:if condition="{element.required} || ({element.renderingOptions.hideOptionalLabel} == 1)">
@@ -79,23 +95,6 @@
                     </f:if>
                     <f:render section="Field"
                               arguments="{element: element, elementContent: elementContent, validationResults: validationResults}"/>
-
-                </f:then>
-                <f:else if="{labelType} > 1">
-                    <fieldset class="FormField__group">
-                        <legend class="FormField__label FormField__label--group {labelClasses}">
-                            <f:format.raw>{label}</f:format.raw>
-                            <f:if condition="{element.required}">
-                                <f:render partial="Field/Required"
-                                          arguments="{element: element}"/>
-                            </f:if>
-                            <f:if condition="{element.required}">
-                                <f:render partial="Field/Required"/>
-                            </f:if>
-                        </legend>
-                        <f:render section="Field"
-                                  arguments="{element: element, elementContent: elementContent, validationResults: validationResults}"/>
-                    </fieldset>
                 </f:else>
             </f:if>
         </f:if>
