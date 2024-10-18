@@ -3,21 +3,25 @@
     @param GenericFormElement element          Form element
 
 --></f:comment>
-<html xmlns:f="https://xsd.helhum.io/ns/typo3/cms-fluid/master/ViewHelpers"
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:twforms="http://typo3.org/ns/Tollwerk/TwForms/ViewHelpers"
       xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers"
       data-namespace-typo3-fluid="true">
     <formvh:renderRenderable renderable="{element}">
         <f:form.validationResults for="{element.rootForm.identifier}.{element.identifier}">
-            <f:render partial="Field/Field" arguments="{element: element, classes: 'text-input'}"
+            <f:variable name="additionalAttributes"
+                        value="{twforms:form.field.additionalAttributes(element: element, validationResults: validationResults)}" />
+            <f:render partial="Field/Field"
+                      arguments="{element: element}"
                       contentAs="elementContent">
                 <twforms:form.textfield
-                    type="email"
-                    property="{element.identifier}"
-                    id="{element.uniqueIdentifier}"
-                    dontPrefixName="{element.renderingOptions.dontPrefixName}"
-                    class="{element.properties.elementClassAttribute}"
-                    errorClass="{element.properties.elementErrorClassAttribute}"
-                    additionalAttributes="{twforms:form.field.additionalAttributes(element: element, validationResults: validationResults)}"/>
+                        type="email"
+                        property="{element.identifier}"
+                        id="{element.uniqueIdentifier}"
+                        dontPrefixName="{element.renderingOptions.dontPrefixName}"
+                        class="{element.properties.elementClassAttribute}"
+                        errorClass="{element.properties.elementErrorClassAttribute}"
+                        additionalAttributes="{additionalAttributes}"/>
             </f:render>
         </f:form.validationResults>
     </formvh:renderRenderable>

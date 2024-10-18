@@ -6,7 +6,7 @@
 
 --></f:comment>
 <html data-namespace-typo3-fluid="true"
-      xmlns:f="https://xsd.helhum.io/ns/typo3/cms-fluid/master/ViewHelpers"
+      xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
       xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers">
     <formvh:renderRenderable renderable="{element}">
         <f:form.validationResults for="{element.rootForm.identifier}.{element.identifier}">
@@ -14,22 +14,24 @@
                         value="{twforms:form.field.additionalAttributes(element: element, validationResults: validationResults)}"/>
             <f:render partial="Field/Field" contentAs="elementContent"
                       arguments="{element: element}">
-                <f:render section="Checkbox" arguments="{
-                                element: element,
-                                additionalAttributes: additionalAttributes,
-                                multiple: 0,
-                                id: element.uniqueIdentifier,
-                                value: element.properties.value
-                            }"/>
-                <label for="{element.uniqueIdentifier}"
-                       class="FormField__label FormField__label--{element.type -> f:format.case(mode: 'lower')}">
-                    <f:render section="InlineLabel" contentAs="label">
-                        {formvh:translateElementProperty(element: element, property: 'label')}
-                        <f:if condition="{element.required}">
-                            <f:render partial="Field/Required"/>
-                        </f:if>
-                    </f:render>
-                </label>
+                <div class="FormCheckbox__wrapper">
+                    <f:render section="Checkbox" arguments="{
+                                    element: element,
+                                    additionalAttributes: additionalAttributes,
+                                    multiple: 0,
+                                    id: element.uniqueIdentifier,
+                                    value: element.properties.value
+                                }"/>
+                    <label for="{element.uniqueIdentifier}"
+                           class="FormField__label FormField__label--{element.type -> f:format.case(mode: 'lower')}">
+                        <f:render section="InlineLabel" contentAs="label">
+                            {formvh:translateElementProperty(element: element, property: 'label')}
+                            <f:if condition="{element.required}">
+                                <f:render partial="Field/Required"/>
+                            </f:if>
+                        </f:render>
+                    </label>
+                </div>
             </f:render>
         </f:form.validationResults>
     </formvh:renderRenderable>
@@ -47,13 +49,13 @@
     --></f:comment>
     <f:section name="Checkbox">
         <f:form.checkbox
-            additionalAttributes="{additionalAttributes}"
-            multiple="{multiple}"
-            class="{element.properties.elementClassAttribute} hide-element"
-            errorClass="{element.properties.elementErrorClassAttribute}"
-            id="{id}"
-            property="{element.identifier}"
-            value="{value}"
+                additionalAttributes="{additionalAttributes}"
+                multiple="{multiple}"
+                class="{element.properties.elementClassAttribute}"
+                errorClass="{element.properties.elementErrorClassAttribute}"
+                id="{id}"
+                property="{element.identifier}"
+                value="{value}"
         />
     </f:section>
 
@@ -65,8 +67,8 @@
 
     --></f:comment>
     <f:section name="InlineLabel">
-        <f:if condition="{label -> twforms:format.trim()}">
-            <span class="FormField__label-wrap">{label -> twforms:format.trim() -> f:format.raw()}</span>
+        <f:if condition="{label -> v:format.trim()}">
+            <span class="FormField__label-wrap">{label -> v:format.trim() -> f:format.raw()}</span>
         </f:if>
     </f:section>
 </html>
