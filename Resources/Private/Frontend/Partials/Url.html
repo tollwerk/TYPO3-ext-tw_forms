@@ -11,11 +11,10 @@
         <f:form.validationResults for="{element.rootForm.identifier}.{element.identifier}">
             <f:variable name="additionalAttributes"
                         value="{twforms:form.field.additionalAttributes(element: element, validationResults: validationResults)}" />
-            <f:render partial="Field/Field"
-                      arguments="{element: element}"
+            <f:render partial="Field/Field" arguments="{element: element}"
                       contentAs="elementContent">
                 <twforms:form.textfield
-                        type="email"
+                        type="url"
                         property="{element.identifier}"
                         id="{element.uniqueIdentifier}"
                         dontPrefixName="{element.renderingOptions.dontPrefixName}"

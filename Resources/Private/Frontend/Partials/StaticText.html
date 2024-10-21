@@ -1,0 +1,23 @@
+<f:comment><!--
+
+    @param GenericFormElement element          Static text element
+
+--></f:comment>
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:twforms="http://typo3.org/ns/Tollwerk/TwForms/ViewHelpers"
+      xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+    <formvh:renderRenderable renderable="{element}">
+        <div class="Form__field FormField FormField--static-text"
+             id="{element.uniqueIdentifier}">
+            <f:if condition="{element.label}">
+                <twvhs:heading content="{formvh:translateElementProperty(element: element, property: 'label')}"
+                               level="2"/>
+            </f:if>
+            <f:if condition="{element.properties.text}">
+                <p>{formvh:translateElementProperty(element: element,
+                    property: 'text') -> f:format.nl2br()}</p>
+            </f:if>
+        </div>
+    </formvh:renderRenderable>
+</html>

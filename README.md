@@ -30,6 +30,34 @@ page.includeJSLibs.tw_forms_critical >
 page.includeJSFooter.tw_forms_default >
 ```
 
+## YAML configurations
+
+In the corresponding YAML file where the form is configured, the following settings must be ensured to correctly create and validate the fields.
+
+### elementClassAttribute
+Since JavaScript relies on the CSS classes `.FormField__input` and `.FormField__textarea`, each form element must be assigned at least one of these classes. Ideally, this is configured centrally in the `CustomFormSetup.yaml`:
+```yaml
+Text:
+  properties:
+  containerClassAttribute: ''
+  elementClassAttribute: 'FormText FormField__input'
+Textarea:
+  properties:
+    containerClassAttribute: ''
+    elementClassAttribute: 'FormTextarea FormField__textarea'
+```
+### fluidAdditionalAttributes
+Each `<input>` element, that takes a text or numeric value as input, `<textarea>`, `<select>` and `<form>` element should include the `autcomplete` HTML attribute. This attribute provides semantic meaning to form fields by explicitly defining the expected input type (e.g., name, email, address). This helps browsers and assistive technologies understand the purpose of each field, enhancing both accessibility and user experience.
+
+This is set in the `fluidAdditionalAttributes` array within the form configuration file (`myform.form.yaml`):
+```yaml
+fluidAdditionalAttributes:
+  placeholder: '+49 1234 56789'
+  required: required
+  autocomplete: tel
+```
+You can find a full list of autocomplete purposes in [WCAG 2.1](https://www.w3.org/TR/WCAG21/#input-purposes).
+
 ## Known issues
 
 * The client-side validation only checks the following rules. This will be extended in the future so that all

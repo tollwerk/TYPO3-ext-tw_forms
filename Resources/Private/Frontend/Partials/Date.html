@@ -1,9 +1,11 @@
 <f:comment><!--
 
+    Render a date input element
+
     @param GenericFormElement element          Form element
 
 --></f:comment>
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+<html xmlns:f="https://xsd.helhum.io/ns/typo3/cms-fluid/master/ViewHelpers"
       xmlns:twforms="http://typo3.org/ns/Tollwerk/TwForms/ViewHelpers"
       xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers"
       data-namespace-typo3-fluid="true">
@@ -11,11 +13,10 @@
         <f:form.validationResults for="{element.rootForm.identifier}.{element.identifier}">
             <f:variable name="additionalAttributes"
                         value="{twforms:form.field.additionalAttributes(element: element, validationResults: validationResults)}" />
-            <f:render partial="Field/Field"
-                      arguments="{element: element}"
+            <f:render partial="Field/Field" arguments="{element: element}"
                       contentAs="elementContent">
                 <twforms:form.textfield
-                        type="email"
+                        type="date"
                         property="{element.identifier}"
                         id="{element.uniqueIdentifier}"
                         dontPrefixName="{element.renderingOptions.dontPrefixName}"
