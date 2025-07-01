@@ -8,15 +8,15 @@ TYPO3:
               persistenceManager:
               renderingOptions:
                 templateRootPaths:
-                  20: 'EXT:tw_forms/Resources/Private/Frontend/Templates/'
+                  20: 'EXT:tw_forms/Resources/Private/FormFramework/Frontend/Templates/'
                 partialRootPaths:
-                  20: 'EXT:tw_forms/Resources/Private/Frontend/Partials/'
+                  20: 'EXT:tw_forms/Resources/Private/FormFramework/Frontend/Partials/'
                 elementClassAttribute: 'Form'
                 novalidate: 1
                 translation:
                   translationFiles:
-                    10: 'EXT:form/Resources/Private/Language/locallang.xlf'
-                    20: 'EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf'
+                    10: 'EXT:form/Resources/Private/FormFramework/Language/locallang.xlf'
+                    20: 'EXT:tw_forms/Resources/Private/FormFramework/Language/locallang_forms.xlf'
             Email:
               properties:
                 elementClassAttribute: 'FormEmail FormField__input'

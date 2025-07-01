@@ -1,0 +1,7 @@
+TCEFORM {
+    tx_powermail_domain_model_field {
+        type {
+            removeItems = captcha,reset,country,file,html,password,hidden,date,location,typoscript
+        }
+    }
+}
