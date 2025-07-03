@@ -60,6 +60,7 @@
      * @param {Event} e Submit event
      */
     FormValidation.prototype.validate = function validate(e) {
+        console.log('Submit-Handler ausgeführt', e);
         const novalidate = e && e.submitter && e.submitter.hasAttribute('formnovalidate');
 
         if (!novalidate) {
@@ -84,7 +85,6 @@
         }
 
         this.errorNavigation.setAttribute('hidden', 'hidden');
-        return false; // ?
     };
 
     /**

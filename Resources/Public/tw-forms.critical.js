@@ -216,11 +216,22 @@ window.tw_forms = tw_forms;
         // If there's an error message display
         if (this.errorMessageBag) {
             this.constraints.forEach((constraint) => {
-                const errorMessageKey = `errormsg${constraint.substr(0, 1)
-                    .toUpperCase()}${constraint.substr(1)
-                    .toLowerCase()}`;
-                if (this.element.dataset[errorMessageKey]) {
-                    this.errorMessages[constraint] = this.element.dataset[errorMessageKey];
+                let errorMessage = null;
+                if (constraint === 'valueMissing') {
+                    errorMessage = this.element.getAttribute('data-powermail-required-message');
+                } else if (constraint === 'patternMismatch') {
+                    errorMessage = this.element.getAttribute('data-powermail-error-message');
+                }
+                if(!errorMessage) {
+                    const errorMessageKey = `errormsg${constraint.substr(0, 1)
+                        .toUpperCase()}${constraint.substr(1)
+                        .toLowerCase()}`;
+                    if (this.element.dataset[errorMessageKey]) {
+                        this.errorMessages[constraint] = this.element.dataset[errorMessageKey];
+                    }
+                }
+                if (errorMessage) {
+                    this.errorMessages[constraint] = errorMessage;
                 }
             });
             this.errorMessageBag.querySelectorAll('[data-constraint]')
@@ -377,6 +388,8 @@ window.tw_forms = tw_forms;
     };
 
     // Observing for form fields
-    tw_forms.Observer.register('.FormField__input, .FormField__textarea', (field) => new FormField(field));
+    tw_forms.Observer.register('.FormField__input, .FormField__textarea', (field) => {
+        return new FormField(field);
+    });
 
 }(typeof global !== 'undefined' ? global : window, document));
