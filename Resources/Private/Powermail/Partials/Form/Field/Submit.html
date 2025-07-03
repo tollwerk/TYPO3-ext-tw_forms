@@ -1,6 +1,20 @@
 
 <div class="powermail_fieldwrap powermail_fieldwrap_type_submit powermail_fieldwrap_{field.marker} {field.css} {settings.styles.framework.fieldAndLabelWrappingClasses}">
 	<div class="{settings.styles.framework.fieldWrappingClasses} {settings.styles.framework.offsetClasses}">
-		<f:form.submit value="{field.title}" class="{settings.styles.framework.submitClasses}" />
+		<f:if condition="{novalidate}">
+			<f:then>
+				<f:form.button name="{name}" value="{value}" property="{property}" type="{btnType}"
+							   class="CallToAction"
+							   formnovalidate="formnovalidate">
+					{field.title -> f:format.raw()}
+				</f:form.button>
+			</f:then>
+			<f:else>
+				<f:form.button name="{name}" value="{value}" property="{poperty}" type="{btnType}"
+							   class="CallToAction">
+					{field.title -> f:format.raw()}
+				</f:form.button>
+			</f:else>
+		</f:if>
 	</div>
 </div>

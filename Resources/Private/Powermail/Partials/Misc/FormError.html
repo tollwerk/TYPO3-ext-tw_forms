@@ -1,35 +1,52 @@
 {namespace vh=In2code\Powermail\ViewHelpers}
 
-<f:form.validationResults>
-    <f:if condition="{validationResults.flattenedErrors}">
-        <nav class="powermail_message powermail_message_error" aria-label="{f:translate(key: 'validationerror_container_label')}">
-            <h2><f:translate key="validationerror_title" /></h2>
 
-            <ol>
+        <nav
+                class="Form__error-navigation powermail_message powermail_message_error"
+                aria-label="{f:translate(key: 'validationerror_container_label')}"
+                tabindex="-1"
+                hidden
+                data-title="{f:translate(key: 'validationerror_title')}"
+                data-title-errors="{f:translate(key: 'validationerror_title_errors')}"
+        >
+            <h2
+                    class="Heading"
+                    data-heading-single="{f:translate(key: 'validationerror_title_single')}"
+                    data-heading-multiple="{f:translate(key: 'validationerror_title_multiple')}"
+            >
+                <f:translate key="validationerror_title" />
+            </h2>
+
+            <ul class="Form__error-summary">
                 <f:for each="{validationResults.flattenedErrors}" as="errors">
                     <f:for each="{errors}" as="singleError">
-                        <li>
+                        <li class="Form__error-description">
                             <f:if condition="{singleError.message} == 'spam_details'">
                                 <f:then>
-                                    <f:translate key="validationerror_spam" /> {singleError.arguments.spamfactor}
-
-                                    <f:translate key="validationerror_{singleError.message}">{singleError.message}</f:translate>
+                                    <span>
+                                        <f:translate key="validationerror_spam" /> {singleError.arguments.spamfactor}
+                                        <f:translate key="validationerror_{singleError.message}">{singleError.message}</f:translate>
+                                    </span>
                                 </f:then>
                                 <f:else>
                                     <f:if condition="{singleError.arguments.marker}">
                                         <f:if condition="{vh:getter.getFieldPropertyFromMarkerAndForm(marker: singleError.arguments.marker, form: form, property: 'type')} == 'check'
                                             || {vh:getter.getFieldPropertyFromMarkerAndForm(marker: singleError.arguments.marker, form: form, property: 'type')} == 'radio'">
                                             <f:then>
-                                                <a href="#powermail_field_{singleError.arguments.marker}_1">
+                                                <a
+                                                        href="#powermail_field_{singleError.arguments.marker}_1"
+                                                        class="Form__error-link"
+                                                >
                                                     <vh:getter.getFieldPropertyFromMarkerAndForm marker="{singleError.arguments.marker}" form="{form}" property="title"/>:
-
                                                     <f:translate key="validationerror_{singleError.message}">{singleError.message}</f:translate>
                                                 </a>
                                             </f:then>
                                             <f:else>
-                                                <a href="#powermail_field_{singleError.arguments.marker}">
+                                                <a
+                                                        href="#powermail_field_{singleError.arguments.marker}"
+                                                        class="Form__error-link"
+                                                >
                                                     <vh:getter.getFieldPropertyFromMarkerAndForm marker="{singleError.arguments.marker}" form="{form}" property="title"/>:
-
                                                     <f:translate key="validationerror_{singleError.message}">{singleError.message}</f:translate>
                                                 </a>
                                             </f:else>
@@ -40,7 +57,6 @@
                         </li>
                     </f:for>
                 </f:for>
-            </ol>
+            </ul>
         </nav>
-    </f:if>
-</f:form.validationResults>
+

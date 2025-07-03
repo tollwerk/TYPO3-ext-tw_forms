@@ -104,21 +104,18 @@ class ValidationDataAttributeViewHelper extends AbstractValidationViewHelper
                         unset($additionalAttributes['aria-required']);
                     }
                 } else {
-                    if ($this->isClientValidationEnabled()) {
+                    $additionalAttributes['data-powermail-required'] = 'true';
+                    $additionalAttributes['aria-required'] = 'true';
+
+                }
+                $additionalAttributes['data-powermail-required-message'] =
+                    LocalizationUtility::translate('validationerror_mandatory');
+                if ($iteration['total'] > 1) {
+                    $additionalAttributes['data-powermail-required-message'] =
+                        LocalizationUtility::translate('validationerror_mandatory_multi');
+                    if ($field->getType() === 'check') {
                         $additionalAttributes['data-powermail-required'] = 'true';
                         $additionalAttributes['aria-required'] = 'true';
-                    }
-                }
-                if ($this->isClientValidationEnabled()) {
-                    $additionalAttributes['data-powermail-required-message'] =
-                        LocalizationUtility::translate('validationerror_mandatory');
-                    if ($iteration['total'] > 1) {
-                        $additionalAttributes['data-powermail-required-message'] =
-                            LocalizationUtility::translate('validationerror_mandatory_multi');
-                        if ($field->getType() === 'check') {
-                            $additionalAttributes['data-powermail-required'] = 'true';
-                            $additionalAttributes['aria-required'] = 'true';
-                        }
                     }
                 }
             }
@@ -162,7 +159,7 @@ class ValidationDataAttributeViewHelper extends AbstractValidationViewHelper
              * javascript example: <input type="text" data-powermail-type="email" />
              */
             case 1:
-                if ($this->isClientValidationEnabled() && !$this->isNativeValidationEnabled()) {
+                if (!$this->isNativeValidationEnabled()) {
                     $additionalAttributes['data-powermail-type'] = 'email';
                 }
                 break;
@@ -174,7 +171,7 @@ class ValidationDataAttributeViewHelper extends AbstractValidationViewHelper
                  * javascript example: <input type="text" data-powermail-type="url" />
                  */
             case 2:
-                if ($this->isClientValidationEnabled() && !$this->isNativeValidationEnabled()) {
+                if (!$this->isNativeValidationEnabled()) {
                     $additionalAttributes['data-powermail-type'] = 'url';
                 }
                 break;
@@ -205,9 +202,7 @@ class ValidationDataAttributeViewHelper extends AbstractValidationViewHelper
                 if ($this->isNativeValidationEnabled()) {
                     $additionalAttributes['pattern'] = $pattern;
                 } else {
-                    if ($this->isClientValidationEnabled()) {
-                        $additionalAttributes['data-powermail-pattern'] = $pattern;
-                    }
+                    $additionalAttributes['data-powermail-pattern'] = $pattern;
                 }
                 break;
 
@@ -218,7 +213,7 @@ class ValidationDataAttributeViewHelper extends AbstractValidationViewHelper
                  * javascript example: <input type="text" data-powermail-type="integer" />
                  */
             case 4:
-                if ($this->isClientValidationEnabled() && !$this->isNativeValidationEnabled()) {
+                if (!$this->isNativeValidationEnabled()) {
                     $additionalAttributes['data-powermail-type'] = 'integer';
                 }
                 break;
@@ -233,9 +228,7 @@ class ValidationDataAttributeViewHelper extends AbstractValidationViewHelper
                 if ($this->isNativeValidationEnabled()) {
                     $additionalAttributes['pattern'] = '[A-Za-z]+';
                 } else {
-                    if ($this->isClientValidationEnabled()) {
-                        $additionalAttributes['data-powermail-pattern'] = '[a-zA-Z]+';
-                    }
+                    $additionalAttributes['data-powermail-pattern'] = '[a-zA-Z]+';
                 }
                 break;
 
@@ -250,9 +243,7 @@ class ValidationDataAttributeViewHelper extends AbstractValidationViewHelper
                 if ($this->isNativeValidationEnabled()) {
                     $additionalAttributes['min'] = $field->getValidationConfiguration();
                 } else {
-                    if ($this->isClientValidationEnabled()) {
-                        $additionalAttributes['data-powermail-min'] = $field->getValidationConfiguration();
-                    }
+                    $additionalAttributes['data-powermail-min'] = $field->getValidationConfiguration();
                 }
                 break;
 
@@ -267,9 +258,7 @@ class ValidationDataAttributeViewHelper extends AbstractValidationViewHelper
                 if ($this->isNativeValidationEnabled()) {
                     $additionalAttributes['max'] = $field->getValidationConfiguration();
                 } else {
-                    if ($this->isClientValidationEnabled()) {
-                        $additionalAttributes['data-powermail-max'] = $field->getValidationConfiguration();
-                    }
+                    $additionalAttributes['data-powermail-max'] = $field->getValidationConfiguration();
                 }
                 break;
 
@@ -294,10 +283,8 @@ class ValidationDataAttributeViewHelper extends AbstractValidationViewHelper
                     $additionalAttributes['min'] = (int)($values[0] ?? 0);
                     $additionalAttributes['max'] = (int)($values[1] ?? 0);
                 } else {
-                    if ($this->isClientValidationEnabled()) {
-                        $additionalAttributes['data-powermail-min'] = (int)($values[0] ?? 0);
-                        $additionalAttributes['data-powermail-max'] = (int)($values[1] ?? 0);
-                    }
+                    $additionalAttributes['data-powermail-min'] = (int)($values[0] ?? 0);
+                    $additionalAttributes['data-powermail-max'] = (int)($values[1] ?? 0);
                 }
                 break;
 
@@ -317,9 +304,8 @@ class ValidationDataAttributeViewHelper extends AbstractValidationViewHelper
                     $values[1] = (int)($values[0] ?? 0);
                     $values[0] = 1;
                 }
-                if ($this->isClientValidationEnabled()) {
-                    $additionalAttributes['data-powermail-length'] = '[' . implode(', ', $values) . ']';
-                }
+
+                $additionalAttributes['data-powermail-length'] = '[' . implode(', ', $values) . ']';
                 break;
 
                 /**
@@ -334,9 +320,7 @@ class ValidationDataAttributeViewHelper extends AbstractValidationViewHelper
                 if ($this->isNativeValidationEnabled()) {
                     $additionalAttributes['pattern'] = $field->getValidationConfiguration();
                 } else {
-                    if ($this->isClientValidationEnabled()) {
-                        $additionalAttributes['data-powermail-pattern'] = $field->getValidationConfiguration();
-                    }
+                    $additionalAttributes['data-powermail-pattern'] = $field->getValidationConfiguration();
                 }
                 break;
 
@@ -349,7 +333,7 @@ class ValidationDataAttributeViewHelper extends AbstractValidationViewHelper
                  * <input type="text" data-powermail-custom100="1" />
                  */
             default:
-                if ($field->getValidation() && $this->isClientValidationEnabled()) {
+                if ($field->getValidation()) {
                     $value = 1;
                     if ($field->getValidationConfiguration()) {
                         $value = $field->getValidationConfiguration();
@@ -359,7 +343,7 @@ class ValidationDataAttributeViewHelper extends AbstractValidationViewHelper
         }
 
         // set errormessage if javascript validation active
-        if ($field->getValidation() && $this->isClientValidationEnabled()) {
+        if ($field->getValidation()) {
             $additionalAttributes['data-powermail-error-message'] =
                 LocalizationUtility::translate('validationerror_validation.' . $field->getValidation());
         }
@@ -382,7 +366,6 @@ class ValidationDataAttributeViewHelper extends AbstractValidationViewHelper
         array $iteration
     ): array {
         if ($field->isMandatory() &&
-            $this->isClientValidationEnabled() &&
             $field->getType() === 'check' &&
             $iteration['total'] > 1
         ) {
@@ -397,12 +380,9 @@ class ValidationDataAttributeViewHelper extends AbstractValidationViewHelper
      * @return array
      * @throws DBALException
      */
-    protected function addErrorContainerAndClassHandlerAttributes(array $additionalAttributes, Field $field)
+    protected function addErrorContainerAndClassHandlerAttributes(array $additionalAttributes, Field $field): array
     {
-        if ($this->isClientValidationEnabled()) {
-            $additionalAttributes = $this->addErrorContainer($additionalAttributes, $field);
-            $additionalAttributes = $this->addClassHandler($additionalAttributes, $field);
-        }
-        return $additionalAttributes;
+        $additionalAttributes = $this->addErrorContainer($additionalAttributes, $field);
+        return $this->addClassHandler($additionalAttributes, $field);
     }
 }

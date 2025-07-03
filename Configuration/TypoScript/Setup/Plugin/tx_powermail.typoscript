@@ -2,7 +2,7 @@ plugin.tx_powermail {
     # Validation settings
     settings {
         validation {
-            native = 0
+            native = 1
             client = 0
             server = 1
         }
@@ -10,7 +10,8 @@ plugin.tx_powermail {
         setup {
             styles {
                 framework {
-                    fieldAndLabelWrappingClasses = Powermail__fieldwrap
+                    formClasses = Form Form--custom-validation
+                    fieldAndLabelWrappingClasses = FormField
                     fieldWrappingClasses = Powermail__field
                     labelClasses = Powermail__label
                     fieldClasses = FormField__input

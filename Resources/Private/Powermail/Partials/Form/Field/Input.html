@@ -1,15 +1,23 @@
 {namespace vh=In2code\Powermail\ViewHelpers}
+{namespace f=TYPO3\CMS\Fluid\ViewHelpers}
 
-<div class="powermail_fieldwrap powermail_fieldwrap_type_input powermail_fieldwrap_{field.marker} {field.css} {settings.styles.framework.fieldAndLabelWrappingClasses}">
+<div class="FormField powermail_fieldwrap powermail_fieldwrap_type_input powermail_fieldwrap_{field.marker} {field.css} {settings.styles.framework.fieldAndLabelWrappingClasses}">
 	<f:render partial="Form/FieldLabel" arguments="{_all}" />
+	<div id="error-for-powermail-field-{field.marker}"></div>
 	<div class="{settings.styles.framework.fieldWrappingClasses}">
 		<f:form.textfield
 				type="{vh:validation.fieldTypeFromValidation(field:field)}"
 				property="{field.marker}"
 				placeholder="{field.placeholder}"
 				value="{vh:misc.prefillField(field:field, mail:mail)}"
-				class="powermail_input {settings.styles.framework.fieldClasses} {vh:validation.errorClass(field:field, class:'powermail_field_error')}"
+				aria="{'errormessage': 'error-for-powermail-field-{field.marker}', 'describedby': 'error-for-powermail-field-{field.marker} desc-for-powermail-field-{field.marker}'}"
+				class="powermail_input {settings.styles.framework.fieldClasses}"
 				additionalAttributes="{vh:validation.validationDataAttribute(field:field)}"
 				id="powermail_field_{field.marker}" />
 	</div>
+	<f:if condition="{field.description}">
+		<div id="desc-for-powermail-field-{field.marker}">
+			{field.description -> f:format.html()}
+		</div>
+	</f:if>
 </div>
