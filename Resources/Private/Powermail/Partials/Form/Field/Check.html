@@ -1,27 +1,69 @@
 {namespace vh=In2code\Powermail\ViewHelpers}
 
-<div class="powermail_fieldwrap powermail_fieldwrap_type_check powermail_fieldwrap_{field.marker} {field.css} {settings.styles.framework.fieldAndLabelWrappingClasses}">
-	<f:render partial="Form/FieldLabel" arguments="{_all}" />
+<f:if condition="{f:count(subject: field.modifiedSettings)} > 1">
+	<f:comment><!-- Multi-checkboxes with fieldset and legend --></f:comment>
+	<f:then>
+		<fieldset class="{settings.styles.framework.fieldAndLabelWrappingClasses} powermail_fieldwrap powermail_fieldwrap_type_check powermail_fieldwrap_{field.marker}{f:if(condition: '{field.css}', then: ' {field.css} ')}">
+			<f:comment><!-- Legend --></f:comment>
+			<f:render partial="Form/Fieldset/Legend" arguments="{field: field, settings: settings}"/>
+			<f:comment><!-- Error container --></f:comment>
+			<f:render partial="Form/FieldError" arguments="{_all}" />
+			<f:comment><!-- Input element --></f:comment>
+			<f:render section="Checkbox" arguments="{_all}"/>
+		</fieldset>
+	</f:then>
 
+	<f:comment><!-- Single checkbox --></f:comment>
+	<f:else>
+		<div class="{settings.styles.framework.fieldAndLabelWrappingClasses} powermail_fieldwrap powermail_fieldwrap_type_check powermail_fieldwrap_{field.marker}{f:if(condition: '{field.css}', then: ' {field.css} ')}">
+			<f:comment><!-- Error container --></f:comment>
+			<f:render partial="Form/FieldError" arguments="{_all}" />
+			<f:comment><!-- Input element --></f:comment>
+			<f:render section="Checkbox" arguments="{_all}"/>
+		</div>
+	</f:else>
+</f:if>
+
+<f:comment><!-- Custom checkbox element --></f:comment>
+<f:section name="Checkbox">
 	<div class="{settings.styles.framework.fieldWrappingClasses}">
 		<f:for each="{field.modifiedSettings}" as="setting" iteration="index">
 			<div class="{settings.styles.framework.checkClasses} {vh:validation.errorClass(field:field, class:'powermail_field_error')}">
-				<label>
+
+				<f:comment><!-- Custom checkbox by Sara Soueidan
+                    @see https://www.sarasoueidan.com/blog/inclusively-hiding-and-styling-checkboxes-and-radio-buttons/
+                    -->
+				</f:comment>
+				<label class="PowermailCheck"
+					   for="{formId}-powermail-field-{field.marker}-{index.cycle}">
+
+					<f:comment><!-- Semantic checkbox which is visually hidden --></f:comment>
 					<f:form.checkbox
 							property="{field.marker}"
 							multiple="true"
 							value="{setting.value}"
 							checked="{vh:misc.prefillMultiField(field:field, mail:mail, cycle:index.cycle)}"
-							id="powermail_field_{field.marker}_{index.cycle}"
+							id="{formId}-powermail-field-{field.marker}-{index.cycle}"
 							additionalAttributes="{vh:validation.validationDataAttribute(field:field, iteration:index)}"
-							class="powermail_checkbox powermail_checkbox_{field.uid}" />
-					<vh:string.escapeLabels>{setting.label}</vh:string.escapeLabels>
+							aria="{'errormessage': 'error-for-powermail-field-{formId}-{field.marker}', 'describedby': 'error-for-powermail-field-{formId}-{field.marker} desc-for-powermail-field-{formId}-{field.marker}'}"
+							class="PowermailCheck__input powermail_checkbox powermail_checkbox_{field.uid}" />
+
+					<f:comment><!-- Visual replacement of the radio button via SVG --></f:comment>
+					<!--<svg xmlns="http://www.w3.org/2000/svg"
+						 viewBox="0 0 26.512 23.211">
+						<path class="fill-path" d="M9.131 23.206L0 13.888l2.857-2.8 6.05 6.174L23.452-.006l3.06 2.576z"/>
+					</svg>-->
+
+					<span class="PowermailCheck__text">
+                        <vh:string.escapeLabels>{setting.label}</vh:string.escapeLabels>
+                    </span>
 				</label>
 			</div>
 		</f:for>
 
-		<f:if condition="{settings.validation.client}">
-			<div class="powermail_field_error_container powermail_field_error_container_{field.marker}"></div>
+		<f:comment><!-- Description --></f:comment>
+		<f:if condition="{field.description}">
+			<f:render partial="Form/FieldDescription" arguments="{_all}"/>
 		</f:if>
 	</div>
-</div>
+</f:section>

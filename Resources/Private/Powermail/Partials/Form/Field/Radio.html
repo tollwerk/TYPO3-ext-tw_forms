@@ -1,26 +1,47 @@
 {namespace vh=In2code\Powermail\ViewHelpers}
 
-<div class="powermail_fieldwrap powermail_fieldwrap_type_radio powermail_fieldwrap_{field.marker} {field.css} {settings.styles.framework.fieldAndLabelWrappingClasses}">
-	<f:render partial="Form/FieldLabel" arguments="{_all}" />
+<fieldset
+		class="{settings.styles.framework.fieldAndLabelWrappingClasses} powermail_fieldwrap powermail_fieldwrap_type_radio powermail_fieldwrap_{field.marker}{f:if(condition: '{field.css}', then: ' {field.css} ')}">
+	<f:comment><!-- A11y: Every <fieldset> needs an accessible name (i.e., via <legend>) --></f:comment>
+	<f:render partial="Form/Fieldset/Legend"
+			  arguments="{field: field, settings: settings}"/>
+	<f:comment><!-- Error container --></f:comment>
+	<f:render partial="Form/FieldError" arguments="{_all}" />
 
 	<div class="{settings.styles.framework.fieldWrappingClasses}">
 		<f:for each="{field.modifiedSettings}" as="setting" iteration="index">
 			<div class="{settings.styles.framework.radioClasses} {vh:validation.errorClass(field:field, class:'powermail_field_error')}">
-				<label>
+
+				<f:comment><!-- Custom radio button by Sara Soueidan
+                    @see https://www.sarasoueidan.com/blog/inclusively-hiding-and-styling-checkboxes-and-radio-buttons/
+                    -->
+				</f:comment>
+				<label class="PowermailRadio"
+					   for="powermail-field-{field.marker}-{index.cycle}">
+
+					<f:comment><!-- Semantic radio button which is visually hidden --></f:comment>
 					<f:form.radio
 							property="{field.marker}"
 							value="{setting.value}"
 							checked="{vh:misc.prefillMultiField(field:field, mail:mail, cycle:index.cycle)}"
-							id="powermail_field_{field.marker}_{index.cycle}"
+							id="powermail-field-{field.marker}-{index.cycle}"
 							additionalAttributes="{vh:validation.validationDataAttribute(field:field, iteration:index)}"
-							class="powermail_radio" />
-					<vh:string.escapeLabels>{setting.label}</vh:string.escapeLabels>
+							aria="{describedby: 'powermail-field-{field.marker}-description'}"
+							class="PowermailRadio__input powermail_radio" />
+
+					<f:comment><!-- Visual replacement of the radio button via SVG --></f:comment>
+					<!--<svg width="80" height="80" xmlns="http://www.w3.org/2000/svg"><circle class="fill-path" cx="40" cy="40" r="40"/></svg>-->
+
+					<f:comment><!-- The radio button label text --></f:comment>
+					<span class="PowermailRadio__text">
+                        <vh:string.escapeLabels>{setting.label}</vh:string.escapeLabels>
+                    </span>
 				</label>
 			</div>
 		</f:for>
 
-		<f:if condition="{settings.validation.client}">
-			<div class="powermail_field_error_container powermail_field_error_container_{field.marker}"></div>
+		<f:if condition="{field.description}">
+			<f:render partial="Form/FieldDescription" arguments="{_all}"/>
 		</f:if>
 	</div>
-</div>
+</fieldset>

@@ -1,0 +1,16 @@
+{namespace vh=In2code\Powermail\ViewHelpers}
+
+    <f:variable name="noLabel" value="0" />
+    <f:if condition="{field.css} == 'nolabel'">
+        <f:variable name="noLabel" value="1" />
+    </f:if>
+
+    <f:comment><-- Make sure legend is at least in DOM present --></f:comment>
+    <legend class="Powermail__legend {settings.styles.framework.labelClasses}{f:if(condition: '{noLabel}', then: ' hide-element')}">
+        <f:comment><!-- Legend text --></f:comment>
+        <vh:string.escapeLabels>{field.title}</vh:string.escapeLabels>
+        <f:comment><!-- Add a hint if the fields are mandatory --></f:comment>
+        <f:if condition="{field.mandatory}">
+            ({f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Powermail/Language/locallang_powermail.xlf:powermail.label.required')})
+        </f:if>
+    </legend>

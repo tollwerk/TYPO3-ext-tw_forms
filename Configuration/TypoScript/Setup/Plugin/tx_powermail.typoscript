@@ -15,8 +15,8 @@ plugin.tx_powermail {
                     fieldWrappingClasses = Powermail__field
                     labelClasses = Powermail__label
                     fieldClasses = FormField__input
-                    checkClasses = Powermail__check
-                    radioClasses = Powermail__radio
+                    checkClasses = FormField__input Powermail__check FormMultiCheckbox
+                    radioClasses = FormField__input Powermail__radio FormMultiCheckbox
                     offsetClasses = Powermail__offset
                     submitClasses = Powermail__submit
                 }

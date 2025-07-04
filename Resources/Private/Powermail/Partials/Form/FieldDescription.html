@@ -1,0 +1,8 @@
+{namespace f=TYPO3\CMS\Fluid\ViewHelpers}
+
+<f:if condition="{field.description}">
+    <div class="Powermail__description"
+         id="desc-for-powermail-field-{field.marker}">
+        {field.description -> f:format.html()}
+    </div>
+</f:if>

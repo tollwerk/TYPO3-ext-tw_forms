@@ -11,6 +11,7 @@ Render Powermail Form
         <f:render partial="Misc/FlashMessages" arguments="{_all}"/>
     </f:alias>
 
+    <f:variable name="formId">{form.title -> f:format.case(mode: 'lower')}-{form.uid}</f:variable>
 
     <f:if condition="{form}">
         <f:then>
@@ -21,6 +22,7 @@ Render Powermail Form
                     name="field"
                     enctype="multipart/form-data"
                     addQueryString="{settings.misc.addQueryString}"
+                    id="{formId}"
                     class="powermail_form powermail_form_{form.uid} {form.css} {settings.styles.framework.formClasses} {vh:misc.morestepClass(activate:settings.main.moresteps)}">
 
                     <f:if condition="{form.css} != 'nolabel'">
