@@ -50,8 +50,8 @@
 
     --></f:comment>
     <f:section name="InlineLabel">
-        <f:if condition="{label -> v:format.trim()}">
-            <span class="FormField__label-wrap">{label -> v:format.trim() -> f:format.raw()}</span>
+        <f:if condition="{label -> f:format.trim()}">
+            <span class="FormField__label-wrap">{label -> f:format.trim() -> f:format.raw()}</span>
         </f:if>
     </f:section>
 </html>

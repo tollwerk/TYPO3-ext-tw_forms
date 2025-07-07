@@ -302,16 +302,17 @@ window.tw_forms = tw_forms;
      * @return {Object} Pseudo validity state
      */
     FormField.prototype.validateGroup = function validateGroup() {
-        if (this.element.validity.valueMissing) {
-            for (let e = 0; e < this.groupEnhancers.length; ++e) {
-                if (this.groupEnhancers[e].element.checked) {
-                    return this.overrideValidityState({ valueMissing: false });
-                }
+        let checked = this.element.checked;
+        for (let e = 0; e < this.groupEnhancers.length; ++e) {
+            if (this.groupEnhancers[e].element.checked) {
+                checked = true;
+                break;
             }
         }
 
-        return this.element.validity;
+        return this.overrideValidityState({ valueMissing: !checked });
     };
+
 
     /**
      * Override the validity state of this element

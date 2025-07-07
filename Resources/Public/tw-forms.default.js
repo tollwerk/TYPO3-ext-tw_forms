@@ -32,7 +32,7 @@
                 }
             }
         }
-
+        console.log('FormValidation fields:', this.fields);
         this.initializeErrorSummary(this.element.querySelector('.Form__error-summary'));
     }
 
@@ -60,7 +60,6 @@
      * @param {Event} e Submit event
      */
     FormValidation.prototype.validate = function validate(e) {
-        console.log('Submit-Handler ausgeführt', e);
         const novalidate = e && e.submitter && e.submitter.hasAttribute('formnovalidate');
 
         if (!novalidate) {

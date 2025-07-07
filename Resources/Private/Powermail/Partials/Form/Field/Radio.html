@@ -17,17 +17,17 @@
                     -->
 				</f:comment>
 				<label class="PowermailRadio"
-					   for="powermail-field-{field.marker}-{index.cycle}">
+					   for="{formId}-powermail-field-{field.marker}-{index.cycle}">
 
 					<f:comment><!-- Semantic radio button which is visually hidden --></f:comment>
 					<f:form.radio
 							property="{field.marker}"
 							value="{setting.value}"
 							checked="{vh:misc.prefillMultiField(field:field, mail:mail, cycle:index.cycle)}"
-							id="powermail-field-{field.marker}-{index.cycle}"
+							id="{formId}-powermail-field-{field.marker}-{index.cycle}"
 							additionalAttributes="{vh:validation.validationDataAttribute(field:field, iteration:index)}"
-							aria="{describedby: 'powermail-field-{field.marker}-description'}"
-							class="PowermailRadio__input powermail_radio" />
+							aria="{'errormessage': 'error-for-powermail-field-{formId}-{field.marker}', 'describedby': 'powermail-field-{field.marker}-description'}"
+							class="PowermailRadio__input powermail_radio FormField__input FormMultiCheckbox" />
 
 					<f:comment><!-- Visual replacement of the radio button via SVG --></f:comment>
 					<!--<svg width="80" height="80" xmlns="http://www.w3.org/2000/svg"><circle class="fill-path" cx="40" cy="40" r="40"/></svg>-->
