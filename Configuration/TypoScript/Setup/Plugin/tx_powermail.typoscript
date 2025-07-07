@@ -12,13 +12,13 @@ plugin.tx_powermail {
                 framework {
                     formClasses = Form Form--custom-validation
                     fieldAndLabelWrappingClasses = FormField
-                    fieldWrappingClasses = Powermail__field
-                    labelClasses = Powermail__label
+                    fieldWrappingClasses = FormField__field
+                    labelClasses = FormField__label
                     fieldClasses = FormField__input
-                    checkClasses = Powermail__check
-                    radioClasses = Powermail__radio
-                    offsetClasses = Powermail__offset
-                    submitClasses = Powermail__submit
+                    checkClasses = FormField__check
+                    radioClasses = FormField__radio
+                    offsetClasses = FormField__offset
+                    submitClasses = FormField__submit
                 }
             }
         }
