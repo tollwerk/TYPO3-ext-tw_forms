@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="messages" date="2016-12-08T10:17:19Z"
+          product-name="tw_baylat">
+        <header/>
+        <body>
+            <!-- General form -->
+            <trans-unit id="form.navigation">
+                <source>Form</source>
+            </trans-unit>
+            <trans-unit id="form.steps">
+                <source>Form progress</source>
+            </trans-unit>
+            <trans-unit id="form.steps.pattern">
+                <source>Step %s of %s | %s</source>
+            </trans-unit>
+            <trans-unit id="form.required">
+                <source>(required)</source>
+            </trans-unit>
+            <trans-unit id="form.optional">
+                <source>(optional)</source>
+            </trans-unit>
+            <trans-unit id="form.complete">
+                <source>(complete)</source>
+            </trans-unit>
+            <trans-unit id="form.error">
+                <source>There are still issues with 1 of your entries</source>
+            </trans-unit>
+            <trans-unit id="form.errors">
+                <source>There are still issues with %s of your entries</source>
+            </trans-unit>
+            <trans-unit id="form.nav.errors">
+                <source>Problematic form fields</source>
+            </trans-unit>
+            <trans-unit id="form.title.errors">
+                <source>%s errors ⚠️ %s</source>
+            </trans-unit>
+
+            <!-- Error messages -->
+            <trans-unit id="validation.error.1580509091">
+                <source>Please fill out this field</source>
+            </trans-unit>
+            <trans-unit id="validation.error.1580509080">
+                <source>Please enter a valid email address</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
+

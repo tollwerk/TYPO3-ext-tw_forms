@@ -15,9 +15,10 @@
 namespace Tollwerk\TwForms\ViewHelpers\Form;
 
 use Closure;
-use Tollwerk\TwForms\Utility\LocalizationUtility;
+use Exception;
+use In2code\Powermail\Domain\Model\Form as PowermailForm;
 use Tollwerk\TwForms\Utility\PageTitleUtility;
-use TYPO3\CMS\Extbase\Object\Exception;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Form\Domain\Runtime\FormRuntime;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
@@ -43,7 +44,7 @@ class TitleViewHelper extends AbstractViewHelper
      * @param Closure                   $renderChildrenClosure Render Children Closure
      * @param RenderingContextInterface $renderingContext      Rendering Context
      *
-     * @return mixed
+     * @return array
      * @throws Exception
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -52,34 +53,53 @@ class TitleViewHelper extends AbstractViewHelper
         array $arguments,
         Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
-    ) {
-        // Check if the form status display is enabled
+    ): array {
         /**
-         * Form Runtime
+         * Get the form argument, which can be either a TYPO3 FormRuntime or a Powermail Form
          *
-         * @var FormRuntime $formRuntime
+         * @var FormRuntime|PowermailForm $form
          */
-        $formRuntime      = $arguments['form'];
-        $renderingOptions = $formRuntime->getFormDefinition()->getRenderingOptions();
-        if (!empty($renderingOptions['enableStatusDisplay']) && $formRuntime->getCurrentPage()->getIndex()) {
-            $stepsPattern = LocalizationUtility::translate(
-                'LLL:EXT:tw_tollwerk/Resources/Private/Language/locallang_forms.xlf:form.steps.pattern',
-                'TwTollwerk'
-            );
-            $totalPages   = count($formRuntime->getPages());
-            $statusTitle  = sprintf($stepsPattern, $formRuntime->getCurrentPage()->getIndex() + 1, $totalPages, '%s');
-            PageTitleUtility::setPageTitle($statusTitle, ['flex', 'record']);
-        }
-
-        $count        = 0;
+        $form = $arguments['form'];
         $defaultTitle = PageTitleUtility::getPageTitle();
 
-        // Add error information
+        // TYPO3 Form Framework: Handle status display and page steps
+        if ($form instanceof FormRuntime) {
+            $renderingOptions = $form->getFormDefinition()->getRenderingOptions();
+            // Check if status display is enabled and current page index is set
+            if (!empty($renderingOptions['enableStatusDisplay']) && $form->getCurrentPage()->getIndex()) {
+                $stepsPattern = LocalizationUtility::translate(
+                    'LLL:EXT:tw_tollwerk/Resources/Private/Language/locallang_forms.xlf:form.steps.pattern',
+                    'TwTollwerk'
+                );
+                $totalPages = count($form->getPages());
+                $statusTitle = sprintf(
+                    $stepsPattern,
+                    $form->getCurrentPage()->getIndex() + 1,
+                    $totalPages,
+                    '%s'
+                );
+                PageTitleUtility::setPageTitle($statusTitle, ['flex', 'record']);
+            }
+        }
+        // Powermail: Set a simple title using the form's title property
+        elseif ($form instanceof PowermailForm) {
+            // Powermail does not have steps/pages like TYPO3 Form Framework,
+            // so we just use the form's title if available
+            $formTitle = $form->getTitle();
+            if (!empty($formTitle)) {
+                PageTitleUtility::setPageTitle($formTitle, ['flex', 'record']);
+            }
+        }
+
+        $count = 0;
+
+        // Add error information to the page title if there are errors
         if ($arguments['errors']) {
             $errorTitle = sprintf($arguments['pattern'], $arguments['errors'], '%s');
             PageTitleUtility::setPageTitle($errorTitle, ['flex', 'record']);
         }
 
+        // Return the pattern with placeholders and the default title
         return [
             'pattern' => preg_replace_callback(
                 '/%s/',
@@ -99,11 +119,12 @@ class TitleViewHelper extends AbstractViewHelper
      * @return void
      * @api
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
-        $this->registerArgument('form', FormRuntime::class, 'Form runtime', true);
-        $this->registerArgument('pattern', 'string', 'Page title pattern when form errors occured', true);
+        // Accept both FormRuntime (TYPO3) and PowermailForm (Powermail) as form argument
+        $this->registerArgument('form', 'mixed', 'Form runtime or Powermail form', true);
+        $this->registerArgument('pattern', 'string', 'Page title pattern when form errors occurred', true);
         $this->registerArgument('errors', 'int', 'Number of form errors', true);
     }
 }

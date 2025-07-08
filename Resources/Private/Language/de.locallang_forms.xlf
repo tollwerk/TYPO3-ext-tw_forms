@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="messages" date="2016-12-08T10:17:19Z"
+          product-name="tw_baylat">
+        <header/>
+        <body>
+            <!-- General form -->
+            <trans-unit id="form.navigation" approved="yes">
+                <source>Form</source>
+                <target state="translated">Formular</target>
+            </trans-unit>
+            <trans-unit id="form.steps" approved="yes">
+                <source>Form progress</source>
+                <target state="translated">Formular-Fortschritt</target>
+            </trans-unit>
+            <trans-unit id="form.steps.pattern" approved="yes">
+                <source>Step %s of %s | %s</source>
+                <target state="translated">Schritt %s von %s | %s</target>
+            </trans-unit>
+            <trans-unit id="form.required" approved="yes">
+                <source>(required)</source>
+                <target state="translated">(erforderlich)</target>
+            </trans-unit>
+            <trans-unit id="form.optional" approved="yes">
+                <source>(optional)</source>
+                <target state="translated">(optional)</target>
+            </trans-unit>
+            <trans-unit id="form.complete" approved="yes">
+                <source>(complete)</source>
+                <target state="translated">(vollständig)</target>
+            </trans-unit>
+            <trans-unit id="form.error" approved="yes">
+                <source>There are still issues with 1 of your entries</source>
+                <target state="translated">Es gibt noch Probleme mit 1 Ihrer Angaben</target>
+            </trans-unit>
+            <trans-unit id="form.errors" approved="yes">
+                <source>There are still issues with %s of your entries</source>
+                <target state="translated">Es gibt noch Probleme mit %s Ihrer Angaben</target>
+            </trans-unit>
+            <trans-unit id="form.nav.errors" approved="yes">
+                <source>Problematic form fields</source>
+                <target state="translated">Problematische Formularfelder</target>
+            </trans-unit>
+            <trans-unit id="form.title.errors" approved="yes">
+                <source>%s errors ⚠️ %s</source>
+                <target state="translated">%s Fehler ⚠️ %s</target>
+            </trans-unit>
+            <!-- Error messages -->
+            <trans-unit id="validation.error.1580509091" approved="yes">
+                <source>Please fill out this field</source>
+                <target state="translated">Bitte füllen Sie dieses Feld aus</target>
+            </trans-unit>
+            <trans-unit id="validation.error.1580509080" approved="yes">
+                <source>Please enter a valid email address</source>
+                <target state="translated">Bitte geben Sie eine gültige E-Mail-Adresse ein</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
+

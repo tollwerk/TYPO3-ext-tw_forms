@@ -22,6 +22,8 @@ plugin.tx_powermail {
                 }
             }
         }
+
+        meine_konstante = {$powermail.settings.meine_konstante}
     }
 
     # Overwrite root paths
@@ -47,6 +49,7 @@ plugin.tx_powermail {
 
     # Overwrite language keys (has to be explicit, not only in language file)
     _LOCAL_LANG {
+        validationerror_container_label = Problematic form fields
         validationerror_mandatory = Please fill out this field.
         validationerror_mandatory_multi = Please fill out one of these fields.
         validationerror_validation = Your input is not allowed.
@@ -60,6 +63,7 @@ plugin.tx_powermail {
         validationerror_validation.8 = The number is too high or too low.
         validationerror_validation.9 = Your entry is not valid (too many or too few characters).
         validationerror_validation.10 = Error during validation.
+        de.validationerror_container_label = Problematische Formularfelder
         de.validationerror_mandatory = Bitte füllen Sie dieses Feld aus.
         de.validationerror_mandatory_multi = Bitte wählen Sie mindestens eine Option aus.
         de.validationerror_validation = Diese Eingabe ist ungültig.

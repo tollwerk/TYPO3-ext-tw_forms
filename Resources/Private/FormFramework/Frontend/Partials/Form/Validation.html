@@ -47,15 +47,15 @@
             <f:variable name="headingKeySingle"
                         value="LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.error"/>
             <f:variable name="headingKeyMultiple"
-                        value="LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.error"/>
+                        value="LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.errors"/>
             <f:variable name="headingContent" value="{f:if(condition: '{count} == 1', then: '{f:translate(key: headingKeySingle)}', else: '{f:translate(key: headingKeyMultiple, arguments: \'{0: count}\')}')}"/>
         <div class="Form__error-navigation__content">
 
-            <span id="{form.identifier}-errors"
+            <h2 id="{form.identifier}-errors"
                   data-heading-single="{f:translate(key: headingKeySingle)}"
                   data-heading-multiple="{f:translate(key: headingKeyMultiple)}">
                 {headingContent}
-            </span>
+            </h2>
             <ol class="Form__error-summary">
                 <f:for each="{validationResults.flattenedErrors}" as="propertyErrors" key="elementIdentifier">
                     <f:variable name="element"
