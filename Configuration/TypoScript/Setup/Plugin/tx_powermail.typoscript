@@ -22,8 +22,6 @@ plugin.tx_powermail {
                 }
             }
         }
-
-        meine_konstante = {$powermail.settings.meine_konstante}
     }
 
     # Overwrite root paths
