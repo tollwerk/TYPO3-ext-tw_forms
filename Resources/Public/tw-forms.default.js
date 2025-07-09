@@ -22,6 +22,7 @@
         this.element.addEventListener('submit', this.validate.bind(this));
         this.errorNavigation = null;
         this.fields = {};
+
         for (let e = 0; e < this.element.elements.length; ++e) {
             const elementId = this.element.elements[e].id;
             if (elementId && this.element.elements[e].enhancer) {
@@ -32,7 +33,6 @@
                 }
             }
         }
-        console.log('FormValidation fields:', this.fields);
         this.initializeErrorSummary(this.element.querySelector('.Form__error-summary'));
     }
 
@@ -67,7 +67,7 @@
             for (const f in this.fields) {
                 if (Object.prototype.hasOwnProperty.call(this.fields, f)) {
                     const fieldErrors = this.fields[f].validate(true, null);
-                    if (this.fields[f].lastConstraints) {
+                    if (Object.keys(fieldErrors).length > 0) {
                         errorMessages[f] = fieldErrors;
                     }
                 }
@@ -90,9 +90,7 @@
      * Update the error summary if it's currently visible
      */
     FormValidation.prototype.update = function update() {
-        if (!this.errorNavigation.hidden) {
-            this.validate(null);
-        }
+        this.validate(null);
     };
 
     /**
@@ -117,8 +115,10 @@
                 const errorLink = d.createElement('a');
                 errorLink.className = 'Form__error-link';
                 errorLink.href = `#${f}`;
-                errorLink.textContent = Object.values(errorMessages[f])
-                    .join('; ');
+
+                const uniqueMessages = [...new Set(Object.values(errorMessages[f]))];
+                errorLink.textContent = uniqueMessages.join('; ');
+
                 errorLink.addEventListener('click', errorLinkHandler.bind(this));
                 const errorListItem = d.createElement('li');
                 errorListItem.className = 'Form__error-description';

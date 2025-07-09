@@ -1,9 +1,19 @@
 /**
- * Polyfills
+ * Form Validation Script with Powermail Integration
+ *
+ * This script provides comprehensive form validation functionality including:
+ * - Browser compatibility polyfills
+ * - DOM mutation observer for dynamic form fields
+ * - Native HTML5 validation enhanced with custom Powermail validators
+ * - Real-time error message display and field state management
  */
-/* eslint no-param-reassign: ["error", { "props": true, "ignorePropertyModificationsFor": ["s", "e"] }] */
+
+/**
+ * Polyfills for older browser compatibility
+ * Provides essential missing functionality for IE11 and other legacy browsers
+ */
 (function iefe(w, e, s, svg) {
-    // NodeList.forEach
+    // NodeList.forEach - Enables forEach method on NodeList collections
     if (window.NodeList && !NodeList.prototype.forEach) {
         NodeList.prototype.forEach = function foreEach(callback, thisArg) {
             for (let i = 0; i < this.length; ++i) {
@@ -12,7 +22,7 @@
         };
     }
 
-    // Element.matches
+    // Element.matches - Provides CSS selector matching functionality
     if (!e.matches) {
         e.matches = e.matchesSelector
             || e.mozMatchesSelector
@@ -29,7 +39,7 @@
             });
     }
 
-    // Element.closest
+    // Element.closest - Finds the closest ancestor element matching a selector
     if (!e.closest) {
         e.closest = function closest(str) {
             let el = this;
@@ -41,7 +51,7 @@
         };
     }
 
-    // String.format
+    // String.format - Custom string formatting utility with placeholder replacement
     if (!s.format) {
         s.format = function format(...args) {
             return this.replace(
@@ -51,7 +61,7 @@
         };
     }
 
-    // classList support for IE11
+    // classList support for SVG elements in IE11
     if (!('classList' in svg)) {
         Object.defineProperty(svg, 'classList', {
             get() {
@@ -74,70 +84,61 @@
     }
 }(window, Element.prototype, String.prototype, SVGElement.prototype));
 
-
-
 /**
- * Observer
- */
-/**
- * tw_forms namespace
+ * DOM Mutation Observer
  *
- * @type {Object}
+ * Watches for DOM changes and automatically initializes form field enhancers
+ * when new form elements are added to the page dynamically
  */
-// eslint-disable-next-line no-unused-vars
 const tw_forms = window.tw_forms || { has: {} };
 window.tw_forms = tw_forms;
 
 (function (w, d) {
+    // Prevent multiple initializations
     if (((typeof exports !== 'undefined') && exports.Observer) || w.tw_forms.Observer) {
         return;
     }
 
     /**
-     * Observer constructor
-     *
-     * @constructor
+     * Observer class for monitoring DOM mutations and registering field enhancers
      */
     function Observer() {
+        // Array of [selector, callback] pairs for elements to observe
         this.observed = [['[data-mutate-recursive]', this.process.bind(this)]];
-
         const checkNode = this.checkNode.bind(this);
+
+        // Create MutationObserver to watch for added DOM nodes
         const observer = new MutationObserver((mutations) => mutations
             .forEach((mutation) => Array.prototype.slice.call(mutation.addedNodes)
                 .filter((node) => node.nodeType === 1).forEach(checkNode)));
 
+        // Start observing the entire document
         observer.observe(d.documentElement, {
             characterData: true, attributes: false, childList: true, subtree: true
         });
     }
 
     /**
-     * Register a new selector / callback pair
-     *
-     * @param {String} selectors Selectors
-     * @param {Function} callback Callback
+     * Register a new selector and callback for observation
+     * @param {string} selectors - CSS selector to match elements
+     * @param {function} callback - Function to call when matching elements are found
      */
     Observer.prototype.register = function (selectors, callback) {
         this.observed.push([selectors, callback]);
     };
 
     /**
-     * Check whether a newly created node should be processed
-     *
-     * @param {Element} node Node
+     * Check if a node matches any registered selectors and execute callbacks
+     * @param {Element} node - DOM node to check
      */
     Observer.prototype.checkNode = function (node) {
-        this.observed.filter((observer) => {
-            return node.matches(observer[0])
-        }).forEach((observer) => {
-            observer[1](node);
-        });
+        this.observed.filter((observer) => node.matches(observer[0]))
+            .forEach((observer) => observer[1](node));
     };
 
     /**
-     * Run all callbacks on a particular node and its children
-     *
-     * @param {Element} node Node
+     * Process a node and all its descendants for matching elements
+     * @param {Element} node - DOM node to process recursively
      */
     Observer.prototype.process = function (node) {
         if (node.nodeType === 1) {
@@ -146,36 +147,227 @@ window.tw_forms = tw_forms;
         }
     };
 
-    // Export as CommonJS module
+    // Export or attach to global scope
     if (typeof exports !== 'undefined') {
         exports.Observer = new Observer();
-
-        // Else create a global instance
     } else {
-        // eslint-disable-next-line no-param-reassign
         w.tw_forms.Observer = new Observer();
     }
 }(typeof global !== 'undefined' ? global : window, document));
 
+/**
+ * Powermail Validators
+ *
+ * Custom validation functions for Powermail form fields
+ * These validators extend the native HTML5 validation with additional rules
+ */
+const PowermailValidators = {
+    /**
+     * Validates email addresses using a comprehensive regex pattern
+     * @param {HTMLElement} field - The input field to validate
+     * @returns {boolean} - True if validation fails, false if valid
+     */
+    email: (field) => {
+        if (!field.value) return false;
+        if (field.type === 'email' || field.getAttribute('data-powermail-type') === 'email') {
+            const pattern = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+            return !pattern.test(field.value);
+        }
+        return false;
+    },
+
+    /**
+     * Validates URL format with optional protocol
+     * @param {HTMLElement} field - The input field to validate
+     * @returns {boolean} - True if validation fails, false if valid
+     */
+    url: (field) => {
+        if (!field.value) return false;
+        if (field.type === 'url' || field.getAttribute('data-powermail-type') === 'url') {
+            const pattern = new RegExp('^(https?:\\/\\/)?'+
+                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+
+                '((\\d{1,3}\\.){3}\\d{1,3}))'+
+                '(\\:\\d+)?(\\/[-a-zA-Z\\d%_.~+]*)*'+
+                '(\\?[;&a-zA-Z\\d%_.~+=-]*)?'+
+                '(\\#[-a-zA-Z\\d_]*)?$','i');
+            return !pattern.test(field.value);
+        }
+        return false;
+    },
+
+    /**
+     * Validates input against a custom regex pattern
+     * @param {HTMLElement} field - The input field to validate
+     * @returns {boolean} - True if validation fails, false if valid
+     */
+    pattern: (field) => {
+        if (!field.value) return false;
+        const pattern = field.getAttribute('data-powermail-pattern') || field.getAttribute('pattern');
+        if (pattern) {
+            try {
+                const regex = new RegExp(pattern);
+                return !regex.test(field.value);
+            } catch (e) { return false; }
+        }
+        return false;
+    },
+
+    /**
+     * Validates numeric input for integer fields
+     * @param {HTMLElement} field - The input field to validate
+     * @returns {boolean} - True if validation fails, false if valid
+     */
+    number: (field) => {
+        if (!field.value) return false;
+        if (field.type === 'number' || field.getAttribute('data-powermail-type') === 'integer') {
+            return isNaN(field.value);
+        }
+        return false;
+    },
+
+    /**
+     * Validates minimum value constraints
+     * @param {HTMLElement} field - The input field to validate
+     * @returns {boolean} - True if validation fails, false if valid
+     */
+    minimum: (field) => {
+        if (!field.value) return false;
+        const min = field.getAttribute('min') || field.getAttribute('data-powermail-min');
+        if (min !== null) {
+            return parseFloat(field.value) < parseFloat(min);
+        }
+        return false;
+    },
+
+    /**
+     * Validates maximum value constraints
+     * @param {HTMLElement} field - The input field to validate
+     * @returns {boolean} - True if validation fails, false if valid
+     */
+    maximum: (field) => {
+        if (!field.value) return false;
+        const max = field.getAttribute('max') || field.getAttribute('data-powermail-max');
+        if (max !== null) {
+            return parseFloat(field.value) > parseFloat(max);
+        }
+        return false;
+    },
+
+    /**
+     * Validates string length constraints with min/max range
+     * @param {HTMLElement} field - The input field to validate
+     * @returns {boolean} - True if validation fails, false if valid
+     */
+    length: (field) => {
+        if (!field.value) return false;
+        const lengthConfig = field.getAttribute('data-powermail-length');
+        if (lengthConfig) {
+            const [min, max] = lengthConfig.replace('[', '').replace(']', '').split(',').map(Number);
+            return field.value.length < min || field.value.length > max;
+        }
+        return false;
+    },
+
+    /**
+     * Validates that field value equals another field's value
+     * @param {HTMLElement} field - The input field to validate
+     * @returns {boolean} - True if validation fails, false if valid
+     */
+    equalto: (field) => {
+        const selector = field.getAttribute('data-powermail-equalto');
+        if (selector) {
+            const form = field.closest('form');
+            const compareField = form.querySelector(selector);
+            if (compareField) {
+                return compareField.value !== field.value;
+            }
+        }
+        return false;
+    },
+
+    /**
+     * Validates file size constraints for upload fields
+     * @param {HTMLElement} field - The file input field to validate
+     * @returns {boolean} - True if validation fails, false if valid
+     */
+    powermailfilesize: (field) => {
+        if (field.type !== 'file' || !field.files || !field.files.length) return false;
+        const sizeConfig = field.getAttribute('data-powermail-powermailfilesize');
+        if (sizeConfig) {
+            const maxSize = parseInt(sizeConfig.split(',')[0], 10);
+            for (let i = 0; i < field.files.length; i++) {
+                if (field.files[i].size > maxSize) return true;
+            }
+        }
+        return false;
+    },
+
+    /**
+     * Validates file extensions for upload fields
+     * @param {HTMLElement} field - The file input field to validate
+     * @returns {boolean} - True if validation fails, false if valid
+     */
+    powermailfileextensions: (field) => {
+        if (field.type !== 'file' || !field.files || !field.files.length) return false;
+        const accept = field.getAttribute('accept');
+        if (accept) {
+            const allowed = accept.split(',').map(ext => ext.trim().replace('.', '').toLowerCase());
+            for (let i = 0; i < field.files.length; i++) {
+                const ext = field.files[i].name.split('.').pop().toLowerCase();
+                if (!allowed.includes(ext)) return true;
+            }
+        }
+        return false;
+    }
+};
+
+/**
+ * Determines whether a Powermail validator should be skipped based on native validation state
+ * @param {string} validator - Name of the validator
+ * @param {ValidityState} validity - Native HTML5 validity state
+ * @param {HTMLElement} element - The form element being validated
+ * @returns {boolean} - True if validator should be skipped
+ */
+const shouldSkipPowermailValidator = (validator, validity, element) => {
+    if (validator === 'email' && element.type === 'email' && validity.typeMismatch) return true;
+    if (validator === 'url' && element.type === 'url' && validity.typeMismatch) return true;
+    if (validator === 'pattern' && validity.patternMismatch) return true;
+    if (validator === 'maximum' && validity.rangeOverflow) return true;
+    if (validator === 'minimum' && validity.rangeUnderflow) return true;
+    if (validator === 'length' && (validity.tooLong || validity.tooShort)) return true;
+    return validator === 'number' && element.type === 'number' && validity.badInput;
+};
 
 
 /**
- * Formfield
+ * Gets the appropriate error message for a Powermail validator
+ * @param {HTMLElement} element - The form element
+ * @param {string} validator - Name of the validator
+ * @returns {string} - Error message to display
  */
+const getPowermailErrorMessage = (element, validator) => {
+    return element.getAttribute(`data-powermail-${validator}-message`) ||
+        element.getAttribute('data-powermail-error-message') ||
+        `Invalid input (${validator})`;
+};
 
-/* global tw_forms */
-/* eslint no-restricted-properties: [0, {"object": "Map", "property": "pow"}] */
+/**
+ * FormField Enhancement Class
+ *
+ * Enhances form fields with real-time validation, error messaging,
+ * and accessibility features. Supports both individual fields and
+ * grouped fields (like radio buttons and checkboxes).
+ */
 (function formFields(w, d) {
+    // Determine the best available scroll method for focusing invalid fields
     let scrollIntoView = d.documentElement.scrollIntoView ? 'scrollIntoView' : null;
     if (d.documentElement.scrollIntoViewIfNeeded) {
         scrollIntoView = 'scrollIntoViewIfNeeded';
     }
 
     /**
-     * Form field constructor
-     *
-     * @param {Element} element Form element
-     * @constructor
+     * FormField constructor - Initializes form field validation and enhancement
+     * @param {HTMLElement} element - The form input element to enhance
      */
     function FormField(element) {
         this.element = element;
@@ -183,10 +375,12 @@ window.tw_forms = tw_forms;
         this.wrapper = this.element.closest('.FormField');
         this.groupPrimaryEnhancer = null;
         this.groupEnhancers = [];
+        this.lastErrorString = '';
 
-        // Check if this is a field group and determine the primary enhancer
+        // Handle grouped form fields (checkboxes, radio buttons)
         this.isGroup = this.element.classList.contains('FormMultiCheckbox');
         if (this.isGroup) {
+            // Find the primary enhancer for this group
             for (let e = 0; e < this.element.form.elements.length; ++e) {
                 const elementId = this.element.form.elements[e].id;
                 const elementName = this.element.form.elements[e].name;
@@ -200,21 +394,23 @@ window.tw_forms = tw_forms;
             }
         }
 
-        // If this field is part of a group but not the primary field: Link to the primary enhancer
+        // If this is a secondary group element, register with primary and return
         if (this.isGroup && this.groupPrimaryEnhancer) {
             this.groupPrimaryEnhancer.groupEnhancers.push(this);
             this.element.addEventListener('input', this.validate.bind(this.groupPrimaryEnhancer, true));
             return;
         }
 
+        // Initialize validation state and error messaging
         this.lastConstraints = 0;
         this.errorMessages = {};
         this.errorMessageBag = this.element.hasAttribute('aria-errormessage')
             ? d.getElementById(this.element.getAttribute('aria-errormessage')) : null;
         this.recursiveErrorMessages = null;
 
-        // If there's an error message display
+        // Set up error message handling if error message container exists
         if (this.errorMessageBag) {
+            // Extract error messages from data attributes
             this.constraints.forEach((constraint) => {
                 let errorMessage = null;
                 if (constraint === 'valueMissing') {
@@ -234,6 +430,8 @@ window.tw_forms = tw_forms;
                     this.errorMessages[constraint] = errorMessage;
                 }
             });
+
+            // Calculate initial constraint state from existing error messages
             this.errorMessageBag.querySelectorAll('[data-constraint]')
                 .forEach((c) => {
                     const constraintIndex = this.constraints.indexOf(c.dataset.constraint);
@@ -241,14 +439,14 @@ window.tw_forms = tw_forms;
                         this.lastConstraints += Math.pow(2, constraintIndex);
                     }
                 });
+
+            // Attach input event listener for real-time validation
             this.element.addEventListener('input', this.validate.bind(this, true));
         }
     }
 
     /**
-     * Constraints
-     *
-     * @type {string[]}
+     * Array of HTML5 constraint validation types
      */
     FormField.prototype.constraints = [
         'badInput',
@@ -263,21 +461,23 @@ window.tw_forms = tw_forms;
     ];
 
     /**
-     * Validate the form field
-     *
-     * @param {boolean} includeMissing Include missing value errors
-     * @return {array} errorMessages
+     * Validates the form field using both native HTML5 validation and Powermail validators
+     * @param {boolean} includeMissing - Whether to include required field validation
+     * @returns {Object} - Object containing validation error messages
      */
     FormField.prototype.validate = function validate(includeMissing) {
-        // If there's already a validation process running: Return error messages
+        // Prevent recursive validation calls
         if (this.recursiveErrorMessages) {
             return this.recursiveErrorMessages;
         }
 
         const errorMessages = {};
         let constraints = 0;
+
+        // Get validity state (either from group validation or individual element)
         const validity = (this.isGroup && !this.groupPrimaryEnhancer) ? this.validateGroup() : this.element.validity;
 
+        // Process native HTML5 validation constraints
         if (includeMissing || !validity.valueMissing) {
             for (const constraint in this.errorMessages) {
                 if (
@@ -290,35 +490,48 @@ window.tw_forms = tw_forms;
                 }
             }
         }
+
+        // Process Powermail custom validators
+        for (const [validatorName, validatorFunction] of Object.entries(PowermailValidators)) {
+            // Skip if native validation already covers this case
+            if (shouldSkipPowermailValidator(validatorName, validity, this.element)) {
+                continue;
+            }
+
+            // Run the validator function
+            if (validatorFunction(this.element)) {
+                errorMessages[validatorName] = getPowermailErrorMessage(this.element, validatorName);
+            }
+        }
+
+        // Store current validation state and update UI
         this.recursiveErrorMessages = errorMessages;
         this.updateErrorMessageBag(constraints, errorMessages);
         this.recursiveErrorMessages = null;
+
         return errorMessages;
     };
 
     /**
-     * Validate all fields of a group
-     *
-     * @return {Object} Pseudo validity state
+     * Validates grouped form fields (checkboxes, radio buttons)
+     * @returns {Object} - Validity state object for the group
      */
     FormField.prototype.validateGroup = function validateGroup() {
         let checked = this.element.checked;
+        // Check if any element in the group is checked
         for (let e = 0; e < this.groupEnhancers.length; ++e) {
             if (this.groupEnhancers[e].element.checked) {
                 checked = true;
                 break;
             }
         }
-
         return this.overrideValidityState({ valueMissing: !checked });
     };
 
-
     /**
-     * Override the validity state of this element
-     *
-     * @param {Object} override Override values
-     * @return {Object} Pseudo validity state
+     * Creates a custom validity state object with overridden values
+     * @param {Object} override - Properties to override in the validity state
+     * @returns {Object} - Custom validity state object
      */
     FormField.prototype.overrideValidityState = function overrideValidityState(override) {
         const clonedValidityState = { valid: true };
@@ -330,14 +543,20 @@ window.tw_forms = tw_forms;
     };
 
     /**
-     * Update the error message bag with a set of error messages
-     *
-     * @param {array} constraints Current constraints (bitmask)
-     * @param {object} errorMessages Error messages
+     * Updates the error message container and field styling based on validation results
+     * @param {number} constraints - Bitmask of active constraints
+     * @param {Object} errorMessages - Object containing error messages to display
      */
     FormField.prototype.updateErrorMessageBag = function updateErrorMessageBag(constraints, errorMessages) {
-        if (constraints !== this.lastConstraints) {
-            if (constraints) {
+        const hasErrors = Object.keys(errorMessages).length > 0;
+        const errorString = JSON.stringify(errorMessages);
+
+        // Only update if the error state has changed
+        if (constraints !== this.lastConstraints || hasErrors !== this.lastHadErrors ||
+            errorString !== this.lastErrorString) {
+
+            // Update field and wrapper styling
+            if (hasErrors) {
                 this.errorMessageBag.removeAttribute('hidden');
                 this.element.setAttribute('aria-invalid', 'true');
                 this.wrapper.classList.add('FormField--has-error');
@@ -346,9 +565,13 @@ window.tw_forms = tw_forms;
                 this.element.setAttribute('aria-invalid', 'false');
                 this.wrapper.classList.remove('FormField--has-error');
             }
+
+            // Clear existing error messages
             while (this.errorMessageBag.childNodes.length) {
                 this.errorMessageBag.removeChild(this.errorMessageBag.lastChild);
             }
+
+            // Add new error messages
             for (const c in errorMessages) {
                 if (Object.prototype.hasOwnProperty.call(errorMessages, c)) {
                     const errorMessage = d.createElement('span');
@@ -357,18 +580,28 @@ window.tw_forms = tw_forms;
                     this.errorMessageBag.appendChild(errorMessage);
                 }
             }
+
+            // Update state tracking
             this.lastConstraints = constraints;
+            this.lastHadErrors = hasErrors;
+            this.lastErrorString = errorString;
             this.focusWrapper();
 
-            // If this form field is part of an enhanced form: Update error summary
-            if (this.element.form.enhancer) {
-                this.element.form.enhancer.update();
+            // Trigger form-level update asynchronously
+            if (typeof Promise !== 'undefined' && Promise.resolve) {
+                Promise.resolve().then(() => {
+                    this.element.form.enhancer.update();
+                });
+            } else {
+                setTimeout(() => {
+                    this.element.form.enhancer.update();
+                }, 0);
             }
         }
     };
 
     /**
-     * Scroll the fields wrapper into the view
+     * Smoothly scrolls the form field wrapper into view
      */
     FormField.prototype.focusWrapper = function focusWrapper() {
         if (scrollIntoView) {
@@ -381,14 +614,14 @@ window.tw_forms = tw_forms;
     };
 
     /**
-     * Focus the form field and bring its wrapper into the view
+     * Focuses the form field and scrolls it into view
      */
     FormField.prototype.focus = function focus() {
         this.element.focus();
         this.focusWrapper();
     };
 
-    // Observing for form fields
+    // Register FormField enhancer with the DOM observer
     tw_forms.Observer.register('.FormField__input, .FormField__textarea', (field) => {
         return new FormField(field);
     });
