@@ -29,6 +29,10 @@
                 <source>(complete)</source>
                 <target state="translated">(vollständig)</target>
             </trans-unit>
+            <trans-unit id="form.select" approved="yes">
+                <source>Please select...</source>
+                <target state="translated">Bitte wählen...</target>
+            </trans-unit>
             <trans-unit id="form.error" approved="yes">
                 <source>There are still issues with 1 of your entries</source>
                 <target state="translated">Es gibt noch Probleme mit 1 Ihrer Angaben</target>
@@ -57,4 +61,3 @@
         </body>
     </file>
 </xliff>
-
