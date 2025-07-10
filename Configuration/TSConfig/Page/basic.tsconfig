@@ -3,5 +3,8 @@ TCEFORM {
         type {
             removeItems = captcha,reset,country,file,html,password,hidden,date,location,typoscript
         }
+        multiselect {
+            disabled = 1
+        }
     }
 }

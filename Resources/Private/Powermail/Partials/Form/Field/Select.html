@@ -19,20 +19,10 @@ t=TRAW\Powermailautocomplete\ViewHelpers}
       id="{formId}-powermail-field-{field.marker}"
       additionalAttributes="{vh:validation.validationDataAttribute(field:field)}"
       aria="{'errormessage': 'error-for-powermail-field-{formId}-{field.marker}', 'describedby': 'error-for-powermail-field-{formId}-{field.marker} desc-for-powermail-field-{formId}-{field.marker}'}"
-      multiple="{field.multiselectForField}"
       value="{vh:misc.prefillField(field:field, mail:mail)}"
-      autocomplete="{t:autocomplete(field:field)}"
       prependOptionLabel="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.select')}"
       prependOptionValue=""
     />
-
-    <f:if condition="{field.multiselect}">
-      <f:if condition="{settings.validation.client}">
-        <div
-          class="powermail_field_error_container powermail_field_error_container_{field.marker}"
-        ></div>
-      </f:if>
-    </f:if>
   </div>
 
   <f:comment><!-- Description --></f:comment>
