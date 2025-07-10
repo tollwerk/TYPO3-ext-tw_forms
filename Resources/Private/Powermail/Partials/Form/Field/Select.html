@@ -22,6 +22,8 @@ t=TRAW\Powermailautocomplete\ViewHelpers}
       multiple="{field.multiselectForField}"
       value="{vh:misc.prefillField(field:field, mail:mail)}"
       autocomplete="{t:autocomplete(field:field)}"
+      prependOptionLabel="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.select')}"
+      prependOptionValue=""
     />
 
     <f:if condition="{field.multiselect}">
