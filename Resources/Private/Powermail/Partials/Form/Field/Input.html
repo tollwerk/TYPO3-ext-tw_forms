@@ -1,30 +1,33 @@
-{namespace vh=In2code\Powermail\ViewHelpers}
-{namespace f=TYPO3\CMS\Fluid\ViewHelpers}
-{namespace t=TRAW\Powermailautocomplete\ViewHelpers}
+{namespace vh=In2code\Powermail\ViewHelpers} {namespace
+f=TYPO3\CMS\Fluid\ViewHelpers} {namespace
+t=TRAW\Powermailautocomplete\ViewHelpers}
 
-<div class="{settings.styles.framework.fieldAndLabelWrappingClasses} powermail_fieldwrap powermail_fieldwrap_type_input powermail_fieldwrap_{field.marker}{f:if(condition: '{field.css}', then: ' {field.css} ')}">
-	<f:comment><!-- Label --></f:comment>
-	<f:render partial="Form/FieldLabel" arguments="{_all}" />
+<div
+  class="{settings.styles.framework.fieldAndLabelWrappingClasses} powermail_fieldwrap powermail_fieldwrap_type_input powermail_fieldwrap_{field.marker}{f:if(condition: '{field.css}', then: ' {field.css} ')}"
+>
+  <f:comment><!-- Label --></f:comment>
+  <f:render partial="Form/FieldLabel" arguments="{_all}" />
 
-	<f:comment><!-- Error container --></f:comment>
-	<f:render partial="Form/FieldError" arguments="{_all}" />
+  <f:comment><!-- Error container --></f:comment>
+  <f:render partial="Form/FieldError" arguments="{_all}" />
 
-	<f:comment><!-- Input --></f:comment>
-	<div class="{settings.styles.framework.fieldWrappingClasses}">
-		<f:form.textfield
-				type="{vh:validation.fieldTypeFromValidation(field:field)}"
-				property="{field.marker}"
-				placeholder="{field.placeholder}"
-				value="{vh:misc.prefillField(field:field, mail:mail)}"
-				class="powermail_input {settings.styles.framework.fieldClasses} {vh:validation.errorClass(field:field, class:'powermail_field_error')}"
-				additionalAttributes="{vh:validation.validationDataAttribute(field:field)}"
-				aria="{'errormessage': 'error-for-powermail-field-{formId}-{field.marker}', 'describedby': 'error-for-powermail-field-{formId}-{field.marker} desc-for-powermail-field-{formId}-{field.marker}'}"
-				id="{formId}-powermail-field-{field.marker}"
-				autocomplete="{t:autocomplete(field:field)}" />
-	</div>
+  <f:comment><!-- Input --></f:comment>
+  <div class="{settings.styles.framework.fieldWrappingClasses}">
+    <f:form.textfield
+      type="{vh:validation.fieldTypeFromValidation(field:field)}"
+      property="{field.marker}"
+      placeholder="{field.placeholder}"
+      value="{vh:misc.prefillField(field:field, mail:mail)}"
+      class="powermail_input {settings.styles.framework.fieldClasses} {vh:validation.errorClass(field:field, class:'powermail_field_error')}"
+      additionalAttributes="{vh:validation.validationDataAttribute(field:field)}"
+      aria="{'errormessage': 'error-for-powermail-field-{formId}-{field.marker}', 'describedby': 'error-for-powermail-field-{formId}-{field.marker} desc-for-powermail-field-{formId}-{field.marker}'}"
+      id="{formId}-powermail-field-{field.marker}"
+      autocomplete="{t:autocomplete(field:field)}"
+    />
+  </div>
 
-	<f:comment><!-- Description --></f:comment>
-	<f:if condition="{field.description}">
-		<f:render partial="Form/FieldDescription" arguments="{_all}"/>
-	</f:if>
+  <f:comment><!-- Description --></f:comment>
+  <f:if condition="{field.description}">
+    <f:render partial="Form/FieldDescription" arguments="{_all}" />
+  </f:if>
 </div>
