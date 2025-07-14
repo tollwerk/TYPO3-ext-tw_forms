@@ -10,7 +10,7 @@
         </vh:misc.createRowTags>
     </f:for>
 
-    <f:if condition="{settings.main.moresteps}">
+    <f:if condition="{form.pages -> f:count()} > 1">
         <div class="powermail_fieldwrap powermail_tab_navigation">
             <f:if condition="!{iterationPages.isLast}">
                 <button type="button" class="btn btn-primary pull-right" data-powermail-morestep-show="{iterationPages.cycle}">&gt;</button>

@@ -8,3 +8,6 @@ page.includeJSFooter.tw_forms_default = EXT:tw_forms/Resources/Public/tw-forms.d
 
 # powermail default javascript. Needs to be deactivated due to own javascript.
 page.includeJSFooter.powermailForm >
+
+# powermail multistepform javascript. Only necessary for powermail setup.
+page.includeJSFooter.tw_forms_powermail_multistep = EXT:tw_forms/Resources/Public/Javascript/MoreStepForm.min.js

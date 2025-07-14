@@ -19,14 +19,14 @@ Render Powermail Form {form} All Forms with their Pages and their Fields
           enctype="multipart/form-data"
           addQueryString="{settings.misc.addQueryString}"
           novalidate="1"
-          class="Form--custom-validation powermail_form powermail_form_{form.uid} {form.css} {settings.styles.framework.formClasses} {vh:misc.morestepClass(activate:settings.main.moresteps)}"
+          class="Form--custom-validation powermail_form powermail_form_{form.uid} {form.css} {settings.styles.framework.formClasses} {vh:misc.morestepClass(activate:'{form.pages -> f:count()} > 1}')}"
         >
           <f:if condition="{form.css} != 'nolabel'">
             <h3>{form.title}</h3>
           </f:if>
           <f:render partial="Misc/FormError" arguments="{_all}" />
 
-          <f:if condition="{settings.main.moresteps}">
+          <f:if condition="{form.pages -> f:count()} > 1">
             <div class="btn-group">
               <f:for each="{form.pages}" as="page" iteration="iterationPages">
                 <button
@@ -44,11 +44,10 @@ Render Powermail Form {form} All Forms with their Pages and their Fields
           <f:for each="{form.pages}" as="page" iteration="iterationPages">
             <f:render partial="Form/Page" arguments="{_all}" />
           </f:for>
-          <f:form.hidden
-            name="mail[form]"
-            value="{form.uid}"
-            class="powermail_form_uid"
-            respectSubmittedDataValue="false"
+          <f:form.hidden name="mail[form]"
+                         value="{form.uid}"
+                         class="powermail_form_uid"
+                         respectSubmittedDataValue="false"
           />
           <f:render partial="Misc/HoneyPod" arguments="{form:form}" />
         </f:form>
