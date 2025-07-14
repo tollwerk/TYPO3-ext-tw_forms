@@ -1,15 +1,15 @@
 {namespace f=TYPO3\CMS\Fluid\ViewHelpers}
 
 <f:form.validationResults>
-  <f:if condition="{validationResults.flattenedErrors}">
-    <f:for each="{validationResults.flattenedErrors.mail}" as="error">
-      <f:if condition="{field.marker} == {error.arguments.marker}">
-        <div class="Powermail__error" id="error-for-powermail-field-{formId}-{field.marker}">
-          <f:translate key="validationerror_{error.message}">
-            {error.message}
-          </f:translate>
-        </div>
-      </f:if>
-    </f:for>
-  </f:if>
+  <div class="Powermail__error" id="error-for-powermail-field-{formId}-{field.marker}">
+    <f:if condition="{validationResults.flattenedErrors}">
+      <f:for each="{validationResults.flattenedErrors.mail}" as="error">
+        <f:if condition="{field.marker} == {error.arguments.marker}">
+            <f:translate key="validationerror_{error.message}">
+              {error.message}
+            </f:translate>
+        </f:if>
+      </f:for>
+    </f:if>
+  </div>
 </f:form.validationResults>
