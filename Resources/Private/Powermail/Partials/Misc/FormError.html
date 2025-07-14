@@ -1,5 +1,5 @@
-{namespace vh=In2code\Powermail\ViewHelpers} {namespace
-twforms=Tollwerk\TwForms\ViewHelpers}
+{namespace vh=In2code\Powermail\ViewHelpers}
+{namespace twforms=Tollwerk\TwForms\ViewHelpers}
 
 <f:form.validationResults>
   <f:variable
@@ -24,24 +24,16 @@ twforms=Tollwerk\TwForms\ViewHelpers}
     data-title="{title.default}"
     data-title-errors="{title.pattern}"
   >
-    <f:variable
-      name="headingKeySingle"
-      value="LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.error"
-    />
-    <f:variable
-      name="headingKeyMultiple"
-      value="LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.errors"
-    />
-    <f:variable
-      name="headingContent"
-      value="{f:if(condition: '{count} == 1', then: '{f:translate(key: headingKeySingle)}', else: '{f:translate(key: headingKeyMultiple, arguments: \'{0: count}\')}')}"
-    />
-    <h2
-      class="Heading"
-      id="{formId}-errors"
-      data-heading-single="{f:translate(key: headingKeySingle)}"
-      data-heading-multiple="{f:translate(key: headingKeyMultiple)}"
-    >
+    <f:variable name="headingKeySingle"
+                value="LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.error"/>
+    <f:variable name="headingKeyMultiple"
+                value="LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.errors"/>
+    <f:variable name="headingContent"
+                value="{f:if(condition: '{count} == 1', then: '{f:translate(key: headingKeySingle)}', else: '{f:translate(key: headingKeyMultiple, arguments: \'{0: count}\')}')}"/>
+    <h2 class="Heading"
+        id="{formId}-errors"
+        data-heading-single="{f:translate(key: headingKeySingle)}"
+        data-heading-multiple="{f:translate(key: headingKeyMultiple)}">
       {headingContent}
     </h2>
 
@@ -61,42 +53,29 @@ twforms=Tollwerk\TwForms\ViewHelpers}
                 </f:then>
                 <f:else>
                   <f:if condition="{singleError.arguments.marker}">
-                    <f:if
-                      condition="{vh:getter.getFieldPropertyFromMarkerAndForm(marker: singleError.arguments.marker, form: form, property: 'type')} == 'check'
+                    <f:if condition="{vh:getter.getFieldPropertyFromMarkerAndForm(marker: singleError.arguments.marker, form: form, property: 'type')} == 'check'
                                             || {vh:getter.getFieldPropertyFromMarkerAndForm(marker: singleError.arguments.marker, form: form, property: 'type')} == 'radio'"
                     >
                       <f:then>
-                        <a
-                          href="#powermail_field_{singleError.arguments.marker}_1"
-                          class="Form__error-link"
-                        >
-                          <vh:getter.getFieldPropertyFromMarkerAndForm
-                            marker="{singleError.arguments.marker}"
-                            form="{form}"
-                            property="title"
-                          />:
-
-                          <f:translate
-                            key="validationerror_{singleError.message}"
-                            >{singleError.message}</f:translate
-                          >
+                        <a href="#powermail_field_{singleError.arguments.marker}_1"
+                           class="Form__error-link">
+                          <vh:getter.getFieldPropertyFromMarkerAndForm marker="{singleError.arguments.marker}"
+                                                                       form="{form}"
+                                                                       property="title"/>:
+                          <f:translate key="validationerror_{singleError.message}">
+                            {singleError.message}
+                          </f:translate>
                         </a>
                       </f:then>
                       <f:else>
-                        <a
-                          href="#powermail_field_{singleError.arguments.marker}"
-                          class="Form__error-link"
-                        >
-                          <vh:getter.getFieldPropertyFromMarkerAndForm
-                            marker="{singleError.arguments.marker}"
-                            form="{form}"
-                            property="title"
-                          />:
-
-                          <f:translate
-                            key="validationerror_{singleError.message}"
-                            >{singleError.message}</f:translate
-                          >
+                        <a href="#powermail_field_{singleError.arguments.marker}"
+                           class="Form__error-link">
+                          <vh:getter.getFieldPropertyFromMarkerAndForm marker="{singleError.arguments.marker}"
+                                                                       form="{form}"
+                                                                       property="title"/>:
+                          <f:translate key="validationerror_{singleError.message}">
+                            {singleError.message}
+                          </f:translate>
                         </a>
                       </f:else>
                     </f:if>

@@ -2,16 +2,14 @@
 
 <f:form.validationResults>
   <f:if condition="{validationResults.flattenedErrors}">
-    <div
-      class="Powermail__error"
-      id="error-for-powermail-field-{formId}-{field.marker}"
-    >
-      <f:for
-        each="{validationResults.flattenedErrors.{field.marker}}"
-        as="error"
-      >
-        <span data-constraint="{error.code}">{error.message}</span>
-      </f:for>
-    </div>
+    <f:for each="{validationResults.flattenedErrors.mail}" as="error">
+      <f:if condition="{field.marker} == {error.arguments.marker}">
+        <div class="Powermail__error" id="error-for-powermail-field-{formId}-{field.marker}">
+          <f:translate key="validationerror_{error.message}">
+            {error.message}
+          </f:translate>
+        </div>
+      </f:if>
+    </f:for>
   </f:if>
 </f:form.validationResults>

@@ -2,7 +2,7 @@ plugin.tx_powermail {
     # Validation settings
     settings {
         validation {
-            native = 0
+            native = 1
             client = 0
             server = 1
         }
