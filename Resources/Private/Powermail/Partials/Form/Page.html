@@ -6,17 +6,17 @@
 
     <f:for each="{page.fields}" as="field" iteration="iteration">
         <vh:misc.createRowTags columns="{settings.styles.numberOfColumns}" class="{settings.styles.framework.rowClasses}" iteration="{iteration}">
-            <f:render partial="Form/Field/{vh:String.Upper(string:field.type)}" arguments="{field:field, formId: formId}"/>
+            <f:render partial="Form/Field/{vh:String.Upper(string:field.type)}" arguments="{field:field, formId:formId, iterationPages:iterationPages}"/>
         </vh:misc.createRowTags>
     </f:for>
 
     <f:if condition="{form.pages -> f:count()} > 1">
         <div class="powermail_fieldwrap powermail_tab_navigation">
             <f:if condition="!{iterationPages.isLast}">
-                <button type="button" class="btn btn-primary pull-right" data-powermail-morestep-show="{iterationPages.cycle}">&gt;</button>
+                <button type="button" class="btn btn-primary pull-right" data-powermail-morestep-show="{iterationPages.cycle}" data-powermail-morestep-next>&gt;</button>
             </f:if>
             <f:if condition="!{iterationPages.isFirst}">
-                <button type="button" class="btn btn-warning" data-powermail-morestep-show="{iterationPages.index - 1}">&lt;</button>
+                <button type="button" class="btn btn-warning" data-powermail-morestep-show="{iterationPages.index - 1}" data-powermail-morestep-prev>&lt;</button>
             </f:if>
         </div>
     </f:if>

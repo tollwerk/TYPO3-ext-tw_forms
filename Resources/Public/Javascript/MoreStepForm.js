@@ -22,6 +22,10 @@ export default function MoreStepForm() {
       let fieldsets = getAllFieldsetsOfForm(form);
       Utility.showElement(fieldsets[index]);
       updateButtonStatus(form);
+
+      if (form.enhancer) {
+        form.enhancer.update();
+      }
     }
   };
 

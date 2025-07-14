@@ -30,7 +30,7 @@ Render Powermail Form {form} All Forms with their Pages and their Fields
             <div class="btn-group">
               <f:for each="{form.pages}" as="page" iteration="iterationPages">
                 <button
-                  class="btn btn-default{f:if(condition:iterationPages.isFirst,then:' btn-primary')}"
+                  class="step-btn btn btn-default{f:if(condition:iterationPages.isFirst,then:' btn-primary')}"
                   type="button"
                   data-powermail-morestep-current="{iterationPages.index}"
                   data-powermail-morestep-show="{iterationPages.index}"
