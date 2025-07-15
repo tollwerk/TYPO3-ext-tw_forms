@@ -22,12 +22,38 @@ export default function MoreStepForm() {
       let fieldsets = getAllFieldsetsOfForm(form);
       Utility.showElement(fieldsets[index]);
       updateButtonStatus(form);
-
-      if (form.enhancer) {
-        form.enhancer.update();
-      }
     }
   };
+
+  /**
+   * Helper function to check if a field is currently visible
+   * @param {HTMLElement} field - The field element to check
+   * @returns {boolean}
+   */
+  const isFieldVisible = function(field) {
+    if (field.style.display === 'none' || field.hasAttribute('hidden')) {
+      return false;
+    }
+
+    let parent = field.parentElement;
+    while (parent && parent !== document.body) {
+      if (parent.style.display === 'none' ||
+          parent.hasAttribute('hidden') ||
+          parent.classList.contains('hidden')) {
+        return false;
+      }
+
+      if (parent.classList.contains('powermail_fieldset') &&
+          parent.style.display === 'none') {
+        return false;
+      }
+
+      parent = parent.parentElement;
+    }
+
+    return true;
+  };
+
 
   let initializeForms = function() {
     let moreStepForms = document.querySelectorAll('form.' + formClass);
@@ -40,16 +66,45 @@ export default function MoreStepForm() {
     that.showFieldset(0, form);
   };
 
-  let showListener = function() {
+  let showListener = function () {
     let moreButtons = document.querySelectorAll('[data-powermail-morestep-show]');
     for (let i = 0; i < moreButtons.length; i++) {
-      moreButtons[i].addEventListener('click', function(event) {
-        let targetFieldset = event.target.getAttribute('data-powermail-morestep-show');
+      moreButtons[i].addEventListener('click', function (event) {
+        event.preventDefault();
+
         let form = event.target.closest('form');
-        that.showFieldset(targetFieldset, form);
+        let currentIndex = getActivePageIndex(form);
+        let nextIndex = parseInt(event.target.getAttribute('data-powermail-morestep-show'), 10);
+
+        if (nextIndex > currentIndex) {
+          // Nur prüfen, wenn man vorwärts geht
+          const visibleFields = Array.from(form.elements).filter((el) =>
+              isFieldVisible(el) && el.enhancer
+          );
+
+          let isValid = true;
+          visibleFields.forEach((field) => {
+            const errors = field.enhancer.validate(true);
+            if (Object.keys(errors).length > 0) {
+              isValid = false;
+            }
+          });
+
+          if (!isValid) {
+            // Fehlernavigation sichtbar machen, wenn nötig
+            if (form.enhancer && form.enhancer.errorNavigation) {
+              form.enhancer.errorNavigation.removeAttribute('hidden');
+              form.enhancer.errorNavigation.focus();
+            }
+            return false;
+          }
+        }
+
+        that.showFieldset(nextIndex, form);
       });
     }
-  }
+  };
+
 
   let hideAllFieldsets = function(form) {
     let fieldsets = getAllFieldsetsOfForm(form);
