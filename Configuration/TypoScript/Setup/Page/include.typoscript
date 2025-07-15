@@ -8,11 +8,5 @@ page.includeJSLibs.tw_forms_critical = EXT:tw_forms/Resources/Public/Javascript/
 # utility classes for validation and multistep.
 page.includeJSFooter.utility = EXT:tw_forms/Resources/Public/Javascript/Utility/tw-forms.utility.js
 
-# tw_forms default javascript. Depends on tw-forms.critical.min.js
-page.includeJSFooter.tw_forms_default = EXT:tw_forms/Resources/Public/Javascript/tw-forms.default.js
-
 # powermail default javascript. Needs to be deactivated due to own javascript.
 page.includeJSFooter.powermailForm >
-
-# powermail multistepform javascript. Only necessary for powermail setup.
-page.includeJSFooter.tw_forms_powermail_multistep = EXT:tw_forms/Resources/Public/Javascript/Powermail/MoreStepForm.min.js
