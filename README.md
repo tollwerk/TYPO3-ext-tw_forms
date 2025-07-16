@@ -65,3 +65,16 @@ validation rules available in the TYPO3 form wizard are taken into account.
   * required fields
   * email
   
+## NEW in Version 2
+
+Now also supports the TYPO3 extension ``powermail`` by **in2code**.
+
+## Disable powermail-specific functionality
+
+If you only want to use the native TYPO3 forms, you can use TypoScript to remove the included powermail javascript files. The standard `powermailForm` always has to be deactivated due to own implementations:
+
+```typo3_typoscript
+page.includeJSFooter.powermailForm >
+page.includeJSFooter.tw_forms_utility = >
+page.includeJSFooter.tw_forms_powermail_multistep >
+```
