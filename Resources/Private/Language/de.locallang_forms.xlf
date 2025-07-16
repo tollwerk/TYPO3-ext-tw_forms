@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-    <file source-language="en" datatype="plaintext" original="messages" date="2016-12-08T10:17:19Z"
-          product-name="tw_baylat">
+    <file source-language="en" datatype="plaintext" original="messages" date="2016-12-08T10:17:19Z">
         <header/>
         <body>
             <!-- General form -->
@@ -49,7 +48,20 @@
                 <source>%s errors ⚠️ %s</source>
                 <target state="translated">%s Fehler ⚠️ %s</target>
             </trans-unit>
+
             <!-- Error messages -->
+            <trans-unit id="validation.error.1221560910" approved="yes">
+                <source>This field is mandatory.</source>
+                <target state="translated">Bitte füllen Sie dieses Feld aus.</target>
+            </trans-unit>
+            <trans-unit id="validation.error.1221560718" approved="yes">
+                <source>This field is mandatory.</source>
+                <target state="translated">Das Feld darf nicht leer sein.</target>
+            </trans-unit>
+            <trans-unit id="validation.error.1347992400" approved="yes">
+                <source>This field is mandatory.</source>
+                <target state="translated">Dieses Feld ist erforderlich.</target>
+            </trans-unit>
             <trans-unit id="validation.error.1580509091" approved="yes">
                 <source>Please fill out this field</source>
                 <target state="translated">Bitte füllen Sie dieses Feld aus</target>
