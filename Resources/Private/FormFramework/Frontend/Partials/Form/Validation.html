@@ -41,19 +41,21 @@
         <f:variable name="count" value="{f:count(subject: validationResults.flattenedErrors)}"/>
         <f:variable name="title" value="{twforms:form.title(form: form, pattern: pattern, errors: count)}"/>
 
-        <nav class="Form__error-navigation" aria-label="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.nav.errors')}" tabindex="-1"
-             data-title-errors="{title.pattern}" data-title="{title.default} | tollwerk"
+        <nav class="Form__error-navigation"
+             aria-label="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.nav.errors')}" tabindex="-1"
+             data-title-errors="{title.pattern}"
+             data-title="{title.default}"
              {f:if(condition: hidden, then: ' hidden')}>
             <f:variable name="headingKeySingle"
                         value="LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.error"/>
             <f:variable name="headingKeyMultiple"
                         value="LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.errors"/>
-            <f:variable name="headingContent" value="{f:if(condition: '{count} == 1', then: '{f:translate(key: headingKeySingle)}', else: '{f:translate(key: headingKeyMultiple, arguments: \'{0: count}\')}')}"/>
-        <div class="Form__error-navigation__content">
-
-            <h2 id="{form.identifier}-errors"
-                  data-heading-single="{f:translate(key: headingKeySingle)}"
-                  data-heading-multiple="{f:translate(key: headingKeyMultiple)}">
+            <f:variable name="headingContent"
+                        value="{f:if(condition: '{count} == 1', then: '{f:translate(key: headingKeySingle)}', else: '{f:translate(key: headingKeyMultiple, arguments: \'{0: count}\')}')}"/>
+            <h2 class="Heading"
+                id="{formId}-errors"
+                data-heading-single="{f:translate(key: headingKeySingle)}"
+                data-heading-multiple="{f:translate(key: headingKeyMultiple)}">
                 {headingContent}
             </h2>
             <ol class="Form__error-summary">
@@ -73,7 +75,6 @@
                     </li>
                 </f:for>
             </ol>
-        </div>
         </nav>
     </f:section>
 </html>
