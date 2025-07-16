@@ -1,7 +1,5 @@
-<f:asset.script identifier="powermailmultistep" src="EXT:tw_forms/Resources/Public/Javascript/Powermail/MoreStepForm.min.js"/>
-<f:asset.script identifier="powermailvalidation" src="EXT:tw_forms/Resources/Public/Javascript/Powermail/MoreStepForm.min.js"/>
-
 {namespace vh=In2code\Powermail\ViewHelpers}
+
 <f:layout name="Default" />
 
 Render Powermail Form {form} All Forms with their Pages and their Fields
@@ -14,6 +12,8 @@ Render Powermail Form {form} All Forms with their Pages and their Fields
 
   <f:if condition="{form}">
     <f:then>
+      <f:variable name="formId">{form.title -> f:format.case(mode: 'lower')}-{form.uid}</f:variable>
+
       <div class="container-fluid">
         <f:form
           action="{action}"
