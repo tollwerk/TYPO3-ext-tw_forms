@@ -15,17 +15,20 @@ TYPO3:
                 novalidate: 1
                 translation:
                   translationFiles:
-                    10: 'EXT:form/Resources/Private/FormFramework/Language/locallang.xlf'
-                    20: 'EXT:tw_forms/Resources/Private/FormFramework/Language/locallang_forms.xlf'
+                    10: 'EXT:form/Resources/Private/Language/locallang.xlf'
+                    20: 'EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf'
             Email:
               properties:
                 elementClassAttribute: 'FormEmail FormField__input'
             Checkbox:
               properties:
                 elementClassAttribute: 'FormCheckbox FormField__input'
+            MultiCheckbox:
+              properties:
+                elementClassAttribute: 'FormField__input FormField__multi'
             SingleSelect:
               properties:
-                elementClassAttribute: 'FormSelect'
+                elementClassAttribute: 'FormSelect FormField__input'
             Text:
               properties:
                 elementClassAttribute: 'FormText FormField__input'
@@ -38,4 +41,4 @@ TYPO3:
             RadioButton:
               properties:
                 containerClassAttribute: 'FormRadioButton'
-                elementClassAttribute: ''
+                elementClassAttribute: 'FormField__input FormField__multi'
