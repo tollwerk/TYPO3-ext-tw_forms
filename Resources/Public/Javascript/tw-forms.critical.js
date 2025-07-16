@@ -400,7 +400,7 @@ const PowermailValidators = {
     this.lastErrorString = "";
 
     // Handle group validation
-    this.isGroup = this.element.classList.contains("FormMultiCheckbox");
+    this.isGroup = this.element.classList.contains("FormField__multi");
     if (this.isGroup) {
       // Find primary enhancer for this group
       for (let e = 0; e < this.element.form.elements.length; ++e) {

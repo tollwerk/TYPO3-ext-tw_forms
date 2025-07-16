@@ -1,4 +1,4 @@
-import Utility from './Utility';
+import Utility from './Utility/Utility';
 
 /**
  * Multi-step form handler that manages navigation between fieldsets
