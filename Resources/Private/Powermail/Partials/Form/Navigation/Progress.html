@@ -1,0 +1,34 @@
+<f:comment>
+    <!--
+        Partial: Progress for Powermail Multistep Form
+        Renders list with buttons that navigate to form pages.
+    -->
+</f:comment>
+
+<nav class="Progress"
+     id="form-{formId}-progress"
+     aria-labelledby="form-{formId}-progress-heading">
+    <h2 class="Progress__heading"
+        id="form-{formId}-progress-heading">
+        {f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.steps')}
+    </h2>
+    <ol class="Progress__list">
+        <f:for each="{form.pages}"
+               as="page"
+               iteration="iterationPages">
+            <li class="Progress__item">
+                <button
+                        class="Progress__button{f:if(condition:iterationPages.isFirst,then:' is-active')}"
+                        type="button"
+                        data-powermail-morestep-button
+                        data-powermail-default-label="{page.title}"
+                        data-powermail-morestep-current="{iterationPages.index}"
+                        data-powermail-morestep-show="{iterationPages.index}"
+                        data-powermail-morestep-success="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.complete')}"
+                >
+                    {page.title}
+                </button>
+            </li>
+        </f:for>
+    </ol>
+</nav>
