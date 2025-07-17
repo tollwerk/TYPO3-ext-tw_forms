@@ -1,0 +1,29 @@
+* {
+	box-sizing: border-box;
+	font-family: sans-serif;
+}
+
+body {
+	margin: 0;
+}
+
+.Progress__button {
+	border: none;
+
+	background-color: transparent;
+	color: #0000cc;
+
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.Form__error-navigation--visible {
+	border: 5px solid #a31b1a;
+	padding: 1.5rem;
+	margin: 1rem 0;
+}
+
+.Progress__button.is-active          { background: #1e88e5; color: #fff; }
+.Progress__button.is-valid           { background: #43a047; color: #fff; }
+.Progress__button.is-disabled        { background: #e0e0e0; color: #aaa; cursor: not-allowed; }
+.Progress__button[disabled]          { pointer-events: none; opacity: 0.5; }
