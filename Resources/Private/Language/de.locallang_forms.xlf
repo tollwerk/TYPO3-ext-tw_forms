@@ -10,7 +10,7 @@
             </trans-unit>
             <trans-unit id="form.steps" approved="yes">
                 <source>Form progress</source>
-                <target state="translated">Formular-Fortschritt</target>
+                <target state="translated">Fortschritt</target>
             </trans-unit>
             <trans-unit id="form.steps.pattern" approved="yes">
                 <source>Step %s of %s | %s</source>
