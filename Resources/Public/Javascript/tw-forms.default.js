@@ -77,6 +77,7 @@
             }
             if (!this.updateErrorSummary(errorMessages)) {
                 this.errorNavigation.removeAttribute('hidden');
+                this.errorNavigation.classList.add('Form__error-navigation--visible');
                 if (e) {
                     this.errorNavigation.focus();
                     e.preventDefault();

@@ -1,44 +1,66 @@
 import Utility from './Utility/Utility';
 
 /**
- * Multi-step form handler that manages navigation between fieldsets
- * and validates fields before allowing forward navigation
+ * Multi-step form handler that manages navigation between fieldsets,
+ * validates fields before allowing forward navigation,
+ * and visually updates progress navigation (status, tick, disable)
+ *
+ * Patched: Each step keeps its own pristine-flag (no error hints in new step
+ * until "Next" has been tried at least once inside it).
  */
-
 export default function MoreStepForm() {
   'use strict';
 
-  // CSS class names for form elements
+  // CSS class constants for form identification and styling
   let formClass = 'powermail_morestep';
   let fieldsetClass = 'powermail_fieldset';
-  let buttonActiveClass = 'btn-primary';
+  let buttonActiveClass = 'is-active';
+  let buttonValidClass = 'is-valid';
+  let buttonDisabledClass = 'is-disabled';
 
+  // WeakMap to track validation progress for each form instance (index of last valid step)
+  const formValidUntilMap = new WeakMap();
   let that = this;
 
   /**
    * Initialize the multi-step form functionality
+   * Sets up event listeners and initializes all forms on the page
    */
   this.initialize = function() {
+    // Initialize pristine-step flags for all multistep forms
+    document.querySelectorAll('form.' + formClass).forEach(form => {
+      const fieldsets = form.querySelectorAll('.' + fieldsetClass);
+      // Pristine array, one value per step: true = untouched, false = ready for validation
+      form._stepPristine = Array(fieldsets.length).fill(true);
+    });
+
     showListener();
     initializeForms();
   };
 
   /**
-   * Show a specific fieldset by index and hide all others
-   * @param {number} index - The index of the fieldset to show
-   * @param {HTMLElement} form - The form element containing the fieldsets
+   * Display a specific fieldset and update navigation state
+   * @param {number} index - Index of the fieldset to show
+   * @param {HTMLFormElement} form - The form element containing the fieldsets
    */
   this.showFieldset = function(index, form) {
     if (form.classList.contains(formClass)) {
       hideAllFieldsets(form);
       let fieldsets = getAllFieldsetsOfForm(form);
       Utility.showElement(fieldsets[index]);
-      updateButtonStatus(form);
+      updateButtonStatus(form, index, formValidUntilMap.get(form) || -1);
+
+      // Hide error navigation when switching steps to avoid confusion
+      if (form.enhancer && form.enhancer.errorNavigation) {
+        form.enhancer.errorNavigation.setAttribute('hidden', 'hidden');
+        form.enhancer.errorNavigation.classList.remove('Form__error-navigation--visible');
+      }
     }
   };
 
   /**
    * Initialize all multi-step forms found on the page
+   * Searches for forms with the specified class and initializes each one
    */
   let initializeForms = function() {
     let moreStepForms = document.querySelectorAll('form.' + formClass);
@@ -48,62 +70,129 @@ export default function MoreStepForm() {
   };
 
   /**
-   * Initialize a single form by showing the first fieldset
-   * @param {HTMLElement} form - The form element to initialize
+   * Initialize a single form instance
+   * Sets initial validation state and shows the first fieldset
+   * @param {HTMLFormElement} form - The form to initialize
    */
   let initializeForm = function(form) {
+    formValidUntilMap.set(form, -1); // -1 means no steps validated yet
     that.showFieldset(0, form);
+    updateButtonStatus(form, 0, -1);
+    // pristine flags array is already set in this.initialize()
   };
 
   /**
-   * Add event listeners to all navigation buttons
+   * Validate all visible fields in the current step
+   * BUT: Only runs validation as normal.
+   * The pristine logic is handled at field-level, not here.
+   * @param {HTMLFormElement} form - The form to validate
+   * @returns {boolean} True if all fields are valid, false otherwise
+   */
+  let validateCurrentStep = function(form) {
+    if (typeof window.isFieldVisible !== 'function') {
+      return true;
+    }
+    const visibleFields = Array.from(form.elements).filter((el) =>
+        window.isFieldVisible(el) && el.enhancer
+    );
+
+    let isValid = true;
+    visibleFields.forEach((field) => {
+      const errors = field.enhancer.validate(true);
+      if (Object.keys(errors).length > 0) { isValid = false; }
+    });
+
+    return isValid;
+  };
+
+  /**
+   * Set up event listeners for navigation buttons and progress indicators
+   * Handles both step navigation buttons and progress bar clicks
    */
   let showListener = function () {
+    // Handle step navigation buttons (Next/Previous)
     let moreButtons = document.querySelectorAll('[data-powermail-morestep-show]');
     for (let i = 0; i < moreButtons.length; i++) {
       moreButtons[i].addEventListener('click', function (event) {
         event.preventDefault();
-
         let form = event.target.closest('form');
         let currentIndex = getActivePageIndex(form);
         let nextIndex = parseInt(event.target.getAttribute('data-powermail-morestep-show'), 10);
 
         // Only validate when moving forward through the form
         if (nextIndex > currentIndex) {
-          // Get all visible fields that have an enhancer (validation)
-          const visibleFields = Array.from(form.elements).filter((el) =>
-              window.isFieldVisible(el) && el.enhancer
-          );
+          // Mark current step as dirty (not pristine)
+          if (Array.isArray(form._stepPristine)) {
+            form._stepPristine[currentIndex] = false;
+          }
 
-          let isValid = true;
-          // Validate all visible fields
-          visibleFields.forEach((field) => {
-            const errors = field.enhancer.validate(true);
-            if (Object.keys(errors).length > 0) {
-              isValid = false;
-            }
-          });
-
-          // If validation fails, show error navigation and stop
-          if (!isValid) {
-            // Make error navigation visible if it exists
+          if (!validateCurrentStep(form)) {
+            // If validation fails, show error navigation and prevent step change
             if (form.enhancer && form.enhancer.errorNavigation) {
               form.enhancer.errorNavigation.removeAttribute('hidden');
+              form.enhancer.errorNavigation.classList.add('Form__error-navigation--visible');
               form.enhancer.errorNavigation.focus();
             }
             return false;
+          } else {
+            // Update validation progress - track the highest validated step
+            let validUntil = Math.max(currentIndex, formValidUntilMap.get(form) || -1);
+            formValidUntilMap.set(form, validUntil);
           }
         }
 
-        // Navigate to the requested fieldset
+        // Update UI and navigate to the requested step
+        // --- PATCH: DO NOT reset any pristine or dirty-flag here!
+        updateButtonStatus(form, nextIndex, formValidUntilMap.get(form) || -1);
         that.showFieldset(nextIndex, form);
       });
+    }
+
+    // Handle progress bar navigation (clicking on progress indicators)
+    let progressNavs = document.querySelectorAll('nav.Progress');
+    for (let pi = 0; pi < progressNavs.length; pi++) {
+      let progressButtons = progressNavs[pi].querySelectorAll('.Progress__button');
+      for (let j = 0; j < progressButtons.length; j++) {
+        progressButtons[j].addEventListener('click', function(event) {
+          event.preventDefault();
+          let form = event.target.closest('form');
+          let index = Array.from(progressButtons).indexOf(event.target);
+          let validUntil = formValidUntilMap.get(form) || -1;
+          let currentIndex = getActivePageIndex(form);
+
+          // Only allow navigation to validated steps or the next immediate step
+          if (index > validUntil + 1) return false;
+
+          // If moving forward to an unvalidated step, validate current step first
+          if (index > currentIndex && index > validUntil) {
+            // --- PATCH: Mark current step as "dirty" before validating!
+            if (Array.isArray(form._stepPristine)) {
+              form._stepPristine[currentIndex] = false;
+            }
+            if (!validateCurrentStep(form)) {
+              if (form.enhancer && form.enhancer.errorNavigation) {
+                form.enhancer.errorNavigation.removeAttribute('hidden');
+                form.enhancer.errorNavigation.classList.add('Form__error-navigation--visible');
+                form.enhancer.errorNavigation.focus();
+              }
+              return false;
+            } else {
+              // Update validation progress
+              let newValidUntil = Math.max(currentIndex, validUntil);
+              formValidUntilMap.set(form, newValidUntil);
+              validUntil = newValidUntil;
+            }
+          }
+          updateButtonStatus(form, index, validUntil);
+          that.showFieldset(index, form);
+        });
+      }
     }
   };
 
   /**
    * Hide all fieldsets in the given form
-   * @param {HTMLElement} form - The form containing the fieldsets
+   * @param {HTMLFormElement} form - The form whose fieldsets should be hidden
    */
   let hideAllFieldsets = function(form) {
     let fieldsets = getAllFieldsetsOfForm(form);
@@ -113,45 +202,73 @@ export default function MoreStepForm() {
   };
 
   /**
-   * Update the visual status of navigation buttons
-   * Adds active class to the current step button
-   * @param {HTMLElement} form - The form containing the buttons
-   */
-  let updateButtonStatus = function(form) {
-    let buttons = form.querySelectorAll('[data-powermail-morestep-current]');
-    let activePageIndex = getActivePageIndex(form);
-    for (let i = 0; i < buttons.length; i++) {
-      buttons[i].classList.remove(buttonActiveClass);
-      if (i === activePageIndex) {
-        buttons[i].classList.add(buttonActiveClass);
-      }
-    }
-  };
-
-  /**
-   * Get index of current visible fieldset
-   * @param {HTMLElement} form - The form to check
-   * @returns {number} The index of the currently visible fieldset
+   * Get the index of the currently active/visible fieldset
+   * @param {HTMLFormElement} form - The form to check
+   * @returns {number} Index of the active fieldset, or 0 if none found
    */
   let getActivePageIndex = function(form) {
     let fieldsets = getAllFieldsetsOfForm(form);
     for (let i = 0; i < fieldsets.length; i++) {
-      if (fieldsets[i].style.display !== 'none') {
-        return i;
-      }
+      if (fieldsets[i].style.display !== 'none') { return i; }
     }
+    return 0;
   }
 
   /**
-   * Get all fieldsets within a form
-   * @param {HTMLElement} form - The form to search in
-   * @returns {NodeList} All fieldsets found in the form
+   * Get all fieldsets belonging to a specific form
+   * @param {HTMLFormElement} form - The form to search within
+   * @returns {NodeList} All fieldsets with the specified class
    */
   let getAllFieldsetsOfForm = function(form) {
     return form.querySelectorAll('.' + fieldsetClass);
   };
+
+  /**
+   * Update the visual state of navigation buttons based on current step and validation progress
+   * @param {HTMLFormElement} form - The form containing the buttons
+   * @param {number} activeIdx - Index of the currently active step
+   * @param {number} validUntil - Highest step index that has been validated
+   */
+  let updateButtonStatus = function(form, activeIdx, validUntil) {
+    let buttons = form.querySelectorAll('.Progress__button, [data-powermail-morestep-current]');
+    validUntil = typeof validUntil === 'number' ? validUntil : -1;
+
+    for (let i = 0; i < buttons.length; i++) {
+      buttons[i].classList.remove(buttonActiveClass, buttonValidClass, buttonDisabledClass);
+      buttons[i].removeAttribute('disabled');
+      buttons[i].removeAttribute('aria-current');
+      let baseLabel = buttons[i].dataset.powermailDefaultLabel || buttons[i].textContent.trim();
+      let successLabel = buttons[i].dataset.powermailMorestepSuccess || '';
+
+      if (i === activeIdx) {
+        buttons[i].classList.add(buttonActiveClass);
+        buttons[i].textContent = baseLabel;
+        buttons[i].setAttribute('aria-current', 'step');
+      } else if (i <= validUntil) {
+        buttons[i].classList.add(buttonValidClass);
+        buttons[i].textContent = `${baseLabel} ${successLabel}`;
+      } else if (i > validUntil + 1) {
+        buttons[i].classList.add(buttonDisabledClass);
+        buttons[i].setAttribute('disabled','disabled');
+        buttons[i].textContent = baseLabel;
+      } else {
+        buttons[i].textContent = baseLabel;
+      }
+    }
+  };
 }
 
-// Initialize the multi-step form functionality
-const moreStepForm = new MoreStepForm();
-moreStepForm.initialize();
+// --- No change needed in DOMContentLoaded init logic ---
+document.addEventListener('DOMContentLoaded', function() {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeWhenReady);
+  } else {
+    initializeWhenReady();
+  }
+  function initializeWhenReady() {
+    setTimeout(function() {
+      const moreStepForm = new MoreStepForm();
+      moreStepForm.initialize();
+    }, 10);
+  }
+});

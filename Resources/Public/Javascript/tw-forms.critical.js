@@ -183,6 +183,34 @@ window.tw_forms = tw_forms;
 })(typeof global !== "undefined" ? global : window, document);
 
 /**
+ * Global dirty flag handling
+ * Used for all forms: no validation before first submit/next, live after
+ */
+
+// Set all forms to pristine ("not dirty") when loaded
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('form').forEach(form => {
+    const fieldsets = form.querySelectorAll('.powermail_fieldset');
+    if (fieldsets.length > 1 && form.classList.contains('powermail_morestep')) {
+      // MultiStep: pristine array for each step
+      form._stepPristine = Array(fieldsets.length).fill(true);
+    } else {
+      // Single-page/Classic: just one global dirty flag
+      form.dataset.dirty = "0";
+    }
+  });
+});
+
+// Trigger dirty after first submit (single-page/global only!)
+document.addEventListener('submit', function(e) {
+  const form = e.target.closest('form');
+  if (form && !Array.isArray(form._stepPristine)) {
+    form.dataset.dirty = "1";
+  }
+}, true);
+
+
+/**
  * Powermail custom validators
  * Additional validation functions for Powermail form fields beyond native HTML5 validation
  */
@@ -399,6 +427,25 @@ const PowermailValidators = {
     this.groupEnhancers = [];
     this.lastErrorString = "";
 
+    this.element.addEventListener("input", (e) => {
+      const form = e.target.form;
+
+      // Multistep powermail form: use pristine array if present
+      if (Array.isArray(form._stepPristine)) {
+        const fieldset = e.target.closest('.powermail_fieldset');
+        const fieldsets = Array.from(form.querySelectorAll('.powermail_fieldset'));
+        const stepIdx = fieldsets.indexOf(fieldset);
+        if (form._stepPristine[stepIdx]) return; // pristine: suppress error!
+
+        // Single page form: global dirty (after first submit)
+      } else if (form.dataset.dirty !== "1") {
+        return;
+      }
+
+      this.validate(true); // Now run validation
+    });
+
+
     // Handle group validation
     this.isGroup = this.element.classList.contains("FormField__multi");
     if (this.isGroup) {
@@ -418,16 +465,6 @@ const PowermailValidators = {
       }
     }
 
-    // If this is a group member, register with primary enhancer
-    if (this.isGroup && this.groupPrimaryEnhancer) {
-      this.groupPrimaryEnhancer.groupEnhancers.push(this);
-      this.element.addEventListener(
-        "input",
-        this.validate.bind(this.groupPrimaryEnhancer, true)
-      );
-      return;
-    }
-
     // Initialize validation properties
     this.lastConstraints = 0;
     this.errorMessages = {};
@@ -440,7 +477,6 @@ const PowermailValidators = {
     if (this.errorMessageBag) {
       this.setupErrorMessages();
       this.setupInitialConstraints();
-      this.element.addEventListener("input", this.validate.bind(this, true));
     }
   }
 
