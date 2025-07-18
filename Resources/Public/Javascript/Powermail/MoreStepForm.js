@@ -44,6 +44,7 @@ export default function MoreStepForm() {
    * @param {HTMLFormElement} form - The form element containing the fieldsets
    */
   this.showFieldset = function(index, form) {
+    console.log('Zeige Step:', index);
     if (form.classList.contains(formClass)) {
       hideAllFieldsets(form);
       let fieldsets = getAllFieldsetsOfForm(form);
@@ -54,6 +55,16 @@ export default function MoreStepForm() {
       if (form.enhancer && form.enhancer.errorNavigation) {
         form.enhancer.errorNavigation.setAttribute('hidden', 'hidden');
         form.enhancer.errorNavigation.classList.remove('Form__error-navigation--visible');
+      }
+
+      const currentIndex = index;
+      if (Array.isArray(form._stepPristine) && form._stepPristine[currentIndex]) {
+        const fieldset = getAllFieldsetsOfForm(form)[currentIndex];
+        fieldset.querySelectorAll('input, select, textarea').forEach(el => {
+          if (el.enhancer && typeof el.enhancer.setPristine === 'function') {
+            el.enhancer.setPristine(true); // korrekt!
+          }
+        });
       }
     }
   };
@@ -77,33 +88,33 @@ export default function MoreStepForm() {
   let initializeForm = function(form) {
     formValidUntilMap.set(form, -1); // -1 means no steps validated yet
     that.showFieldset(0, form);
-    updateButtonStatus(form, 0, -1);
     // pristine flags array is already set in this.initialize()
   };
 
   /**
    * Validate all visible fields in the current step
-   * BUT: Only runs validation as normal.
-   * The pristine logic is handled at field-level, not here.
    * @param {HTMLFormElement} form - The form to validate
    * @returns {boolean} True if all fields are valid, false otherwise
    */
-  let validateCurrentStep = function(form) {
-    if (typeof window.isFieldVisible !== 'function') {
-      return true;
-    }
+  let validateCurrentStep = function(form, { showErrors = true } = {}) {
+    if (typeof window.isFieldVisible !== 'function') return true;
+
     const visibleFields = Array.from(form.elements).filter((el) =>
         window.isFieldVisible(el) && el.enhancer
     );
 
     let isValid = true;
     visibleFields.forEach((field) => {
-      const errors = field.enhancer.validate(true);
-      if (Object.keys(errors).length > 0) { isValid = false; }
+      const errors = field.enhancer.validate(true, { force: showErrors });
+      if (Object.keys(errors).length > 0) {
+        isValid = false;
+      }
     });
 
     return isValid;
   };
+
+
 
   /**
    * Set up event listeners for navigation buttons and progress indicators
@@ -111,7 +122,8 @@ export default function MoreStepForm() {
    */
   let showListener = function () {
     // Handle step navigation buttons (Next/Previous)
-    let moreButtons = document.querySelectorAll('[data-powermail-morestep-show]');
+    let moreButtons = document.querySelectorAll('.pull-right');
+
     for (let i = 0; i < moreButtons.length; i++) {
       moreButtons[i].addEventListener('click', function (event) {
         event.preventDefault();
@@ -121,30 +133,55 @@ export default function MoreStepForm() {
 
         // Only validate when moving forward through the form
         if (nextIndex > currentIndex) {
-          // Mark current step as dirty (not pristine)
-          if (Array.isArray(form._stepPristine)) {
-            form._stepPristine[currentIndex] = false;
-          }
+          // Zuerst prüfen, ob valid
+          const isValid = (() => {
+            if (Array.isArray(form._stepPristine)) {
+              form._stepPristine[currentIndex] = false;
+              const fieldset = getAllFieldsetsOfForm(form)[currentIndex];
+              fieldset.querySelectorAll('input, select, textarea').forEach(el => {
+                if (el.enhancer?.setPristine) {
+                  el.enhancer.setPristine(false);
+                }
+              });
+            }
+            return validateCurrentStep(form, { showErrors: true });
+          })();
 
-          if (!validateCurrentStep(form)) {
-            // If validation fails, show error navigation and prevent step change
+          if (!isValid) {
+            // Jetzt pristine auf false setzen → aktiviert Live-Validierung
+            if (Array.isArray(form._stepPristine)) {
+              form._stepPristine[currentIndex] = false;
+
+              const fieldset = getAllFieldsetsOfForm(form)[currentIndex];
+              fieldset.querySelectorAll('input, select, textarea').forEach(el => {
+                if (el.enhancer && typeof el.enhancer.setPristine === 'function') {
+                  el.enhancer.setPristine(false);
+                }
+              });
+            }
+
+            // Fehlernavigation einblenden
             if (form.enhancer && form.enhancer.errorNavigation) {
               form.enhancer.errorNavigation.removeAttribute('hidden');
               form.enhancer.errorNavigation.classList.add('Form__error-navigation--visible');
               form.enhancer.errorNavigation.focus();
             }
+
             return false;
-          } else {
-            // Update validation progress - track the highest validated step
-            let validUntil = Math.max(currentIndex, formValidUntilMap.get(form) || -1);
-            formValidUntilMap.set(form, validUntil);
+          }
+
+          // Wenn alles ok → Step-Wechsel
+          let newValidUntil = Math.max(currentIndex, formValidUntilMap.get(form) || -1);
+          formValidUntilMap.set(form, newValidUntil);
+          that.showFieldset(nextIndex, form);
+          updateButtonStatus(form, nextIndex, newValidUntil);
+
+          // Fehlernavigation ausblenden
+          if (form.enhancer && form.enhancer.errorNavigation) {
+            form.enhancer.errorNavigation.setAttribute('hidden', 'hidden');
+            form.enhancer.errorNavigation.classList.remove('Form__error-navigation--visible');
           }
         }
-
-        // Update UI and navigate to the requested step
-        // --- PATCH: DO NOT reset any pristine or dirty-flag here!
-        updateButtonStatus(form, nextIndex, formValidUntilMap.get(form) || -1);
-        that.showFieldset(nextIndex, form);
       });
     }
 
@@ -160,15 +197,16 @@ export default function MoreStepForm() {
           let validUntil = formValidUntilMap.get(form) || -1;
           let currentIndex = getActivePageIndex(form);
 
-          // Only allow navigation to validated steps or the next immediate step
-          if (index > validUntil + 1) return false;
+          // Only allow navigation to validate steps or the next immediate step
+          if (index > validUntil) return false;
 
           // If moving forward to an unvalidated step, validate current step first
           if (index > currentIndex && index > validUntil) {
-            // --- PATCH: Mark current step as "dirty" before validating!
+            // Mark the current step as dirty
             if (Array.isArray(form._stepPristine)) {
               form._stepPristine[currentIndex] = false;
             }
+
             if (!validateCurrentStep(form)) {
               if (form.enhancer && form.enhancer.errorNavigation) {
                 form.enhancer.errorNavigation.removeAttribute('hidden');
@@ -177,13 +215,12 @@ export default function MoreStepForm() {
               }
               return false;
             } else {
-              // Update validation progress
-              let newValidUntil = Math.max(currentIndex, validUntil);
-              formValidUntilMap.set(form, newValidUntil);
-              validUntil = newValidUntil;
+              // Update validation progress - this step is now validated
+              formValidUntilMap.set(form, currentIndex);
             }
           }
-          updateButtonStatus(form, index, validUntil);
+
+          // Navigation successful - show fieldset
           that.showFieldset(index, form);
         });
       }
@@ -241,17 +278,21 @@ export default function MoreStepForm() {
       let successLabel = buttons[i].dataset.powermailMorestepSuccess || '';
 
       if (i === activeIdx) {
+        // Current active step
         buttons[i].classList.add(buttonActiveClass);
         buttons[i].textContent = baseLabel;
         buttons[i].setAttribute('aria-current', 'step');
       } else if (i <= validUntil) {
+        // Validated step - show success label
         buttons[i].classList.add(buttonValidClass);
-        buttons[i].textContent = `${baseLabel} ${successLabel}`;
+        buttons[i].textContent = successLabel ? `${baseLabel} ${successLabel}` : baseLabel;
       } else if (i > validUntil + 1) {
+        // Disabled step (more than one step ahead)
         buttons[i].classList.add(buttonDisabledClass);
         buttons[i].setAttribute('disabled','disabled');
         buttons[i].textContent = baseLabel;
       } else {
+        // Next available step
         buttons[i].textContent = baseLabel;
       }
     }
