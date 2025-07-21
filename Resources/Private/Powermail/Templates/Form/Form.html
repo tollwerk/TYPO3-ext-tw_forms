@@ -15,7 +15,7 @@ Render Powermail Form
   <f:if condition="{form}">
     <f:then>
       <f:comment><!-- Give id to form in case several are present on one site --></f:comment>
-      <f:variable name="formId">{form.title -> f:format.case(mode: 'lower')}-{form.uid}</f:variable>
+      <f:variable name="formId">powermail-form-{form.uid}</f:variable>
 
       <div class="Powermail">
         <f:form
