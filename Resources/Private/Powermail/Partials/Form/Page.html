@@ -13,7 +13,11 @@
     <f:if condition="{form.pages -> f:count()} > 1">
         <div class="powermail_fieldwrap powermail_tab_navigation">
             <f:if condition="!{iterationPages.isLast}">
-                <button type="button" class="btn btn-primary pull-right" data-powermail-morestep-show="{iterationPages.cycle}" data-powermail-morestep-next>&gt;</button>
+                <button class="Powermail__button Powermail__button--next"
+                        data-powermail-morestep-show="{iterationPages.cycle}"
+                        data-powermail-morestep-next>
+                    {f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.next')}
+                </button>
             </f:if>
         </div>
     </f:if>

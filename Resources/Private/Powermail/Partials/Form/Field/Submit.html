@@ -1,18 +1,18 @@
 
 <f:if condition="{iterationPages.isLast}">
-	<div class="powermail_fieldwrap powermail_fieldwrap_type_submit powermail_fieldwrap_{field.marker} {field.css} {settings.styles.framework.fieldAndLabelWrappingClasses}">
+	<div class="{settings.styles.framework.fieldAndLabelWrappingClasses} powermail_fieldwrap powermail_fieldwrap_type_submit powermail_fieldwrap_{field.marker}{f:if(condition: '{field.css}', then: ' {field.css}')}">
 		<div class="{settings.styles.framework.fieldWrappingClasses} {settings.styles.framework.offsetClasses}">
 			<f:if condition="{novalidate}">
 				<f:then>
 					<f:form.button name="{name}" value="{value}" property="{property}" type="{btnType}"
-								   class="CallToAction"
+								   class="Powermail__button Powermail__button--submit"
 								   formnovalidate="formnovalidate">
 						{field.title -> f:format.raw()}
 					</f:form.button>
 				</f:then>
 				<f:else>
 					<f:form.button name="{name}" value="{value}" property="{poperty}" type="{btnType}"
-								   class="CallToAction">
+								   class="Powermail__button Powermail__button--submit">
 						{field.title -> f:format.raw()}
 					</f:form.button>
 				</f:else>
