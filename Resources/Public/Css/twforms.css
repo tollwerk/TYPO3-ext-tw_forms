@@ -7,23 +7,125 @@ body {
 	margin: 0;
 }
 
-.Progress__button {
+main {
+	padding: 0 1.5rem;
+}
+
+fieldset {
+	padding: 0;
 	border: none;
-
-	background-color: transparent;
-	color: #0000cc;
-
-	text-decoration: underline;
-	cursor: pointer;
+	margin: 0;
 }
 
 .Form__error-navigation--visible {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+
 	border: 5px solid #a31b1a;
 	padding: 1.5rem;
 	margin: 1rem 0;
 }
 
-.Progress__button.is-active          { background: #1e88e5; color: #fff; }
-.Progress__button.is-valid           { background: #43a047; color: #fff; }
-.Progress__button.is-disabled        { background: #e0e0e0; color: #aaa; cursor: not-allowed; }
-.Progress__button[disabled]          { pointer-events: none; opacity: 0.5; }
+.Form__error-heading {
+	width: calc(100% - 3rem);
+	padding-left: 1rem;
+	margin: 0;
+}
+
+.FormField--has-error {
+	& .FormField__input {
+		border: 3px solid #ad0c01;
+		box-shadow: 0 0 0 2px #fff, 0 0 0 4px #ad0c01;
+	}
+
+	& .Powermail__error-icon {
+		display: block;
+	}
+}
+
+.FormField + .FormField {
+	margin-top: 1rem;
+}
+
+.FormField__label {
+	display: block;
+	margin-bottom: .5em;
+
+	font-weight: 600;
+}
+
+.FormField__input {
+	display: block;
+	width: 100%;
+	padding: .5em;
+	border: 2px solid black;
+}
+
+legend {
+	padding: 0;
+	margin-bottom: 1em;
+
+	font-weight: bold;
+	font-size: 1.2rem;
+}
+
+.Progress__button {
+	padding: 0;
+	border: none;
+	margin: 0;
+
+	background-color: transparent;
+	color: rgb(0, 0, 238);
+
+	font-size: 1rem;
+
+	text-decoration: underline;
+	cursor: pointer;
+
+	&.is-disabled {
+		color: #a5a5a5;
+	}
+}
+
+.Powermail__error {
+	display: flex;
+	align-items: center;
+	margin-block: .5em;
+
+	color: #ad0c01;
+
+	font-weight: 700;
+
+	& p {
+		margin: 0;
+	}
+}
+
+.Powermail__error-icon {
+	display: none;
+	margin-right: .25rem;
+}
+
+.Powermail__description {
+	margin-top: .5em;
+
+	& p {
+		margin: 0;
+	}
+}
+
+.Powermail__button {
+	display: block;
+	padding: .5em 1em;
+	border: 2px solid black;
+	margin-top: 1rem;
+
+	background: white;
+
+	cursor: pointer;
+
+	text-align: center;
+	text-decoration: none;
+	font-weight: bold;
+}
