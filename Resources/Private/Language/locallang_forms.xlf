@@ -13,6 +13,9 @@
             <trans-unit id="form.steps.pattern">
                 <source>Step %s of %s | %s</source>
             </trans-unit>
+            <trans-unit id="form.next">
+                <source>Next</source>
+            </trans-unit>
             <trans-unit id="form.required">
                 <source>(required)</source>
             </trans-unit>

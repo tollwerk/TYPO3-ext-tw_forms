@@ -16,6 +16,10 @@
                 <source>Step %s of %s | %s</source>
                 <target state="translated">Schritt %s von %s | %s</target>
             </trans-unit>
+            <trans-unit id="form.next" approved="yes">
+                <source>Next</source>
+                <target state="translated">Weiter</target>
+            </trans-unit>
             <trans-unit id="form.required" approved="yes">
                 <source>(required)</source>
                 <target state="translated">(erforderlich)</target>
