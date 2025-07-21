@@ -73,7 +73,7 @@
            * @returns {boolean} True if class exists
            */
           contains: (className) =>
-            this.className.baseVal.split(" ").indexOf(className) !== -1,
+              this.classList.contains(className),
           /**
            * Add a class to SVG element
            * @param {string} className - Class name to add
@@ -186,8 +186,6 @@ window.tw_forms = tw_forms;
  * Global dirty flag handling
  * Used for all forms: no validation before first submit/next, live after
  */
-
-// Set all forms to pristine ("not dirty") when loaded
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('form').forEach(form => {
     const fieldsets = form.querySelectorAll('.powermail_fieldset');
@@ -436,32 +434,46 @@ const PowermailValidators = {
         const fieldsets = Array.from(form.querySelectorAll('.powermail_fieldset'));
         const stepIdx = fieldsets.indexOf(fieldset);
         if (form._stepPristine[stepIdx]) return; // pristine: suppress error!
-
-        // Single page form: global dirty (after first submit)
       } else if (form.dataset.dirty !== "1") {
-        return;
+        return; // pristine: no validation yet
       }
 
-      this.validate(true); // Now run validation
+      // 👉 For grouped fields, delegate validation to primary
+      if (this.isGroup && this.groupPrimaryEnhancer && this !== this.groupPrimaryEnhancer) {
+        this.groupPrimaryEnhancer.validate(true);
+      } else {
+        this.validate(true);
+      }
     });
 
 
     // Handle group validation
     this.isGroup = this.element.classList.contains("FormField__multi");
+
     if (this.isGroup) {
       // Find primary enhancer for this group
-      for (let e = 0; e < this.element.form.elements.length; ++e) {
-        const elementId = this.element.form.elements[e].id;
-        const elementName = this.element.form.elements[e].name;
-        if (
-          elementId &&
-          elementName &&
-          this.element.name === elementName &&
-          this.element.id !== elementId
-        ) {
-          this.groupPrimaryEnhancer = this.element.form.elements[e].enhancer;
-          break;
-        }
+      const groupName = this.element.name;
+      const formElements = Array.from(this.element.form.elements);
+
+      const groupElements = formElements.filter(
+          (el) =>
+              el.name === groupName &&
+              el !== this.element &&
+              el.classList.contains("FormField__multi")
+      );
+
+      const isFirstInGroup = !groupElements.some((el) => el.compareDocumentPosition(this.element) & Node.DOCUMENT_POSITION_PRECEDING);
+
+      if (isFirstInGroup) {
+        this.groupEnhancers = [this];
+        groupElements.forEach((el) => {
+          if (el.enhancer) {
+            this.groupEnhancers.push(el.enhancer);
+            el.enhancer.groupPrimaryEnhancer = this;
+          }
+        });
+      } else {
+        this.groupPrimaryEnhancer = null;
       }
     }
 
@@ -540,13 +552,25 @@ const PowermailValidators = {
     });
   };
 
+  FormField.prototype.setPristine = function (pristine) {
+    this.pristine = pristine;
+    if (pristine) {
+      this.updateErrorMessageBag(0, {});
+    }
+  }
+
   /**
    * Validate form field and return error messages
    * Performs comprehensive validation including native HTML5 and custom Powermail validators
-   * @param {boolean} includeMissing - Whether to include missing value validation
    * @returns {Object} Object containing validation error messages
+   * @param showErrors
+   * @param options
    */
-  FormField.prototype.validate = function validate(includeMissing) {
+  FormField.prototype.validate = function validate(showErrors = false, options = {}) {
+    if (this.pristine && !(options && options.force)) {
+      return {};
+    }
+
     // Prevent recursive validation calls
     if (this.recursiveErrorMessages) {
       return this.recursiveErrorMessages;
@@ -685,10 +709,12 @@ const PowermailValidators = {
 
     // Only update if there are actual changes
     if (
-      constraints !== this.lastConstraints ||
-      hasErrors !== this.lastHadErrors ||
-      errorString !== this.lastErrorString
+      constraints !== this.lastConstraints || this.pristine !== this.lastPristine ||
+        errorString !== this.lastErrorString
     ) {
+      this.lastConstraints = constraints;
+      this.lastPristine = this.pristine;
+      this.lastErrorString = errorString;
       // Update field and wrapper states
       if (hasErrors) {
         this.errorMessageBag.removeAttribute("hidden");
@@ -701,8 +727,8 @@ const PowermailValidators = {
       }
 
       // Clear existing error messages
-      while (this.errorMessageBag.childNodes.length) {
-        this.errorMessageBag.removeChild(this.errorMessageBag.lastChild);
+      while (this.errorMessageBag.firstChild) {
+        this.errorMessageBag.removeChild(this.errorMessageBag.firstChild);
       }
 
       // Add new error messages
@@ -718,20 +744,11 @@ const PowermailValidators = {
       }
 
       // Update tracking properties
-      this.lastConstraints = constraints;
-      this.lastHadErrors = hasErrors;
-      this.lastErrorString = errorString;
       this.focusWrapper();
 
-      // Trigger form update asynchronously
-      if (typeof Promise !== "undefined" && Promise.resolve) {
-        Promise.resolve().then(() => {
-          this.element.form.enhancer.update();
-        });
-      } else {
-        setTimeout(() => {
-          this.element.form.enhancer.update();
-        }, 0);
+      // Update error summary
+      if (typeof this.element.form.enhancer?.update === "function") {
+        queueMicrotask(() => this.element.form.enhancer.update());
       }
     }
   };

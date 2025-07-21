@@ -44,7 +44,6 @@ export default function MoreStepForm() {
    * @param {HTMLFormElement} form - The form element containing the fieldsets
    */
   this.showFieldset = function(index, form) {
-    console.log('Zeige Step:', index);
     if (form.classList.contains(formClass)) {
       hideAllFieldsets(form);
       let fieldsets = getAllFieldsetsOfForm(form);
@@ -105,7 +104,9 @@ export default function MoreStepForm() {
 
     let isValid = true;
     visibleFields.forEach((field) => {
-      const errors = field.enhancer.validate(true, { force: showErrors });
+      // Only force validation if showErrors or field is not pristine
+      const force = !field.enhancer.pristine || showErrors;
+      const errors = field.enhancer.validate(true, { force });
       if (Object.keys(errors).length > 0) {
         isValid = false;
       }

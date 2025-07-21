@@ -113,23 +113,20 @@
         }
 
         // Run through all invalid fields and create error descriptions & links
+        // Run through all invalid fields and create error descriptions & links
         for (const f in errorMessages) {
             if (Object.prototype.hasOwnProperty.call(errorMessages, f)) {
-                if (this.fields[f] && window.isFieldVisible(this.fields[f].element)) {
-                    errorCount += 1;
-                    const errorLink = d.createElement('a');
-                    errorLink.className = 'Form__error-link';
-                    errorLink.href = `#${f}`;
-
-                    const uniqueMessages = [...new Set(Object.values(errorMessages[f]))];
-                    errorLink.textContent = uniqueMessages.join('; ');
-
-                    errorLink.addEventListener('click', errorLinkHandler.bind(this));
-                    const errorListItem = d.createElement('li');
-                    errorListItem.className = 'Form__error-description';
-                    errorListItem.appendChild(errorLink);
-                    this.errorSummary.appendChild(errorListItem);
-                }
+                errorCount += 1;
+                const errorLink = d.createElement('a');
+                errorLink.className = 'Form__error-link';
+                errorLink.href = `#${f}`;
+                errorLink.textContent = Object.values(errorMessages[f])
+                    .join('; ');
+                errorLink.addEventListener('click', errorLinkHandler.bind(this));
+                const errorListItem = d.createElement('li');
+                errorListItem.className = 'Form__error-description';
+                errorListItem.appendChild(errorLink);
+                this.errorSummary.appendChild(errorListItem);
             }
         }
 
