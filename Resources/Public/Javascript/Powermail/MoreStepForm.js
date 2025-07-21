@@ -123,7 +123,7 @@ export default function MoreStepForm() {
    */
   let showListener = function () {
     // Handle step navigation buttons (Next/Previous)
-    let moreButtons = document.querySelectorAll('.pull-right');
+    let moreButtons = document.querySelectorAll('[data-powermail-morestep-next]');
 
     for (let i = 0; i < moreButtons.length; i++) {
       moreButtons[i].addEventListener('click', function (event) {
@@ -277,6 +277,9 @@ export default function MoreStepForm() {
       buttons[i].removeAttribute('aria-current');
       let baseLabel = buttons[i].dataset.powermailDefaultLabel || buttons[i].textContent.trim();
       let successLabel = buttons[i].dataset.powermailMorestepSuccess || '';
+      let progressStep = buttons[i].closest('.ProgressStep');
+      progressStep.classList.add('ProgressStep--incomplete');
+      progressStep.classList.add('ProgressStep--sibling-incomplete');
 
       if (i === activeIdx) {
         // Current active step
@@ -287,6 +290,8 @@ export default function MoreStepForm() {
         // Validated step - show success label
         buttons[i].classList.add(buttonValidClass);
         buttons[i].textContent = successLabel ? `${baseLabel} ${successLabel}` : baseLabel;
+        progressStep.classList.remove('ProgressStep--incomplete');
+        progressStep.classList.add('ProgressStep--complete');
       } else if (i > validUntil + 1) {
         // Disabled step (more than one step ahead)
         buttons[i].classList.add(buttonDisabledClass);

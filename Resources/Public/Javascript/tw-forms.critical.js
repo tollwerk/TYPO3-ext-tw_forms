@@ -727,9 +727,9 @@ const PowermailValidators = {
       }
 
       // Clear existing error messages
-      while (this.errorMessageBag.firstChild) {
-        this.errorMessageBag.removeChild(this.errorMessageBag.firstChild);
-      }
+      this.errorMessageBag.querySelectorAll("[data-constraint]").forEach((child) => {
+        child.remove();
+      });
 
       // Add new error messages
       for (const constraintKey in errorMessages) {

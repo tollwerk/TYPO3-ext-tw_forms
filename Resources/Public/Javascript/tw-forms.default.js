@@ -33,6 +33,7 @@
                 }
             }
         }
+
         this.initializeErrorSummary(this.element.querySelector('.Form__error-summary'));
     }
 
@@ -88,6 +89,7 @@
         }
 
         this.errorNavigation.setAttribute('hidden', 'hidden');
+        this.errorNavigation.classList.remove('Form__error-navigation--visible');
     };
 
     /**
@@ -131,7 +133,7 @@
         }
 
         // Update the summary heading
-        const summaryHeading = this.errorNavigation.querySelector('.Heading');
+        const summaryHeading = this.errorNavigation.querySelector('.Form__error-heading');
         if (summaryHeading) {
             const templateAttribute = `data-heading-${(errorCount === 1) ? 'single' : 'multiple'}`;
             summaryHeading.textContent = summaryHeading.getAttribute(templateAttribute)

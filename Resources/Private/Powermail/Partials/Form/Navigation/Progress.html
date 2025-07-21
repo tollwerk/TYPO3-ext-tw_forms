@@ -17,17 +17,23 @@
                as="page"
                iteration="iterationPages">
             <li class="Progress__item">
-                <button
-                        class="Progress__button{f:if(condition:iterationPages.isFirst,then:' is-active')}"
-                        type="button"
-                        data-powermail-morestep-button
-                        data-powermail-default-label="{page.title}"
-                        data-powermail-morestep-current="{iterationPages.index}"
-                        data-powermail-morestep-show="{iterationPages.index}"
-                        data-powermail-morestep-success="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.complete')}"
-                >
-                    {page.title}
-                </button>
+                <div class="ProgressStep">
+                    <div class="ProgressStep__graphic">
+                        <div class="ProgressStep__border"></div>
+                        <div class="ProgressStep__ring"></div>
+                    </div>
+                    <button
+                            class="Progress__button{f:if(condition:iterationPages.isFirst,then:' is-active')}"
+                            type="button"
+                            data-powermail-morestep-button
+                            data-powermail-default-label="{page.title}"
+                            data-powermail-morestep-current="{iterationPages.index}"
+                            data-powermail-morestep-show="{iterationPages.index}"
+                            data-powermail-morestep-success="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.complete')}"
+                    >
+                        {page.title}
+                    </button>
+                </div>
             </li>
         </f:for>
     </ol>
