@@ -1,0 +1,8 @@
+config.pageTitleProviders {
+    twforms {
+        provider = Tollwerk\TwForms\PageTitle\FormErrorTitleProvider
+        before = record
+    }
+}
+
+
