@@ -49,8 +49,8 @@
                 <target state="translated">Problematische Formularfelder</target>
             </trans-unit>
             <trans-unit id="form.title.errors" approved="yes">
-                <source>%s errors ⚠️ %s</source>
-                <target state="translated">%s Fehler ⚠️ %s</target>
+                <source>%s errors ⚠️</source>
+                <target state="translated">%s Fehler ⚠️</target>
             </trans-unit>
 
             <!-- Error messages -->

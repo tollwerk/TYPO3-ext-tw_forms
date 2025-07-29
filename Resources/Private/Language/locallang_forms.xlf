@@ -38,7 +38,7 @@
                 <source>Problematic form fields</source>
             </trans-unit>
             <trans-unit id="form.title.errors">
-                <source>%s errors ⚠️ %s</source>
+                <source>%s errors ⚠️</source>
             </trans-unit>
 
             <!-- Error messages -->
