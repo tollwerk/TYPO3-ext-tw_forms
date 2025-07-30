@@ -20,6 +20,7 @@ use In2code\Powermail\Domain\Model\Form as PowermailForm;
 use Tollwerk\TwForms\Utility\PageTitleUtility;
 use TYPO3\CMS\Core\Configuration\SiteConfiguration;
 use TYPO3\CMS\Core\Http\Request;
+use TYPO3\CMS\Core\PageTitle\PageTitleProviderManager;
 use TYPO3\CMS\Core\PageTitle\RecordPageTitleProvider;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
@@ -105,13 +106,8 @@ class TitleViewHelper extends AbstractViewHelper
         Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ): array {
-        DebuggerUtility::var_dump($arguments, 'TitleViewHelper arguments');
-
-        // Get website name.
-        $websiteName = self::getWebsiteName($renderingContext);
-        $pageTitle = GeneralUtility::makeInstance(RecordPageTitleProvider::class)->getTitle();
-
         /**
+         * TODO: This functionality should be split into two distinct ViewHelpers for FormFramework and Powermail.
          * Get the form argument, which can be either a TYPO3 FormRuntime or a Powermail Form
          *
          * @var FormRuntime|PowermailForm $form
@@ -119,6 +115,7 @@ class TitleViewHelper extends AbstractViewHelper
         $form = $arguments['form'];
         $defaultTitle = PageTitleUtility::getPageTitle();
 
+        // TODO: Remove if not necessary.
         // TYPO3 Form Framework: Handle status display and page steps
         if ($form instanceof FormRuntime) {
             $renderingOptions = $form->getFormDefinition()->getRenderingOptions();
@@ -148,13 +145,15 @@ class TitleViewHelper extends AbstractViewHelper
             }
         }
 
-        // Add error information to the page title if there are errors
+
+        // Get pattern for page title with form errors.
         $count = 0;
         if ($arguments['errors']) {
-            $errorTitle = sprintf($arguments['pattern'], $arguments['errors'], '%s') . ' ' . $pageTitle;
+            $errorTitle = sprintf($arguments['pattern'], $arguments['errors'], '%s')
+                . ' '
+                . GeneralUtility::makeInstance(RecordPageTitleProvider::class)->getTitle();
             PageTitleUtility::setPageTitle($errorTitle, ['flex', 'record']);
         }
-
         $pattern = preg_replace_callback(
             '/%s/',
             function ($matches) use (&$count) {
@@ -163,15 +162,12 @@ class TitleViewHelper extends AbstractViewHelper
             $arguments['pattern']
         );
 
-        DebuggerUtility::var_dump([
+        // Return the pattern with placeholders and the default title
+        $return = [
             'pattern' => $pattern,
             'default' => $defaultTitle,
-        ]);
-
-        // Return the pattern with placeholders and the default title
-        return [
-            'pattern' => $pattern,
-            'default' => $defaultTitle
+            'websiteName' => self::getWebsiteName($renderingContext),
         ];
+        return $return;
     }
 }
