@@ -18,6 +18,14 @@ use Closure;
 use Exception;
 use In2code\Powermail\Domain\Model\Form as PowermailForm;
 use Tollwerk\TwForms\Utility\PageTitleUtility;
+use TYPO3\CMS\Core\Configuration\SiteConfiguration;
+use TYPO3\CMS\Core\Http\Request;
+use TYPO3\CMS\Core\PageTitle\PageTitleProviderManager;
+use TYPO3\CMS\Core\PageTitle\RecordPageTitleProvider;
+use TYPO3\CMS\Core\Site\Entity\Site;
+use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Form\Domain\Runtime\FormRuntime;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
@@ -30,11 +38,55 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  * @package    Tollwerk\TwForms
  * @subpackage Tollwerk\TwForms\ViewHelpers
  * @author     Jolanta Dworczyk <jolanta@tollwerk.de>
+ * @author     Klaus Fiedler <klaus@tollwerk.de>
  * @license    MIT https://opensource.org/licenses/MIT
  * @link       https://tollwerk.de
  */
 class TitleViewHelper extends AbstractViewHelper
 {
+    /**
+     * Initialize all arguments. You need to override this method and call
+     * $this->registerArgument(...) inside this method, to register all your arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments(): void
+    {
+        parent::initializeArguments();
+        // Accept both FormRuntime (TYPO3) and PowermailForm (Powermail) as form argument
+        $this->registerArgument('form', 'mixed', 'Form runtime or Powermail form', true);
+        $this->registerArgument('pattern', 'string', 'Page title pattern when form errors occurred', true);
+        $this->registerArgument('errors', 'int', 'Number of form errors', true);
+    }
+
+    /**
+     * Get website name
+     *
+     * @param RenderingContextInterface $renderingContext RenderContext
+     *
+     * @return string
+     */
+    public static function getWebsiteName(RenderingContextInterface $renderingContext): string
+    {
+        /** @var Request $request */
+        $request = $renderingContext->getRequest();
+        /** @var Site $site */
+        $site = $request->getAttribute('site');
+        /** @var SiteLanguage $siteLanguage */
+        $siteLanguage = $request->getAttribute('language');
+        /** @var SiteConfiguration $siteConfiguration */
+        $siteConfiguration = $site->getConfiguration();
+
+        // Get website name.
+        $websiteName = $siteConfiguration['websiteTitle'];
+        if (!empty($siteConfiguration['languages'][$siteLanguage->getLanguageId()]['websiteTitle'])) {
+            $websiteName = $siteConfiguration['languages'][$siteLanguage->getLanguageId()]['websiteTitle'];
+        }
+
+        return $websiteName;
+    }
+
     /**
      * Default implementation of static rendering; useful API method if your ViewHelper
      * when compiled is able to render itself statically to increase performance. This
@@ -55,6 +107,7 @@ class TitleViewHelper extends AbstractViewHelper
         RenderingContextInterface $renderingContext
     ): array {
         /**
+         * TODO: This functionality should be split into two distinct ViewHelpers for FormFramework and Powermail.
          * Get the form argument, which can be either a TYPO3 FormRuntime or a Powermail Form
          *
          * @var FormRuntime|PowermailForm $form
@@ -62,6 +115,7 @@ class TitleViewHelper extends AbstractViewHelper
         $form = $arguments['form'];
         $defaultTitle = PageTitleUtility::getPageTitle();
 
+        // TODO: Remove if not necessary.
         // TYPO3 Form Framework: Handle status display and page steps
         if ($form instanceof FormRuntime) {
             $renderingOptions = $form->getFormDefinition()->getRenderingOptions();
@@ -91,40 +145,29 @@ class TitleViewHelper extends AbstractViewHelper
             }
         }
 
-        $count = 0;
 
-        // Add error information to the page title if there are errors
+        // Get pattern for page title with form errors.
+        $count = 0;
         if ($arguments['errors']) {
-            $errorTitle = sprintf($arguments['pattern'], $arguments['errors'], '%s');
+            $errorTitle = sprintf($arguments['pattern'], $arguments['errors'], '%s')
+                . ' '
+                . GeneralUtility::makeInstance(RecordPageTitleProvider::class)->getTitle();
             PageTitleUtility::setPageTitle($errorTitle, ['flex', 'record']);
         }
+        $pattern = preg_replace_callback(
+            '/%s/',
+            function ($matches) use (&$count) {
+                return '{' . ($count++) . '}';
+            },
+            $arguments['pattern']
+        );
 
         // Return the pattern with placeholders and the default title
-        return [
-            'pattern' => preg_replace_callback(
-                '/%s/',
-                function ($matches) use (&$count) {
-                    return '{' . ($count++) . '}';
-                },
-                $arguments['pattern']
-            ),
-            'default' => $defaultTitle
+        $return = [
+            'pattern' => $pattern,
+            'default' => $defaultTitle,
+            'websiteName' => self::getWebsiteName($renderingContext),
         ];
-    }
-
-    /**
-     * Initialize all arguments. You need to override this method and call
-     * $this->registerArgument(...) inside this method, to register all your arguments.
-     *
-     * @return void
-     * @api
-     */
-    public function initializeArguments(): void
-    {
-        parent::initializeArguments();
-        // Accept both FormRuntime (TYPO3) and PowermailForm (Powermail) as form argument
-        $this->registerArgument('form', 'mixed', 'Form runtime or Powermail form', true);
-        $this->registerArgument('pattern', 'string', 'Page title pattern when form errors occurred', true);
-        $this->registerArgument('errors', 'int', 'Number of form errors', true);
+        return $return;
     }
 }

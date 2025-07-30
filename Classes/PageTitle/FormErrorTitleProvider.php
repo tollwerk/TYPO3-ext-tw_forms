@@ -35,9 +35,11 @@
  *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************************/
 
-namespace Tollwerk\TwForms\Domain\Provider;
+namespace Tollwerk\TwForms\PageTitle;
 
 use TYPO3\CMS\Core\PageTitle\AbstractPageTitleProvider;
+use TYPO3\CMS\Core\PageTitle\RecordPageTitleProvider;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /**
  * Custom Page Title Provider
@@ -49,17 +51,18 @@ use TYPO3\CMS\Core\PageTitle\AbstractPageTitleProvider;
  * @license    MIT https://opensource.org/licenses/MIT
  * @link       https://tollwerk.de
  */
-class FlexPageTitleProvider extends AbstractPageTitleProvider
+class FormErrorTitleProvider extends AbstractPageTitleProvider
 {
     /**
      * Set the page title
      *
      * @param string $title Title
      *
-     * @return string Title
+     * @return string
      */
     public function setTitle(string $title): string
     {
-        return $this->title = $title;
+        $this->title = $title;
+        return $this->title;
     }
 }

@@ -2,6 +2,10 @@
  * Form
  */
 (function formValidation(w, d) {
+
+    // Get the original, unmodified page title as base for the error page title.
+    const originalPageTitle = document.title;
+
     const errorLinkHandler = function errorLinkHandler(e) {
         e.preventDefault();
         this.fields[e.target.href.split('#')
@@ -106,7 +110,6 @@
      * @return {boolean} No errors / form is valid
      */
     FormValidation.prototype.updateErrorSummary = function updateErrorSummary(errorMessages) {
-
         let errorCount = 0;
 
         // Remove all present errors
@@ -114,7 +117,6 @@
             this.errorSummary.removeChild(this.errorSummary.firstChild);
         }
 
-        // Run through all invalid fields and create error descriptions & links
         // Run through all invalid fields and create error descriptions & links
         for (const f in errorMessages) {
             if (Object.prototype.hasOwnProperty.call(errorMessages, f)) {
@@ -141,12 +143,16 @@
                 .join(errorCount);
         }
 
-        // Update the page title
-        let title = this.errorNavigation.getAttribute('data-title');
+        // Update the page title when there are errors.
         if (errorCount) {
-            title = this.errorNavigation.getAttribute('data-title-errors').format(errorCount, title);
+            const errorPattern = this.errorNavigation.dataset.titleErrors;
+            const newTitle = `${errorPattern} ${originalPageTitle}`.replace('{0}', errorCount);
+            document.title = newTitle;
         }
-        document.title = title;
+        if (!errorCount && document.title !== originalPageTitle) {
+            document.title = originalPageTitle;
+        }
+
         return !errorCount;
     };
 
