@@ -5,14 +5,14 @@
 			<f:if condition="{novalidate}">
 				<f:then>
 					<f:form.button name="{name}" value="{value}" property="{property}" type="{btnType}"
-								   class="Powermail__button Powermail__button--submit"
+								   class="Form__button"
 								   formnovalidate="formnovalidate">
 						{field.title -> f:format.raw()}
 					</f:form.button>
 				</f:then>
 				<f:else>
 					<f:form.button name="{name}" value="{value}" property="{poperty}" type="{btnType}"
-								   class="Powermail__button Powermail__button--submit">
+								   class="Form__button">
 						{field.title -> f:format.raw()}
 					</f:form.button>
 				</f:else>

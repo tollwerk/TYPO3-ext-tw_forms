@@ -11,6 +11,12 @@ main {
 	padding: 0 1.5rem;
 }
 
+.list-style-none {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
 fieldset {
 	padding: 0;
 	border: none;
@@ -34,7 +40,7 @@ fieldset {
 }
 
 .FormField--has-error {
-	& .FormField__input {
+	& .FormField__input, & .FormField__textarea {
 		border: 3px solid #ad0c01;
 		box-shadow: 0 0 0 2px #fff, 0 0 0 4px #ad0c01;
 	}
@@ -44,8 +50,32 @@ fieldset {
 	}
 }
 
+.Form__error {
+	color: #ad0c01;
+}
+
 .FormField + .FormField {
 	margin-top: 1rem;
+}
+
+.FormField__wrapper {
+	display: flex;
+	align-items: center;
+	gap: .5rem;
+
+	& + .FormField__wrapper {
+		margin-top: .5rem;
+	}
+
+	& .FormField__input {
+		width: unset;
+		margin: unset;
+	}
+
+	& .FormField__label {
+		margin-block: unset;
+		font-weight: normal;
+	}
 }
 
 .FormField__label {
@@ -55,7 +85,7 @@ fieldset {
 	font-weight: 600;
 }
 
-.FormField__input {
+.FormField__input, .FormField__textarea {
 	display: block;
 	width: 100%;
 	padding: .5em;
@@ -68,6 +98,26 @@ legend {
 
 	font-weight: bold;
 	font-size: 1.2rem;
+}
+
+.FormCheckbox__wrapper {
+	display: flex;
+}
+
+
+.Form__button {
+	display: block;
+	padding: .5em 1em;
+	border: 2px solid black;
+	margin-top: 1rem;
+
+	background: white;
+
+	cursor: pointer;
+
+	text-align: center;
+	text-decoration: none;
+	font-weight: bold;
 }
 
 .Progress__button {
@@ -163,17 +213,3 @@ legend {
 	}
 }
 
-.Powermail__button {
-	display: block;
-	padding: .5em 1em;
-	border: 2px solid black;
-	margin-top: 1rem;
-
-	background: white;
-
-	cursor: pointer;
-
-	text-align: center;
-	text-decoration: none;
-	font-weight: bold;
-}
