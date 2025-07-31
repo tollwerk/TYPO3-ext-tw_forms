@@ -50,10 +50,6 @@ fieldset {
 	}
 }
 
-.Form__error {
-	color: #ad0c01;
-}
-
 .FormField + .FormField {
 	margin-top: 1rem;
 }
@@ -186,7 +182,7 @@ legend {
 	width: 0.8rem;
 }
 
-.Powermail__error {
+.Form__error {
 	display: flex;
 	align-items: center;
 	margin-block: .5em;

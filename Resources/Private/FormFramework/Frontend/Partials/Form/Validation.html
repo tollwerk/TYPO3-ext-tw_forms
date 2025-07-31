@@ -53,7 +53,10 @@
                         value="LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.errors"/>
             <f:variable name="headingContent"
                         value="{f:if(condition: '{count} == 1', then: '{f:translate(key: headingKeySingle)}', else: '{f:translate(key: headingKeyMultiple, arguments: \'{0: count}\')}')}"/>
-            <h2 class="Heading"
+            <svg width="48" height="48" class="Form__error-icon" aria-hidden="true" focusable="false">
+                <use href="#warning-sign"></use>
+            </svg>
+            <h2 class="Form__error-heading"
                 id="{formId}-errors"
                 data-heading-single="{f:translate(key: headingKeySingle)}"
                 data-heading-multiple="{f:translate(key: headingKeyMultiple)}">

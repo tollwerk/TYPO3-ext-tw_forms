@@ -202,6 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
 // Trigger dirty after first submit (single-page/global only!)
 document.addEventListener('submit', function(e) {
   const form = e.target.closest('form');
+  console.log(form);
   if (form && !Array.isArray(form._stepPristine)) {
     form.dataset.dirty = "1";
   }
@@ -438,7 +439,7 @@ const PowermailValidators = {
         return; // pristine: no validation yet
       }
 
-      // 👉 For grouped fields, delegate validation to primary
+      // For grouped fields, delegate validation to primary
       if (this.isGroup && this.groupPrimaryEnhancer && this !== this.groupPrimaryEnhancer) {
         this.groupPrimaryEnhancer.validate(true);
       } else {
@@ -672,7 +673,7 @@ const PowermailValidators = {
         break;
       }
     }
-    return this.overrideValidityState({ valueMissing: !checked });
+    return this.overrideValidityState({ valueupdateErrorMessageMissing: !checked });
   };
 
   /**
@@ -704,6 +705,12 @@ const PowermailValidators = {
     constraints,
     errorMessages
   ) {
+
+    if (!this.errorMessageBag) {
+      console.warn('Fehlendes aria-errormessage-Element für', this.element);
+      return;
+    }
+
     const hasErrors = Object.keys(errorMessages).length > 0;
     const errorString = JSON.stringify(errorMessages);
 

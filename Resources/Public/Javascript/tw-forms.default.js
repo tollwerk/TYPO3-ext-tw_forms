@@ -66,6 +66,7 @@
      */
     FormValidation.prototype.validate = function validate(e) {
         const novalidate = e && e.submitter && e.submitter.hasAttribute('formnovalidate');
+        this.element.dataset.dirty = '1';
 
         if (!novalidate) {
             const errorMessages = {};
@@ -83,6 +84,7 @@
             if (!this.updateErrorSummary(errorMessages)) {
                 this.errorNavigation.removeAttribute('hidden');
                 this.errorNavigation.classList.add('Form__error-navigation--visible');
+
                 if (e) {
                     this.errorNavigation.focus();
                     e.preventDefault();

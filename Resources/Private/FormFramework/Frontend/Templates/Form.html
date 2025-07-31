@@ -1,27 +1,36 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers" data-namespace-typo3-fluid="true">
-<formvh:renderRenderable renderable="{form}">
-<f:comment><!-- TODO: Remove attribute novalidate or use {twforms:form()} if possible. --></f:comment>
     <formvh:renderRenderable renderable="{form}">
-        <formvh:form
-            pageUid="{f:if(condition: form.renderingOptions.pageUid, then: form.renderingOptions.pageUid, else: 0)}"
-            object="{form}"
-            pluginName="{form.renderingOptions.pluginName}"
-            action="{form.renderingOptions.controllerAction}"
-            actionUri="{form.renderingOptions.actionUri}"
-            method="{form.renderingOptions.httpMethod}"
-            id="{form.identifier}"
-            class="{form.renderingOptions.elementClassAttribute} Form--custom-validation"
-            section="{form.renderingOptions.section}"
-            enctype="{form.renderingOptions.httpEnctype}"
-            addQueryString="{form.renderingOptions.addQueryString}"
-            argumentsToBeExcludedFromQueryString="{form.renderingOptions.argumentsToBeExcludedFromQueryString}"
-            additionalParams="{form.renderingOptions.additionalParams}"
-            additionalAttributes="{form.renderingOptions.additionalAttributes}"
-            novalidate="1">
-            <f:render partial="{form.currentPage.templateName}"
-                      arguments="{form: form, page: form.currentPage}"/>
-            <f:render partial="Form/Navigation" arguments="{form: form}"/>
-        </formvh:form>
+    <f:comment><!-- TODO: Remove attribute novalidate or use {twforms:form()} if possible. --></f:comment>
+        <formvh:renderRenderable renderable="{form}">
+            <formvh:form
+                pageUid="{f:if(condition: form.renderingOptions.pageUid, then: form.renderingOptions.pageUid, else: 0)}"
+                object="{form}"
+                pluginName="{form.renderingOptions.pluginName}"
+                action="{form.renderingOptions.controllerAction}"
+                actionUri="{form.renderingOptions.actionUri}"
+                method="{form.renderingOptions.httpMethod}"
+                id="{form.identifier}"
+                class="{form.renderingOptions.elementClassAttribute} Form--custom-validation"
+                section="{form.renderingOptions.section}"
+                enctype="{form.renderingOptions.httpEnctype}"
+                addQueryString="{form.renderingOptions.addQueryString}"
+                argumentsToBeExcludedFromQueryString="{form.renderingOptions.argumentsToBeExcludedFromQueryString}"
+                additionalParams="{form.renderingOptions.additionalParams}"
+                additionalAttributes="{form.renderingOptions.additionalAttributes}"
+                novalidate="1">
+                <f:render partial="{form.currentPage.templateName}"
+                          arguments="{form: form, page: form.currentPage}"/>
+                <f:render partial="Form/Navigation" arguments="{form: form}"/>
+            </formvh:form>
+        </formvh:renderRenderable>
     </formvh:renderRenderable>
-</formvh:renderRenderable>
+
+    <svg xmlns="http://www.w3.org/2000/svg"
+         display="none">
+        <symbol id="warning-sign"
+                viewBox="0 0 50 50">
+            <path fill="#ad0c01"
+                  d="M21.9-.1C9.7-.1-.1 9.8-.1 22S9.8 44.1 22 44.1 44 34.2 44 22C44 9.8 34.1-.1 21.9-.1zM24.1 33h-4.4v-4.4h4.4V33zm0-8.8h-4.4V11h4.4v13.2z"/>
+        </symbol>
+    </svg>
 </html>
