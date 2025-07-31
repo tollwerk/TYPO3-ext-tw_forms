@@ -4,6 +4,15 @@ TYPO3:
       prototypes:
         standard:
           formElementsDefinition:
+            AdvancedPassword: null
+            Checkbox:
+              properties:
+                elementClassAttribute: 'FormCheckbox FormField__input'
+            CountrySelect:
+              formEditor:
+                group: null
+            Date: null
+            DatePicker: null
             Form:
               persistenceManager:
               renderingOptions:
@@ -20,12 +29,13 @@ TYPO3:
             Email:
               properties:
                 elementClassAttribute: 'FormEmail FormField__input'
-            Checkbox:
-              properties:
-                elementClassAttribute: 'FormCheckbox FormField__input'
+            FileUpload: null
+            Hidden: null
+            ImageUpload: null
             MultiCheckbox:
               properties:
                 elementClassAttribute: 'FormField__input FormField__multi'
+            MultiSelect: null
             SingleSelect:
               properties:
                 elementClassAttribute: 'FormSelect FormField__input'
@@ -35,9 +45,7 @@ TYPO3:
             Textarea:
               properties:
                 elementClassAttribute: 'FormTextarea FormField__textarea'
-            Password:
-              properties:
-                elementClassAttribute: 'FormPassword FormField__input'
+            Password: null
             RadioButton:
               properties:
                 containerClassAttribute: 'FormRadioButton'
