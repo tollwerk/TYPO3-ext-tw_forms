@@ -13,25 +13,19 @@
 --></f:comment>
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
       data-namespace-typo3-fluid="true">
-    <f:variable name="btnStyle"
-                value="{f:if(condition: style, then: style, else: 'default')}"/>
-    <f:variable name="btnTheme"
-                value="{f:if(condition: theme, then: theme, else: 'default')}"/>
     <f:variable name="btnType"
                 value="{f:if(condition: '{type}', then: '{type}', else: 'button')}"/>
-    <f:variable name="btnClasses"
-                value="FormButton{f:if(condition: '{classes}', then: ' {classes}')} CallToAction CallToAction--{btnStyle} CallToAction--theme-{btnTheme}"/>
     <f:if condition="{novalidate}">
         <f:then>
             <f:form.button name="{name}" value="{value}" property="{property}" type="{btnType}"
-                           class="CallToAction"
+                           class="Form__button"
                            formnovalidate="formnovalidate">
                 {text -> f:format.raw()}
             </f:form.button>
         </f:then>
         <f:else>
             <f:form.button name="{name}" value="{value}" property="{property}" type="{btnType}"
-                           class="CallToAction">
+                           class="Form__button">
                 {text -> f:format.raw()}
             </f:form.button>
         </f:else>

@@ -13,31 +13,29 @@
                     validationResults: validationResults,
                     doNotShowLabel: 0
                 }" contentAs="elementContent">
-                <ol id="{element.uniqueIdentifier}" class="FormRadioButton__list informal">
-                    <f:for each="{element.properties.options}" as="label" key="value" iteration="idIterator">
-                        <f:variable name="additionalAttributes"
-                                    value="{twforms:form.field.additionalAttributes(element: element, validationResults: validationResults)}"/>
-                        <f:if condition="{idIterator.index}">
-                            <f:variable name="additionalAttributes" value="{}"/>
-                        </f:if>
-                        <li class="FormRadioButton__wrapper">
-                            <f:form.radio
-                                    property="{element.identifier}"
-                                    id="{element.uniqueIdentifier}-{idIterator.index}"
-                                    class="{element.properties.elementClassAttribute}"
-                                    value="{value}"
-                                    errorClass="{element.properties.elementErrorClassAttribute}"
-                                    additionalAttributes="{additionalAttributes}"
-                            />
-                            <label for="{element.uniqueIdentifier}-{idIterator.index}"
-                                   class="FormField__label FormField__label--{element.type -> f:format.case(mode: 'lower')}">
-                                <f:render section="InlineLabel" contentAs="label">
-                                    {formvh:translateElementProperty(element: element, property: '{0: \'options\', 1: value}')}
-                                </f:render>
-                            </label>
-                        </li>
-                    </f:for>
-                </ol>
+                <f:for each="{element.properties.options}" as="label" key="value" iteration="idIterator">
+                    <f:variable name="additionalAttributes"
+                                value="{twforms:form.field.additionalAttributes(element: element, validationResults: validationResults)}"/>
+                    <f:if condition="{idIterator.index}">
+                        <f:variable name="additionalAttributes" value="{}"/>
+                    </f:if>
+                    <div class="FormField__wrapper">
+                        <f:form.radio
+                                property="{element.identifier}"
+                                id="{element.uniqueIdentifier}-{idIterator.index}"
+                                class="{element.properties.elementClassAttribute}"
+                                value="{value}"
+                                errorClass="{element.properties.elementErrorClassAttribute}"
+                                additionalAttributes="{additionalAttributes}"
+                        />
+                        <label for="{element.uniqueIdentifier}-{idIterator.index}"
+                               class="FormField__label FormField__label--{element.type -> f:format.case(mode: 'lower')}">
+                            <f:render section="InlineLabel" contentAs="label">
+                                {formvh:translateElementProperty(element: element, property: '{0: \'options\', 1: value}')}
+                            </f:render>
+                        </label>
+                    </div>
+                </f:for>
             </f:render>
         </f:form.validationResults>
     </formvh:renderRenderable>
