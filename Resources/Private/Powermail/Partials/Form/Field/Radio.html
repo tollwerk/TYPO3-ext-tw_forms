@@ -15,17 +15,6 @@
 
   <div class="{settings.styles.framework.fieldWrappingClasses}">
     <f:for each="{field.modifiedSettings}" as="setting" iteration="index">
-      <f:comment><!-- Due to HTML spec only first radio button in a group should get validation attributes --></f:comment>
-      <f:if condition="{idIterator.isFirst}">
-        <f:then>
-          <f:variable name="additionalAttributes"
-                      value="{twforms:form.field.additionalAttributes(element: element, validationResults: validationResults)}"/>
-        </f:then>
-        <f:else>
-          <f:variable name="additionalAttributes"
-                      value="{}"/>
-        </f:else>
-      </f:if>
 
       <div class="{settings.styles.framework.radioClasses} {vh:validation.errorClass(field:field, class:'powermail_field_error')}">
         <f:comment
@@ -35,17 +24,33 @@
         </f:comment>
         <label class="FormField__wrapper"
                for="{formId}-powermail-field-{field.marker}-{index.cycle}">
-          <f:comment
-            ><!-- Semantic radio button which is visually hidden --></f:comment
-          >
-          <f:form.radio
-                  property="{field.marker}"
-                  value="{setting.value}"
-                  checked="{vh:misc.prefillMultiField(field: field, mail: mail, cycle: index.cycle)}"
-                  id="{formId}-powermail-field-{field.marker}-{index.cycle}"
-                  class="PowermailRadio__input powermail_radio FormField__input FormField__group-element"
-                  name="tx_powermail_pi1[field][{field.marker}]">
-          </f:form.radio>
+          <f:comment><!-- Semantic radio button which is visually hidden --></f:comment>
+          <f:comment><!-- Due to HTML spec only first radio button in a group should get validation attributes --></f:comment>
+          <f:if condition="{index.isFirst}">
+            <f:then>
+              <f:form.radio
+                      property="{field.marker}"
+                      value="{setting.value}"
+                      checked="{vh:misc.prefillMultiField(field: field, mail: mail, cycle: index.cycle)}"
+                      id="{formId}-powermail-field-{field.marker}-{index.cycle}"
+                      class="PowermailRadio__input powermail_radio FormField__input FormField__group-element"
+                      name="tx_powermail_pi1[field][{field.marker}]"
+                      additionalAttributes="{vh:validation.validationDataAttribute(field:field)}"
+                      aria="{'errormessage': 'error-for-powermail-field-{formId}-{field.marker}', 'describedby': 'error-for-powermail-field-{formId}-{field.marker} desc-for-powermail-field-{formId}-{field.marker}'}">
+              </f:form.radio>
+            </f:then>
+            <f:else>
+              <f:form.radio
+                      property="{field.marker}"
+                      value="{setting.value}"
+                      checked="{vh:misc.prefillMultiField(field: field, mail: mail, cycle: index.cycle)}"
+                      id="{formId}-powermail-field-{field.marker}-{index.cycle}"
+                      class="PowermailRadio__input powermail_radio FormField__input FormField__group-element"
+                      name="tx_powermail_pi1[field][{field.marker}]">
+              </f:form.radio>
+            </f:else>
+          </f:if>
+
 
           <f:comment
             ><!-- Visual replacement of the radio button via SVG --></f:comment
