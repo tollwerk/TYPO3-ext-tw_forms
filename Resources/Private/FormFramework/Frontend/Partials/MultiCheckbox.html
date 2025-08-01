@@ -14,11 +14,18 @@
                       arguments="{element: element}">
 
                 <f:for each="{element.properties.options}" as="label" key="value" iteration="idIterator">
-                    <f:variable name="additionalAttributes"
-                                value="{twforms:form.field.additionalAttributes(element: element, validationResults: validationResults)}"/>
-                    <f:if condition="{idIterator.index}">
-                        <f:variable name="additionalAttributes" value="{}"/>
+                    <f:comment><!-- Due to HTML spec only first checkbox in a group should get validation attributes --></f:comment>
+                    <f:if condition="{idIterator.isFirst}">
+                        <f:then>
+                            <f:variable name="additionalAttributes"
+                                        value="{twforms:form.field.additionalAttributes(element: element, validationResults: validationResults)}"/>
+                        </f:then>
+                        <f:else>
+                            <f:variable name="additionalAttributes"
+                                        value="{}"/>
+                        </f:else>
                     </f:if>
+
                     <div class="FormField__wrapper">
                         <f:render partial="Checkbox" section="Checkbox" arguments="{
                             element: element,

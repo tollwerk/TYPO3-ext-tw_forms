@@ -15,18 +15,26 @@
 
   <div class="{settings.styles.framework.fieldWrappingClasses}">
     <f:for each="{field.modifiedSettings}" as="setting" iteration="index">
-      <div
-        class="{settings.styles.framework.radioClasses} {vh:validation.errorClass(field:field, class:'powermail_field_error')}"
-      >
+      <f:comment><!-- Due to HTML spec only first radio button in a group should get validation attributes --></f:comment>
+      <f:if condition="{idIterator.isFirst}">
+        <f:then>
+          <f:variable name="additionalAttributes"
+                      value="{twforms:form.field.additionalAttributes(element: element, validationResults: validationResults)}"/>
+        </f:then>
+        <f:else>
+          <f:variable name="additionalAttributes"
+                      value="{}"/>
+        </f:else>
+      </f:if>
+
+      <div class="{settings.styles.framework.radioClasses} {vh:validation.errorClass(field:field, class:'powermail_field_error')}">
         <f:comment
           ><!-- Custom radio button by Sara Soueidan
                     @see https://www.sarasoueidan.com/blog/inclusively-hiding-and-styling-checkboxes-and-radio-buttons/
                     -->
         </f:comment>
-        <label
-          class="FormField__wrapper"
-          for="{formId}-powermail-field-{field.marker}-{index.cycle}"
-        >
+        <label class="FormField__wrapper"
+               for="{formId}-powermail-field-{field.marker}-{index.cycle}">
           <f:comment
             ><!-- Semantic radio button which is visually hidden --></f:comment
           >
@@ -35,15 +43,8 @@
                   value="{setting.value}"
                   checked="{vh:misc.prefillMultiField(field: field, mail: mail, cycle: index.cycle)}"
                   id="{formId}-powermail-field-{field.marker}-{index.cycle}"
-                  class="PowermailRadio__input powermail_radio FormField__input FormField__multi"
-                  name="tx_powermail_pi1[field][{field.marker}]"
-          >
-            <f:if condition="{index.cycle} == 1">
-              <f:attribute name="required" value="required" />
-              <f:attribute name="aria-required" value="true" />
-              <f:attribute name="aria-errormessage" value="error-for-powermail-field-{formId}-{field.marker}" />
-            </f:if>
-            <f:attribute name="aria-describedby" value="error-for-powermail-field-{formId}-{field.marker} desc-for-powermail-field-{formId}-{field.marker}" />
+                  class="PowermailRadio__input powermail_radio FormField__input FormField__group-element"
+                  name="tx_powermail_pi1[field][{field.marker}]">
           </f:form.radio>
 
           <f:comment

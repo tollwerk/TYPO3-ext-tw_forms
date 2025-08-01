@@ -34,7 +34,7 @@ TYPO3:
             ImageUpload: null
             MultiCheckbox:
               properties:
-                elementClassAttribute: 'FormField__input FormField__multi'
+                elementClassAttribute: 'FormField__input FormField__group-element'
             MultiSelect: null
             SingleSelect:
               properties:
@@ -49,4 +49,4 @@ TYPO3:
             RadioButton:
               properties:
                 containerClassAttribute: 'FormRadioButton'
-                elementClassAttribute: 'FormField__input FormField__multi'
+                elementClassAttribute: 'FormField__input FormField__group-element'

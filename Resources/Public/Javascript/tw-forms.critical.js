@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
 // Trigger dirty after first submit (single-page/global only!)
 document.addEventListener('submit', function(e) {
   const form = e.target.closest('form');
-  console.log(form);
+
   if (form && !Array.isArray(form._stepPristine)) {
     form.dataset.dirty = "1";
   }
@@ -426,7 +426,12 @@ const PowermailValidators = {
     this.groupEnhancers = [];
     this.lastErrorString = "";
 
-    this.element.addEventListener("input", (e) => {
+    // Bei Checkboxen und Radios lieber "change" verwenden statt "input"
+    const eventType = (this.element.type === "radio" || this.element.type === "checkbox")
+        ? "change"
+        : "input";
+
+    this.element.addEventListener(eventType, (e) => {
       const form = e.target.form;
 
       // Multistep powermail form: use pristine array if present
@@ -439,8 +444,8 @@ const PowermailValidators = {
         return; // pristine: no validation yet
       }
 
-      // For grouped fields, delegate validation to primary
-      if (this.isGroup && this.groupPrimaryEnhancer && this !== this.groupPrimaryEnhancer) {
+      // Bei Gruppen IMMER den Primary validieren – egal ob das Element selbst Primary ist oder nicht
+      if (this.isGroup && this.groupPrimaryEnhancer) {
         this.groupPrimaryEnhancer.validate(true);
       } else {
         this.validate(true);
@@ -449,32 +454,38 @@ const PowermailValidators = {
 
 
     // Handle group validation
-    this.isGroup = this.element.classList.contains("FormField__multi");
+    this.isGroup = this.element.classList.contains("FormField__group-element");
 
     if (this.isGroup) {
       // Find primary enhancer for this group
       const groupName = this.element.name;
       const formElements = Array.from(this.element.form.elements);
 
-      const groupElements = formElements.filter(
-          (el) =>
-              el.name === groupName &&
-              el !== this.element &&
-              el.classList.contains("FormField__multi")
-      );
+      const groupElements = formElements
+          .filter((el) => el.name === groupName && el.classList.contains("FormField__group-element"));
 
-      const isFirstInGroup = !groupElements.some((el) => el.compareDocumentPosition(this.element) & Node.DOCUMENT_POSITION_PRECEDING);
+      const primary = groupElements[0];
 
-      if (isFirstInGroup) {
+      if (this.element === primary) {
         this.groupEnhancers = [this];
         groupElements.forEach((el) => {
-          if (el.enhancer) {
+          if (el !== this.element && el.enhancer) {
             this.groupEnhancers.push(el.enhancer);
             el.enhancer.groupPrimaryEnhancer = this;
+            el.enhancer.errorMessageBag = this.errorMessageBag;
+          } else {
+            Object.defineProperty(el, "_primaryEnhancer", {
+              value: this,
+              writable: true
+            });
           }
         });
       } else {
-        this.groupPrimaryEnhancer = null;
+        if (this.element._primaryEnhancer) {
+          this.groupPrimaryEnhancer = this.element._primaryEnhancer;
+          this.errorMessageBag = this.groupPrimaryEnhancer.errorMessageBag;
+          this.groupPrimaryEnhancer.groupEnhancers.push(this);
+        }
       }
     }
 
@@ -673,7 +684,7 @@ const PowermailValidators = {
         break;
       }
     }
-    return this.overrideValidityState({ valueupdateErrorMessageMissing: !checked });
+    return this.overrideValidityState({ valueMissing: !checked });
   };
 
   /**
@@ -705,12 +716,6 @@ const PowermailValidators = {
     constraints,
     errorMessages
   ) {
-
-    if (!this.errorMessageBag) {
-      console.warn('Fehlendes aria-errormessage-Element für', this.element);
-      return;
-    }
-
     const hasErrors = Object.keys(errorMessages).length > 0;
     const errorString = JSON.stringify(errorMessages);
 
