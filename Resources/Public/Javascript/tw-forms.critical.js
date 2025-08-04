@@ -1,8 +1,8 @@
 /**
  * Polyfills for older browsers to ensure compatibility
- * Provides missing methods for NodeList, Element, String, and SVGElement
+ * Provide missing methods for NodeList, Element, String, and SVGElement
  */
-(function iefe(w, e, s, svg) {
+(function browserPolyfills(window, elementProto, stringProto, svgElementProto) {
   /**
    * Polyfill for NodeList.forEach method
    * Adds forEach functionality to NodeList objects in browsers that don't support it
@@ -19,11 +19,9 @@
    * Polyfill for Element.matches method
    * Provides cross-browser support for element matching using CSS selectors
    */
-  if (!Element.prototype.matches) {
-    Element.prototype.matches = function (selector) {
-      const matches = (this.document || this.ownerDocument).querySelectorAll(
-        selector
-      );
+  if (!elementProto.matches) {
+    elementProto.matches = function (selector) {
+      const matches = (this.document || this.ownerDocument).querySelectorAll(selector);
       let i = matches.length - 1;
       while (i >= 0 && matches.item(i) !== this) {
         i -= 1;
@@ -36,13 +34,13 @@
    * Polyfill for Element.closest method
    * Traverses up the DOM tree to find the closest ancestor matching a selector
    */
-  if (!e.closest) {
-    e.closest = function closest(str) {
-      let el = this;
+  if (!elementProto.closest) {
+    elementProto.closest = function closest(selector) {
+      let element = this;
       do {
-        if (el.matches(str)) return el;
-        el = el.parentElement || el.parentNode;
-      } while (el !== null && el.nodeType === 1);
+        if (element.matches(selector)) return element;
+        element = element.parentElement || element.parentNode;
+      } while (element !== null && element.nodeType === 1);
       return null;
     };
   }
@@ -51,8 +49,8 @@
    * Polyfill for String.format method
    * Provides string formatting with placeholder replacement
    */
-  if (!s.format) {
-    s.format = function format(...args) {
+  if (!stringProto.format) {
+    stringProto.format = function format(...args) {
       return this.replace(/{(\d+)}/g, (match, number) =>
         typeof args[number] !== "undefined" ? args[number] : match
       );
@@ -63,37 +61,44 @@
    * Polyfill for classList support on SVG elements in IE11
    * Provides classList functionality for SVG elements
    */
-  if (!("classList" in svg)) {
-    Object.defineProperty(svg, "classList", {
+  if (svgElementProto && !('classList' in svgElementProto)) {
+    Object.defineProperty(svgElementProto, "classList", {
       get() {
         return {
           /**
-           * Check if SVG element contains a specific class
+           * Check if an SVG element contains a specific class
            * @param {string} className - Class name to check
            * @returns {boolean} True if class exists
            */
-          contains: (className) =>
-              this.classList.contains(className),
+          contains: (className) => {
+            const classAttr = this.getAttribute('class');
+            return classAttr ? classAttr.split(/\s+/).includes(className) : false;
+          },
+
           /**
            * Add a class to SVG element
            * @param {string} className - Class name to add
            */
-          add: (className) =>
-            this.setAttribute(
-              "class",
-              `${this.getAttribute("class")} ${className}`
-            ),
+          add: (className) => {
+            const currentClass = this.getAttribute('class') || '';
+            if (!this.classList.contains(className)) {
+              const newClass = currentClass ? `${currentClass} ${className}` : className;
+              this.setAttribute('class', newClass.trim());
+            }
+          },
+
           /**
            * Remove a class from SVG element
            * @param {string} className - Class name to remove
            */
           remove: (className) => {
-            const removedClass = this.getAttribute("class").replace(
-              new RegExp(`(\\s|^)${className}(\\s|$)`, "g"),
-              "$2"
-            );
-            if (this.classList.contains(className)) {
-              this.setAttribute("class", removedClass);
+            const currentClass = this.getAttribute('class');
+            if (currentClass && this.classList.contains(className)) {
+              const newClass = currentClass
+                  .split(/\s+/)
+                  .filter(cls => cls !== className)
+                  .join(' ');
+              this.setAttribute('class', newClass);
             }
           },
         };
@@ -109,11 +114,10 @@
 const tw_forms = window.tw_forms || { has: {} };
 window.tw_forms = tw_forms;
 
-(function (w, d) {
+(function mutationObserverSystem (window, document) {
   // Prevent duplicate initialization
   if (
-    (typeof exports !== "undefined" && exports.Observer) ||
-    w.tw_forms.Observer
+    (typeof exports !== "undefined" && exports.Observer) || window.tw_forms.Observer
   ) {
     return;
   }
@@ -123,8 +127,11 @@ window.tw_forms = tw_forms;
    * Creates a MutationObserver to watch for DOM changes and enhance new form fields
    */
   function Observer() {
+    // Registry of selectors and their corresponding enhancement callbacks
     this.observed = [["[data-mutate-recursive]", this.process.bind(this)]];
     const checkNode = this.checkNode.bind(this);
+
+    // Create MutationObserver to watch for new DOM nodes
     const observer = new MutationObserver((mutations) =>
       mutations.forEach((mutation) =>
         Array.prototype.slice
@@ -133,7 +140,9 @@ window.tw_forms = tw_forms;
           .forEach(checkNode)
       )
     );
-    observer.observe(d.documentElement, {
+
+    // Observe the entire document for changes
+    observer.observe(document.documentElement, {
       characterData: true,
       attributes: false,
       childList: true,
@@ -156,7 +165,7 @@ window.tw_forms = tw_forms;
    */
   Observer.prototype.checkNode = function (node) {
     this.observed
-      .filter((observer) => node.matches(observer[0]))
+      .filter((observer) => node.matches && node.matches(observer[0]))
       .forEach((observer) => observer[1](node));
   };
 
@@ -165,20 +174,19 @@ window.tw_forms = tw_forms;
    * @param {Node} node - DOM node to process
    */
   Observer.prototype.process = function (node) {
-    if (node.nodeType === 1) {
+    if (node.nodeType === Node.ELEMENT_NODE) {
       this.observed.forEach((observer) =>
-        node
-          .querySelectorAll(observer[0])
+        node.querySelectorAll(observer[0])
           .forEach((subnode) => observer[1](subnode))
       );
     }
   };
 
-  // Export Observer instance
+  // Export Observer instance to global scope
   if (typeof exports !== "undefined") {
     exports.Observer = new Observer();
   } else {
-    w.tw_forms.Observer = new Observer();
+    window.tw_forms.Observer = new Observer();
   }
 })(typeof global !== "undefined" ? global : window, document);
 
@@ -186,23 +194,29 @@ window.tw_forms = tw_forms;
  * Global dirty flag handling
  * Used for all forms: no validation before first submit/next, live after
  */
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function initializeFormStates () {
   document.querySelectorAll('form').forEach(form => {
     const fieldsets = form.querySelectorAll('.powermail_fieldset');
+
     if (fieldsets.length > 1 && form.classList.contains('powermail_morestep')) {
-      // MultiStep: pristine array for each step
+      // Multistep form: maintain the pristine state for each step individually
       form._stepPristine = Array(fieldsets.length).fill(true);
     } else {
-      // Single-page/Classic: just one global dirty flag
+      // Single-page form: use a global dirty flag for the entire form
       form.dataset.dirty = "0";
     }
   });
 });
 
-// Trigger dirty after first submit (single-page/global only!)
+/**
+ * Global Form Submission Handler
+ * Triggers dirty state for single-page forms after the first submit attempt
+ * Multi-step forms handle their pristine state independently
+ */
 document.addEventListener('submit', function(e) {
   const form = e.target.closest('form');
 
+  // Only set a dirty flag for single-page forms (not multistep)
   if (form && !Array.isArray(form._stepPristine)) {
     form.dataset.dirty = "1";
   }
@@ -529,11 +543,11 @@ const PowermailValidators = {
       let errorMessage = null;
       if (constraint === "valueMissing") {
         errorMessage = this.element.getAttribute(
-          "data-powermail-required-message"
+          "data-powermail-required-message" || "data-errormsg-valuemissing"
         );
       } else if (constraint === "patternMismatch") {
         errorMessage = this.element.getAttribute(
-          "data-powermail-error-message"
+          "data-powermail-error-message" || "data-errormsg-typemismatch"
         );
       }
       if (!errorMessage) {

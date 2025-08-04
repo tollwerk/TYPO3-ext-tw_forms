@@ -60,15 +60,19 @@
             </trans-unit>
             <trans-unit id="validation.error.1221560718" approved="yes">
                 <source>This field is mandatory.</source>
-                <target state="translated">Das Feld darf nicht leer sein.</target>
+                <target state="translated">Bitte füllen Sie dieses Feld aus.</target>
             </trans-unit>
             <trans-unit id="validation.error.1347992400" approved="yes">
                 <source>This field is mandatory.</source>
-                <target state="translated">Dieses Feld ist erforderlich.</target>
+                <target state="translated">Bitte füllen Sie dieses Feld aus.</target>
+            </trans-unit>
+            <trans-unit id="validation.error.1347992453" approved="yes">
+                <source>This field is mandatory.</source>
+                <target state="translated">Bitte füllen Sie dieses Feld aus.</target>
             </trans-unit>
             <trans-unit id="validation.error.1580509091" approved="yes">
-                <source>Please fill out this field</source>
-                <target state="translated">Bitte füllen Sie dieses Feld aus</target>
+                <source>This field is mandatory.</source>
+                <target state="translated">Bitte füllen Sie dieses Feld aus.</target>
             </trans-unit>
             <trans-unit id="validation.error.1580509080" approved="yes">
                 <source>Please enter a valid email address</source>
