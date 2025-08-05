@@ -175,31 +175,6 @@ class AdditionalAttributesViewHelper extends AbstractViewHelper
                     }
                 }
             }
-
-            // Instantiate the TranslationService once for fallback translations
-            $translationService = GeneralUtility::makeInstance(TranslationService::class);
-
-            // Provide a fallback error message for the "valuemissing" constraint, if it was not already set by YAML or validators
-            if (!isset($additionalAttributes['data-errormsg-valuemissing'])) {
-                $additionalAttributes['data-errormsg-valuemissing'] = $translationService->translateFormElementError(
-                    $element,
-                    '1221560910', // Constraint/error code identifier
-                    [],
-                    'default',
-                    $formRuntime
-                );
-            }
-
-            // Provide a fallback error message for the "typemismatch" constraint, if it was not already set by YAML or validators
-            if (!isset($additionalAttributes['data-errormsg-typemismatch'])) {
-                $additionalAttributes['data-errormsg-typemismatch'] = $translationService->translateFormElementError(
-                    $element,
-                    '1221565130',
-                    [],
-                    'default',
-                    $formRuntime
-                );
-            }
         }
 
         return $additionalAttributes;
