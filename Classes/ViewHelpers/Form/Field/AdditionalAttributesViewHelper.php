@@ -37,19 +37,14 @@
 
 namespace Tollwerk\TwForms\ViewHelpers\Form\Field;
 
-use Closure;
 use Tollwerk\TwForms\Domain\Validator\ValidationErrorMapper;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Error\Result;
-use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 use TYPO3\CMS\Form\Domain\Model\Exception\FormDefinitionConsistencyException;
 use TYPO3\CMS\Form\Domain\Model\FormElements\AbstractFormElement;
-use TYPO3\CMS\Form\Domain\Model\FormElements\GenericFormElement;
 use TYPO3\CMS\Form\Service\TranslationService;
 use TYPO3\CMS\Form\ViewHelpers\RenderRenderableViewHelper;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 /**
  * Prepare additional attributes for form fields
@@ -63,35 +58,37 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
  */
 class AdditionalAttributesViewHelper extends AbstractViewHelper
 {
-    use CompileWithRenderStatic;
+    /**
+     * Initialize all arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments(): void
+    {
+        $this->registerArgument('element', AbstractFormElement::class, 'Form element', true);
+        $this->registerArgument('validationResults', Result::class, 'Validation results', false, null);
+    }
 
     /**
      * Compile a list of additional attributes for a form field
      *
-     * @param array                     $arguments             Arguments
-     * @param Closure                   $renderChildrenClosure Render Children Closure
-     * @param RenderingContextInterface $renderingContext      Rendering Context
-     *
-     * @return mixed
+     * @return array
      * @throws FormDefinitionConsistencyException
      *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public static function renderStatic(
-        array $arguments,
-        Closure $renderChildrenClosure,
-        RenderingContextInterface $renderingContext
-    ) {
-        $element              = $arguments['element'];
-        $validationResults    = $arguments['validationResults'];
-        $properties           = $element->getProperties();
+    public function render(): array
+    {
+        $element           = $this->arguments['element'];
+        $validationResults = $this->arguments['validationResults'];
+        $properties        = $element->getProperties();
         $additionalAttributes = $properties['fluidAdditionalAttributes'] ?? [];
 
         // Skipped as JAWS reads both the error message AND the aria-describedby attribute
         // All other screenreaders only read the aria-describedby attribute
         $additionalAttributes['aria-errormessage'] = $element->getUniqueIdentifier() . '-error';
-        $ariaDescribedBy                           = GeneralUtility::trimExplode(
+        $ariaDescribedBy   = GeneralUtility::trimExplode(
             ' ',
             $additionalAttributes['aria-describedby'] ?? '',
             true
@@ -111,11 +108,13 @@ class AdditionalAttributesViewHelper extends AbstractViewHelper
         }
         array_unshift($ariaDescribedBy, $element->getUniqueIdentifier() . '-error');
         $additionalAttributes['aria-describedby'] = implode(' ', $ariaDescribedBy);
+
         if ($element->isRequired()) {
-            $additionalAttributes['required']      = 'required';
+            $additionalAttributes['required'] = 'required';
             $additionalAttributes['aria-required'] = 'true';
         }
-        $additionalAttributes['aria-invalid'] = $validationResults->hasErrors() ? 'true' : 'false';
+
+        $additionalAttributes['aria-invalid'] = $validationResults && $validationResults->hasErrors() ? 'true' : 'false';
 
         $elementValidators = [];
         foreach ($element->getValidators() as $validatorInstance) {
@@ -123,15 +122,16 @@ class AdditionalAttributesViewHelper extends AbstractViewHelper
         }
 
         if (count($elementValidators)) {
-            $formRuntime = $renderingContext
+            $formRuntime = $this->renderingContext
                 ->getViewHelperVariableContainer()
                 ->get(RenderRenderableViewHelper::class, 'formRuntime');
 
             // Get error codes and constraint name for JavaScript.
             $errorCodesByConstraint = [];
             $elementProperties = $element->getProperties();
+
             if (!empty($elementProperties['validationErrorMessages'])) {
-                foreach($elementProperties['validationErrorMessages'] as $validationErrorMessage) {
+                foreach ($elementProperties['validationErrorMessages'] as $validationErrorMessage) {
                     $constraint = ValidationErrorMapper::mapErrorCodeToConatraint($validationErrorMessage['code']);
                     if (!$constraint) {
                         continue;
@@ -139,18 +139,16 @@ class AdditionalAttributesViewHelper extends AbstractViewHelper
                     if (!array_key_exists($constraint, $errorCodesByConstraint)) {
                         $errorCodesByConstraint[$constraint] = [];
                     }
-
                     $errorCodesByConstraint[$constraint][] = $validationErrorMessage['code'];
                 }
             } else {
-                // Run through all  element validators
+                // Run through all element validators
                 foreach (array_keys($elementValidators) as $validatorClass) {
                     // Run through all potential constraints
                     foreach (ValidationErrorMapper::getInverseMap($validatorClass) as $constraint => $constraintErrorCodes) {
                         if (!array_key_exists($constraint, $errorCodesByConstraint)) {
                             $errorCodesByConstraint[$constraint] = [];
                         }
-
                         // Run through all associated Extbase error codes
                         foreach ($constraintErrorCodes as $errorCode) {
                             $errorCodesByConstraint[$constraint][] = $errorCode;
@@ -159,8 +157,8 @@ class AdditionalAttributesViewHelper extends AbstractViewHelper
                 }
             }
 
-            foreach($errorCodesByConstraint as $constraint => $errorCodes) {
-                foreach($errorCodes as $errorCode) {
+            foreach ($errorCodesByConstraint as $constraint => $errorCodes) {
+                foreach ($errorCodes as $errorCode) {
                     // Try to get a translated error message
                     $translationService = GeneralUtility::makeInstance(TranslationService::class);
                     $errorMessage = $translationService->translateFormElementError(
@@ -178,22 +176,32 @@ class AdditionalAttributesViewHelper extends AbstractViewHelper
                 }
             }
 
+            // Instantiate the TranslationService once for fallback translations
+            $translationService = GeneralUtility::makeInstance(TranslationService::class);
 
+            // Provide a fallback error message for the "valuemissing" constraint, if it was not already set by YAML or validators
+            if (!isset($additionalAttributes['data-errormsg-valuemissing'])) {
+                $additionalAttributes['data-errormsg-valuemissing'] = $translationService->translateFormElementError(
+                    $element,
+                    '1221560910', // Constraint/error code identifier
+                    [],
+                    'default',
+                    $formRuntime
+                );
+            }
+
+            // Provide a fallback error message for the "typemismatch" constraint, if it was not already set by YAML or validators
+            if (!isset($additionalAttributes['data-errormsg-typemismatch'])) {
+                $additionalAttributes['data-errormsg-typemismatch'] = $translationService->translateFormElementError(
+                    $element,
+                    '1221565130',
+                    [],
+                    'default',
+                    $formRuntime
+                );
+            }
         }
 
         return $additionalAttributes;
-    }
-
-    /**
-     * Initialize all arguments. You need to override this method and call
-     * $this->registerArgument(...) inside this method, to register all your arguments.
-     *
-     * @return void
-     * @api
-     */
-    public function initializeArguments()
-    {
-        $this->registerArgument('element', AbstractFormElement::class, 'Form element', true);
-        $this->registerArgument('validationResults', Result::class, 'Validation results', false, null);
     }
 }

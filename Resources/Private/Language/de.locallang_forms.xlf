@@ -55,24 +55,28 @@
 
             <!-- Error messages -->
             <trans-unit id="validation.error.1221560910" approved="yes">
-                <source>This field is mandatory.</source>
+                <source>Please fill out this field.</source>
                 <target state="translated">Bitte füllen Sie dieses Feld aus.</target>
             </trans-unit>
             <trans-unit id="validation.error.1221560718" approved="yes">
-                <source>This field is mandatory.</source>
+                <source>Please fill out this field.</source>
                 <target state="translated">Bitte füllen Sie dieses Feld aus.</target>
             </trans-unit>
             <trans-unit id="validation.error.1347992400" approved="yes">
-                <source>This field is mandatory.</source>
+                <source>Please fill out this field.</source>
                 <target state="translated">Bitte füllen Sie dieses Feld aus.</target>
             </trans-unit>
             <trans-unit id="validation.error.1347992453" approved="yes">
-                <source>This field is mandatory.</source>
+                <source>Please fill out this field.</source>
                 <target state="translated">Bitte füllen Sie dieses Feld aus.</target>
             </trans-unit>
             <trans-unit id="validation.error.1580509091" approved="yes">
-                <source>This field is mandatory.</source>
+                <source>Please fill out this field.</source>
                 <target state="translated">Bitte füllen Sie dieses Feld aus.</target>
+            </trans-unit>
+            <trans-unit id="validation.error.1221565130" approved="yes">
+                <source>You must enter a valid value. Please refer to the description of this field.</source>
+                <target>Bitte geben Sie einen gültigen Wert ein. Beachten Sie dabei die Beschreibung dieses Feldes.</target>
             </trans-unit>
             <trans-unit id="validation.error.1580509080" approved="yes">
                 <source>Please enter a valid email address</source>

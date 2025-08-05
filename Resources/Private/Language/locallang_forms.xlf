@@ -41,6 +41,13 @@
                 <source>%s errors ⚠️</source>
             </trans-unit>
 
+            <trans-unit id="forms.validation.error.valuemissing" xml:space="preserve">
+                <source>This field is required.</source>
+            </trans-unit>
+            <trans-unit id="forms.validation.error.typemismatch" xml:space="preserve">
+                <source>The value entered does not match the expected type.</source>
+            </trans-unit>
+
             <!-- Error messages -->
             <trans-unit id="validation.error.1221560910" resname="validation.error.1221560910" xml:space="preserve">
                 <source>Please fill out this field.</source>
@@ -54,8 +61,11 @@
             <trans-unit id="validation.error.1347992453" resname="validation.error.1347992453" xml:space="preserve">
                 <source>Please fill out this field.</source>
             </trans-unit>
-            <trans-unit id="validation.error.1580509091">
+            <trans-unit id="validation.error.1580509091" resname="validation.error.1580509091" xml:space="preserve">
                 <source>Please fill out this field.</source>
+            </trans-unit>
+            <trans-unit id="validation.error.1221565130" resname="validation.error.1221565130" xml:space="preserve">
+                <source>You must enter a valid value. Please refer to the description of this field.</source>
             </trans-unit>
             <trans-unit id="validation.error.1580509080">
                 <source>Please enter a valid email address</source>
