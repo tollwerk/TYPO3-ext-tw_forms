@@ -37,14 +37,15 @@
 
 namespace Tollwerk\TwForms\ViewHelpers\Form\Field;
 
-use Tollwerk\TwForms\Domain\Validator\ValidationErrorMapper;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Error\Error;
 use TYPO3\CMS\Extbase\Error\Result;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Form\Domain\Model\Exception\FormDefinitionConsistencyException;
 use TYPO3\CMS\Form\Domain\Model\FormElements\AbstractFormElement;
-use TYPO3\CMS\Form\Service\TranslationService;
-use TYPO3\CMS\Form\ViewHelpers\RenderRenderableViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+use Tollwerk\TwForms\Domain\Validator\ValidationErrorMapper;
+use Tollwerk\TwForms\Error\Constraint;
 
 /**
  * Prepare additional attributes for form fields
@@ -88,11 +89,15 @@ class AdditionalAttributesViewHelper extends AbstractViewHelper
         // Skipped as JAWS reads both the error message AND the aria-describedby attribute
         // All other screenreaders only read the aria-describedby attribute
         $additionalAttributes['aria-errormessage'] = $element->getUniqueIdentifier() . '-error';
+
+        // aria-describedby (error + description, if present)
         $ariaDescribedBy   = GeneralUtility::trimExplode(
             ' ',
             $additionalAttributes['aria-describedby'] ?? '',
             true
         );
+        array_unshift($ariaDescribedBy, $element->getUniqueIdentifier() . '-error');
+
         if (!empty($properties['elementDescription'])) {
             $elementDescriptionIdentifier = implode(
                 '-',
@@ -106,72 +111,47 @@ class AdditionalAttributesViewHelper extends AbstractViewHelper
                 $ariaDescribedBy[] = $elementDescriptionIdentifier;
             }
         }
-        array_unshift($ariaDescribedBy, $element->getUniqueIdentifier() . '-error');
         $additionalAttributes['aria-describedby'] = implode(' ', $ariaDescribedBy);
 
+        // Standard HTML5-required attribute handling
         if ($element->isRequired()) {
             $additionalAttributes['required'] = 'required';
             $additionalAttributes['aria-required'] = 'true';
         }
 
+        // aria-invalid only if validation errors exist
         $additionalAttributes['aria-invalid'] = $validationResults && $validationResults->hasErrors() ? 'true' : 'false';
 
+        // Prepare validator-to-constraint mapping
         $elementValidators = [];
         foreach ($element->getValidators() as $validatorInstance) {
             $elementValidators[get_class($validatorInstance)] = true;
         }
 
+        // Iterate through validators and generate data-errormsg* attributes
         if (count($elementValidators)) {
-            $formRuntime = $this->renderingContext
-                ->getViewHelperVariableContainer()
-                ->get(RenderRenderableViewHelper::class, 'formRuntime');
+            $validationErrorMessages = $properties['validationErrorMessages'] ?? [];
+            foreach (array_keys($elementValidators) as $validatorClass) {
+                $errorCodeMap = ValidationErrorMapper::getInverseMap($validatorClass);
+                foreach ($errorCodeMap as $constraint => $errorCodes) {
+                    foreach ($errorCodes as $errorCode) {
+                        $error = new Error('', $errorCode);
+                        $constraintObj = Constraint::fromError($error, $validationErrorMessages);
 
-            // Get error codes and constraint name for JavaScript.
-            $errorCodesByConstraint = [];
-            $elementProperties = $element->getProperties();
+                        $constraintName = $constraintObj->getConstraint();
+                        $message = $constraintObj->getMessage();
 
-            if (!empty($elementProperties['validationErrorMessages'])) {
-                foreach ($elementProperties['validationErrorMessages'] as $validationErrorMessage) {
-                    $constraint = ValidationErrorMapper::mapErrorCodeToConatraint($validationErrorMessage['code']);
-                    if (!$constraint) {
-                        continue;
-                    }
-                    if (!array_key_exists($constraint, $errorCodesByConstraint)) {
-                        $errorCodesByConstraint[$constraint] = [];
-                    }
-                    $errorCodesByConstraint[$constraint][] = $validationErrorMessage['code'];
-                }
-            } else {
-                // Run through all element validators
-                foreach (array_keys($elementValidators) as $validatorClass) {
-                    // Run through all potential constraints
-                    foreach (ValidationErrorMapper::getInverseMap($validatorClass) as $constraint => $constraintErrorCodes) {
-                        if (!array_key_exists($constraint, $errorCodesByConstraint)) {
-                            $errorCodesByConstraint[$constraint] = [];
+                        // Fallback: Try to load message from translation files if empty
+                        if (empty($message)) {
+                            $message = LocalizationUtility::translate('validation.error.' . $errorCode, 'tw_forms')
+                                       ?? LocalizationUtility::translate('validation.error.' . $errorCode, 'form')
+                                          ?? '';
                         }
-                        // Run through all associated Extbase error codes
-                        foreach ($constraintErrorCodes as $errorCode) {
-                            $errorCodesByConstraint[$constraint][] = $errorCode;
-                        }
-                    }
-                }
-            }
 
-            foreach ($errorCodesByConstraint as $constraint => $errorCodes) {
-                foreach ($errorCodes as $errorCode) {
-                    // Try to get a translated error message
-                    $translationService = GeneralUtility::makeInstance(TranslationService::class);
-                    $errorMessage = $translationService->translateFormElementError(
-                        $element,
-                        $errorCode,
-                        [],
-                        'default',
-                        $formRuntime
-                    );
-                    // Add as constraint error message attribute
-                    if (strlen($errorMessage)) {
-                        $additionalAttributes['data-errormsg-' . $constraint] = $errorMessage;
-                        break;
+                        if (!empty($constraintName) && !empty($message)) {
+                            $additionalAttributes['data-errormsg' . ucfirst($constraintName)] = $message;
+                            break; // Only take the first matching message per constraint
+                        }
                     }
                 }
             }

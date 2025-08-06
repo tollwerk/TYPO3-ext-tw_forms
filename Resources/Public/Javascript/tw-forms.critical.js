@@ -428,94 +428,61 @@ const PowermailValidators = {
   }
 
   /**
-   * FormField constructor
-   * Initializes form field enhancement with validation and error handling
-   * @param {HTMLElement} element - Form field element to enhance
+   * FormField: Enhances single form fields or field groups with validation logic and error display.
+   *
+   * Used for both native TYPO3 and Powermail-specific validations.
+   *
+   * @param {HTMLElement} element - The form element to enhance
    */
   function FormField(element) {
     this.element = element;
     this.element.enhancer = this;
-    this.wrapper = this.element.closest(".FormField");
+    this.wrapper = this.element.closest('.FormField');
     this.groupPrimaryEnhancer = null;
     this.groupEnhancers = [];
-    this.lastErrorString = "";
+    this.lastConstraints = 0;
+    this.errorMessages = {};
+    this.lastErrorString = '';
+    this.lastPristine = null;
+    this.pristine = false;
+    this.recursiveErrorMessages = null;
 
-    // Bei Checkboxen und Radios lieber "change" verwenden statt "input"
-    const eventType = (this.element.type === "radio" || this.element.type === "checkbox")
-        ? "change"
-        : "input";
+    // Initialize group
+    this.isGroup = element.classList.contains('FormField__group-element');
+    if (this.isGroup) {
+      this.initGroupContext();
+    }
 
-    this.element.addEventListener(eventType, (e) => {
+    // Initialize error messages
+    this.errorMessageBag = element.hasAttribute('aria-errormessage')
+        ? document.getElementById(element.getAttribute('aria-errormessage'))
+        : null;
+
+    if (this.errorMessageBag) {
+      this.setupErrorMessages();
+      this.setupInitialConstraints();
+    }
+
+    // Add event based on element type
+    const eventType = (element.type === 'radio' || element.type === 'checkbox') ? 'change' : 'input';
+
+    element.addEventListener(eventType, (e) => {
       const form = e.target.form;
-
-      // Multistep powermail form: use pristine array if present
       if (Array.isArray(form._stepPristine)) {
         const fieldset = e.target.closest('.powermail_fieldset');
-        const fieldsets = Array.from(form.querySelectorAll('.powermail_fieldset'));
-        const stepIdx = fieldsets.indexOf(fieldset);
-        if (form._stepPristine[stepIdx]) return; // pristine: suppress error!
-      } else if (form.dataset.dirty !== "1") {
-        return; // pristine: no validation yet
+        const stepIdx = [...form.querySelectorAll('.powermail_fieldset')].indexOf(fieldset);
+        if (form._stepPristine[stepIdx]) return;
+      } else if (form.dataset.dirty !== '1') {
+        return;
       }
 
-      // Bei Gruppen IMMER den Primary validieren – egal ob das Element selbst Primary ist oder nicht
+      // Group: validate primary enhancer
       if (this.isGroup && this.groupPrimaryEnhancer) {
         this.groupPrimaryEnhancer.validate(true);
       } else {
         this.validate(true);
       }
     });
-
-
-    // Handle group validation
-    this.isGroup = this.element.classList.contains("FormField__group-element");
-
-    if (this.isGroup) {
-      // Find primary enhancer for this group
-      const groupName = this.element.name;
-      const formElements = Array.from(this.element.form.elements);
-
-      const groupElements = formElements
-          .filter((el) => el.name === groupName && el.classList.contains("FormField__group-element"));
-
-      const primary = groupElements[0];
-
-      if (this.element === primary) {
-        this.groupEnhancers = [this];
-        groupElements.forEach((el) => {
-          if (el !== this.element && el.enhancer) {
-            this.groupEnhancers.push(el.enhancer);
-            el.enhancer.groupPrimaryEnhancer = this;
-            el.enhancer.errorMessageBag = this.errorMessageBag;
-          } else {
-            Object.defineProperty(el, "_primaryEnhancer", {
-              value: this,
-              writable: true
-            });
-          }
-        });
-      } else {
-        if (this.element._primaryEnhancer) {
-          this.groupPrimaryEnhancer = this.element._primaryEnhancer;
-          this.errorMessageBag = this.groupPrimaryEnhancer.errorMessageBag;
-          this.groupPrimaryEnhancer.groupEnhancers.push(this);
-        }
-      }
-    }
-
-    // Initialize validation properties
-    this.lastConstraints = 0;
-    this.errorMessages = {};
-    this.errorMessageBag = this.element.hasAttribute("aria-errormessage")
-      ? d.getElementById(this.element.getAttribute("aria-errormessage"))
-      : null;
-    this.recursiveErrorMessages = null;
-
-    // Setup error messages and validation
-    if (this.errorMessageBag) {
-      this.setupErrorMessages();
-      this.setupInitialConstraints();
-    }
   }
 
   /**
@@ -535,150 +502,125 @@ const PowermailValidators = {
   ];
 
   /**
-   * Setup error messages for each constraint
-   * Reads error messages from data attributes and stores them
+   * Initializes group logic by finding primary enhancer and linking related elements
+   */
+  FormField.prototype.initGroupContext = function () {
+    const groupName = this.element.name;
+    const formElements = Array.from(this.element.form.elements);
+    const groupElements = formElements.filter(
+        (el) => el.name === groupName && el.classList.contains('FormField__group-element')
+    );
+    const primary = groupElements[0];
+
+    if (this.element === primary) {
+      this.groupEnhancers = [this];
+      groupElements.forEach((el) => {
+        if (el !== this.element) {
+          if (el.enhancer) {
+            this.groupEnhancers.push(el.enhancer);
+            el.enhancer.groupPrimaryEnhancer = this;
+          } else {
+            Object.defineProperty(el, '_primaryEnhancer', {
+              value: this,
+              writable: true
+            });
+          }
+        }
+      });
+    } else {
+      if (this.element._primaryEnhancer) {
+        this.groupPrimaryEnhancer = this.element._primaryEnhancer;
+        this.groupPrimaryEnhancer.groupEnhancers.push(this);
+      }
+    }
+  };
+
+  /**
+   * Collects all error messages defined as data attributes for known constraints
    */
   FormField.prototype.setupErrorMessages = function () {
-    this.constraints.forEach((constraint) => {
-      let errorMessage = null;
-      if (constraint === "valueMissing") {
-        errorMessage = this.element.getAttribute(
-          "data-powermail-required-message" || "data-errormsg-valuemissing"
-        );
-      } else if (constraint === "patternMismatch") {
-        errorMessage = this.element.getAttribute(
-          "data-powermail-error-message" || "data-errormsg-typemismatch"
-        );
-      }
-      if (!errorMessage) {
-        const errorMessageKey = `errormsg${constraint
-          .substring(0, 1)
-          .toUpperCase()}${constraint.substring(1).toLowerCase()}`;
-        if (this.element.dataset[errorMessageKey]) {
-          this.errorMessages[constraint] =
-            this.element.dataset[errorMessageKey];
-        }
-      }
-      if (errorMessage) {
-        this.errorMessages[constraint] = errorMessage;
+    this.constraints.forEach((c) => {
+      const attr = 'data-errormsg' + c.charAt(0).toUpperCase() + c.slice(1);
+      if (this.element.dataset[attr]) {
+        this.errorMessages[c] = this.element.dataset[attr];
       }
     });
   };
 
   /**
-   * Setup initial constraint flags from existing error messages
-   * Calculates constraint bitmask from existing error message elements
+   * Collects all currently rendered errors and stores constraint bitmask
    */
   FormField.prototype.setupInitialConstraints = function () {
-    this.errorMessageBag.querySelectorAll("[data-constraint]").forEach((c) => {
-      const constraintIndex = this.constraints.indexOf(c.dataset.constraint);
-      if (constraintIndex >= 0) {
-        this.lastConstraints += Math.pow(2, constraintIndex);
+    this.errorMessageBag.querySelectorAll('[data-constraint]').forEach((el) => {
+      const c = el.dataset.constraint;
+      const i = this.constraints.indexOf(c);
+      if (i >= 0) {
+        this.lastConstraints += 2 ** i;
       }
     });
   };
 
+  /**
+   * Returns whether the field is pristine and suppresses errors if so
+   * @param {boolean} pristine
+   */
   FormField.prototype.setPristine = function (pristine) {
     this.pristine = pristine;
     if (pristine) {
       this.updateErrorMessageBag(0, {});
     }
-  }
+  };
 
   /**
-   * Validate form field and return error messages
-   * Performs comprehensive validation including native HTML5 and custom Powermail validators
-   * @returns {Object} Object containing validation error messages
-   * @param showErrors
-   * @param options
+   * Validates a single field or field group
+   * @param {boolean} showErrors - Whether to display error messages
+   * @param {Object} options - Extra options, e.g., force validation
+   * @returns {Object} Constraint key -> error message
    */
-  FormField.prototype.validate = function validate(showErrors = false, options = {}) {
-    if (this.pristine && !(options && options.force)) {
-      return {};
-    }
+  FormField.prototype.validate = function (showErrors = false, options = {}) {
+    if (this.pristine && !(options && options.force)) return {};
 
-    // Prevent recursive validation calls
-    if (this.recursiveErrorMessages) {
-      return this.recursiveErrorMessages;
-    }
+    if (this.recursiveErrorMessages) return this.recursiveErrorMessages;
 
     const errorMessages = {};
     let constraints = 0;
-
-    // Determine validity state (group vs individual field)
     let validity;
+
+    // Handle group fields
     if (this.isGroup && !this.groupPrimaryEnhancer) {
       validity = this.validateGroup();
-    } else {
-      validity = this.element.validity;
-    }
-
-    // Handle group validation separately
-    if (this.isGroup && !this.groupPrimaryEnhancer) {
       if (validity.valueMissing) {
-        let msg =
-          this.element.getAttribute("data-powermail-required-message") ||
-          this.element.getAttribute("data-powermail-error-message") ||
-          "Bitte wählen Sie mindestens eine Option aus.";
-        errorMessages.valueMissing = msg;
-        constraints += Math.pow(2, this.constraints.indexOf("valueMissing"));
+        errorMessages.valueMissing =
+            this.element.getAttribute('data-powermail-required-message') ||
+            this.element.getAttribute('data-powermail-error-message') ||
+            'Bitte wählen Sie mindestens eine Option aus.';
+        constraints += 2 ** this.constraints.indexOf('valueMissing');
       }
     } else {
-      // Prioritize required field validation
+      validity = this.element.validity;
       if (validity.valueMissing) {
-        let msg =
-          this.element.getAttribute("data-powermail-required-message") ||
-          this.element.getAttribute("data-powermail-error-message") ||
-          this.errorMessages.valueMissing ||
-          this.element.validationMessage;
-        errorMessages.valueMissing = msg;
-        constraints += Math.pow(2, this.constraints.indexOf("valueMissing"));
+        errorMessages.valueMissing =
+            this.element.getAttribute('data-powermail-required-message') ||
+            this.element.getAttribute('data-powermail-error-message') ||
+            this.errorMessages.valueMissing ||
+            this.element.validationMessage;
+        constraints += 2 ** this.constraints.indexOf('valueMissing');
       } else if (!this.element.checkValidity()) {
-        // Check other validation constraints only if field is not missing
-        this.constraints.forEach((constraint) => {
-          if (constraint === "valueMissing") return; // Already handled
-          if (validity[constraint]) {
-            let msg =
-              this.element.getAttribute(
-                `data-powermail-${constraint.toLowerCase()}-message`
-              ) ||
-              this.element.getAttribute("data-powermail-error-message") ||
-              this.errorMessages[constraint] ||
-              this.element.validationMessage;
-            errorMessages[constraint] = msg;
-            constraints += Math.pow(2, this.constraints.indexOf(constraint));
+        this.constraints.forEach((c) => {
+          if (c === 'valueMissing') return;
+          if (validity[c]) {
+            const attr = 'data-powermail-' + c.toLowerCase() + '-message';
+            errorMessages[c] =
+                this.element.getAttribute(attr) ||
+                this.element.getAttribute('data-powermail-error-message') ||
+                this.errorMessages[c] ||
+                this.element.validationMessage;
+            constraints += 2 ** this.constraints.indexOf(c);
           }
         });
       }
     }
 
-    // Run custom Powermail validators (skip if native validation already failed for same type)
-    for (const [validator, fn] of Object.entries(PowermailValidators)) {
-      if (
-        (validator === "pattern" && validity.patternMismatch) ||
-        (validator === "email" &&
-          validity.typeMismatch &&
-          this.element.type === "email") ||
-        (validator === "url" &&
-          validity.typeMismatch &&
-          this.element.type === "url") ||
-        (validator === "maximum" && validity.rangeOverflow) ||
-        (validator === "minimum" && validity.rangeUnderflow) ||
-        (validator === "length" && (validity.tooLong || validity.tooShort)) ||
-        (validator === "number" && validity.badInput) ||
-        (validator === "required" && validity.valueMissing && !this.isGroup)
-      ) {
-        continue; // Skip custom validator if native validation already failed
-      }
-      if (fn(this.element)) {
-        let msg =
-          this.element.getAttribute(`data-powermail-${validator}-message`) ||
-          this.element.getAttribute("data-powermail-error-message");
-        errorMessages[validator] = msg;
-      }
-    }
-
-    // Update error display and trigger form update
     this.recursiveErrorMessages = errorMessages;
     this.updateErrorMessageBag(constraints, errorMessages);
     this.recursiveErrorMessages = null;
@@ -686,14 +628,13 @@ const PowermailValidators = {
   };
 
   /**
-   * Validate checkbox group
-   * Checks if at least one checkbox in the group is selected
-   * @returns {Object} Validity state object with valueMissing property
+   * Validates a group of radio/checkboxes by checking if at least one is selected
+   * @returns {ValidityState}
    */
-  FormField.prototype.validateGroup = function validateGroup() {
+  FormField.prototype.validateGroup = function () {
     let checked = this.element.checked;
-    for (let e = 0; e < this.groupEnhancers.length; ++e) {
-      if (this.groupEnhancers[e].element.checked) {
+    for (let i = 0; i < this.groupEnhancers.length; ++i) {
+      if (this.groupEnhancers[i].element.checked) {
         checked = true;
         break;
       }
@@ -702,102 +643,77 @@ const PowermailValidators = {
   };
 
   /**
-   * Override validity state with custom values
-   * Creates a new validity state object with overridden properties
-   * @param {Object} override - Properties to override in validity state
-   * @returns {Object} New validity state object
+   * Builds a validity object with overrides for testing custom group constraints
+   * @param {Object} override - Constraint values to override
+   * @returns {ValidityState}
    */
-  FormField.prototype.overrideValidityState = function overrideValidityState(
-    override
-  ) {
-    const clonedValidityState = { valid: true };
+  FormField.prototype.overrideValidityState = function (override) {
+    const validity = { valid: true };
     this.constraints.forEach((c) => {
-      clonedValidityState[c] =
-        c in override ? override[c] : this.element.validity[c];
-      clonedValidityState.valid =
-        clonedValidityState.valid && !clonedValidityState[c];
+      validity[c] = override[c] ?? this.element.validity[c];
+      if (validity[c]) validity.valid = false;
     });
-    return clonedValidityState;
+    return validity;
   };
 
   /**
-   * Update error message display bag
-   * Updates the error message container with current validation errors
-   * @param {number} constraints - Bitmask of active constraints
-   * @param {Object} errorMessages - Object containing error messages
+   * Applies error messages to the DOM
+   * @param {number} constraints - Constraint bitmask
+   * @param {Object} errorMessages - Key -> message map
    */
-  FormField.prototype.updateErrorMessageBag = function updateErrorMessageBag(
-    constraints,
-    errorMessages
-  ) {
+  FormField.prototype.updateErrorMessageBag = function (constraints, errorMessages) {
     const hasErrors = Object.keys(errorMessages).length > 0;
     const errorString = JSON.stringify(errorMessages);
 
-    // Only update if there are actual changes
     if (
-      constraints !== this.lastConstraints || this.pristine !== this.lastPristine ||
-        errorString !== this.lastErrorString
+        constraints !== this.lastConstraints ||
+        errorString !== this.lastErrorString ||
+        this.pristine !== this.lastPristine
     ) {
       this.lastConstraints = constraints;
-      this.lastPristine = this.pristine;
       this.lastErrorString = errorString;
-      // Update field and wrapper states
+      this.lastPristine = this.pristine;
+
       if (hasErrors) {
-        this.errorMessageBag.removeAttribute("hidden");
-        this.element.setAttribute("aria-invalid", "true");
-        this.wrapper.classList.add("FormField--has-error");
+        this.errorMessageBag.removeAttribute('hidden');
+        this.element.setAttribute('aria-invalid', 'true');
+        this.wrapper.classList.add('FormField--has-error');
       } else {
-        this.errorMessageBag.setAttribute("hidden", "hidden");
-        this.element.setAttribute("aria-invalid", "false");
-        this.wrapper.classList.remove("FormField--has-error");
+        this.errorMessageBag.setAttribute('hidden', 'hidden');
+        this.element.setAttribute('aria-invalid', 'false');
+        this.wrapper.classList.remove('FormField--has-error');
       }
 
-      // Clear existing error messages
-      this.errorMessageBag.querySelectorAll("[data-constraint]").forEach((child) => {
-        child.remove();
-      });
+      this.errorMessageBag.querySelectorAll('[data-constraint]').forEach((el) => el.remove());
 
-      // Add new error messages
-      for (const constraintKey in errorMessages) {
-        if (
-          Object.prototype.hasOwnProperty.call(errorMessages, constraintKey)
-        ) {
-          const errorMessage = document.createElement("span");
-          errorMessage.setAttribute("data-constraint", constraintKey);
-          errorMessage.textContent = errorMessages[constraintKey];
-          this.errorMessageBag.appendChild(errorMessage);
-        }
+      for (const [key, msg] of Object.entries(errorMessages)) {
+        const span = document.createElement('span');
+        span.setAttribute('data-constraint', key);
+        span.textContent = msg;
+        this.errorMessageBag.appendChild(span);
       }
 
-      // Update tracking properties
-      this.focusWrapper();
-
-      // Update error summary
-      if (typeof this.element.form.enhancer?.update === "function") {
+      if (typeof this.element.form.enhancer?.update === 'function') {
         queueMicrotask(() => this.element.form.enhancer.update());
       }
+
+      this.focusWrapper();
     }
   };
 
   /**
-   * Scroll field wrapper into view
-   * Smoothly scrolls the field wrapper into the viewport
+   * Scrolls the wrapper into view
    */
-  FormField.prototype.focusWrapper = function focusWrapper() {
-    if (scrollIntoView) {
-      this.wrapper[scrollIntoView]({
-        block: "center",
-        inline: "start",
-        behavior: "smooth",
-      });
+  FormField.prototype.focusWrapper = function () {
+    if ('scrollIntoView' in this.wrapper) {
+      this.wrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   };
 
   /**
-   * Focus the form field and scroll into view
-   * Sets focus to the field element and ensures it's visible
+   * Focuses the field and scrolls it into view
    */
-  FormField.prototype.focus = function focus() {
+  FormField.prototype.focus = function () {
     this.element.focus();
     this.focusWrapper();
   };

@@ -40,55 +40,21 @@ namespace Tollwerk\TwForms\Error;
 use Tollwerk\TwForms\Domain\Validator\ValidationErrorMapper;
 use TYPO3\CMS\Extbase\Error\Error;
 
-/**
- * Extended error with JavaScript mapping
- *
- * @category   Tollwerk\TwForms\Domain\Provider
- * @package    Tollwerk\TwForms
- * @subpackage Tollwerk\TwForms\Domain\Provider
- * @author     Jolanta Dworczyk <jolanta@tollwerk.de>
- * @license    MIT https://opensource.org/licenses/MIT
- * @link       https://tollwerk.de
- */
 class Constraint extends Error
 {
-    /**
-     * Type mismatch constraint
-     *
-     * @var string
-     */
-    const TYPE_MISMATCH = 'typeMismatch';
-    /**
-     * Value missing constraint
-     *
-     * @var string
-     */
-    const VALUE_MISSING = 'valueMissing';
-    /**
-     * Constraint codes
-     *
-     * @var int[]
-     */
-    const CODES = [
-        self::TYPE_MISMATCH => 1580509080,
-        self::VALUE_MISSING => 1580509091,
-    ];
-    /**
-     * JavaScript constraint
-     *
-     * @var string
-     */
-    protected $constraint = '';
+    public const string TYPE_MISMATCH     = 'typeMismatch';
+    public const string VALUE_MISSING     = 'valueMissing';
+    public const string TOO_SHORT         = 'tooShort';
+    public const string TOO_LONG          = 'tooLong';
+    public const string RANGE_UNDERFLOW   = 'rangeUnderflow';
+    public const string RANGE_OVERFLOW    = 'rangeOverflow';
+    public const string PATTERN_MISMATCH  = 'patternMismatch';
 
     /**
-     * Constructs this error
-     *
-     * @param string $message    An english error message which is used if no other error message can be resolved
-     * @param int    $code       A unique error code
-     * @param array  $arguments  Array of arguments to be replaced in message
-     * @param string $title      Optional title for the message
-     * @param string $constraint JavaScript constraint
+     * JavaScript constraint name
      */
+    protected string $constraint = '';
+
     public function __construct(
         string $message,
         int $code,
@@ -101,30 +67,18 @@ class Constraint extends Error
     }
 
     /**
-     * Instantiate a Constraint from an Error
-     *
-     * @param Error $error                   Error
-     * @param array $validationErrorMessages Validation error messages like this:
-     *                                       [
-     *                                          ['code' => 12345, 'message' => 'Some helpful validation error message.'],
-     *                                          ['code' => 98765, 'message' => 'Another validation error message.'],
-     *                                       ]
-     *
-     * @return Constraint Constraint
+     * Create a Constraint from a generic Extbase Error
      */
-    public static function fromError(Error $error, array $validationErrorMessages = []): Constraint
+    public static function fromError(Error $error, array $validationErrorMessages = []): self
     {
-        $constraint = ValidationErrorMapper::mapErrorToConstraint($error);
-        $code = $constraint ? self::CODES[$constraint] : $error->getCode();
+        $constraint = ValidationErrorMapper::mapErrorCodeToConstraint($error->getCode());
+        $code = $error->getCode();
         $message = $error->getMessage();
 
-        // Overwrite default error message with custom one, defined in form editor or YAML file etc.
-        foreach($validationErrorMessages as $validationErrorMessage) {
-            if ($validationErrorMessage['code'] === $error->getCode() && !empty($validationErrorMessage['message'])) {
+        foreach ($validationErrorMessages as $validationErrorMessage) {
+            if ($validationErrorMessage['code'] === $code && !empty($validationErrorMessage['message'])) {
                 $message = $validationErrorMessage['message'];
-
-                // We also have to rewind the error code to the default one from typo3/forms for proper translation.
-                $code = $error->getCode();
+                break;
             }
         }
 
@@ -132,9 +86,7 @@ class Constraint extends Error
     }
 
     /**
-     * Returns the JavaScript constraint
-     *
-     * @return string The JavaScript constraint
+     * Return the JavaScript constraint name
      */
     public function getConstraint(): string
     {

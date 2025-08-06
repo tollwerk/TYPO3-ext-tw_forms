@@ -41,6 +41,9 @@ use Tollwerk\TwForms\Error\Constraint;
 use TYPO3\CMS\Extbase\Error\Error;
 use TYPO3\CMS\Extbase\Validation\Validator\EmailAddressValidator;
 use TYPO3\CMS\Extbase\Validation\Validator\NotEmptyValidator;
+use TYPO3\CMS\Extbase\Validation\Validator\NumberRangeValidator;
+use TYPO3\CMS\Extbase\Validation\Validator\RegularExpressionValidator;
+use TYPO3\CMS\Extbase\Validation\Validator\StringLengthValidator;
 use TYPO3\CMS\Extbase\Validation\Validator\UrlValidator;
 
 /**
@@ -73,6 +76,17 @@ class ValidationErrorMapper
         UrlValidator::class => [
             1238108078 => Constraint::TYPE_MISMATCH,
         ],
+        StringLengthValidator::class => [
+            1238108067 => Constraint::TOO_SHORT,
+            1238110957 => Constraint::TOO_LONG,
+        ],
+        NumberRangeValidator::class => [
+            1234567890 => Constraint::RANGE_UNDERFLOW,
+            1234567891 => Constraint::RANGE_OVERFLOW,
+        ],
+        RegularExpressionValidator::class => [
+            1453211235 => Constraint::PATTERN_MISMATCH,
+        ],
     ];
 
     /**
@@ -88,40 +102,17 @@ class ValidationErrorMapper
     public static function getInverseMap(string $validatorClass): array
     {
         $inverseMap = [];
+
         if (!empty(self::ERROR_MAP[$validatorClass])) {
             foreach (self::ERROR_MAP[$validatorClass] as $errorCode => $constraint) {
-                $constraintCode = Constraint::CODES[$constraint];
-                if (empty($inverseMap[$constraint])) {
-                    $inverseMap[$constraint] = [$constraintCode];
+                if (!isset($inverseMap[$constraint])) {
+                    $inverseMap[$constraint] = [];
                 }
-
-                if(!empty($inverseMap[$constraint])) {
-                    $inverseMap[$constraint][] = $constraintCode;
-                }
+                $inverseMap[$constraint][] = $errorCode;
             }
         }
 
         return $inverseMap;
-    }
-
-    /**
-     * Map an Extbase error to a JavaScript constraint
-     *
-     * @param Error $error Extbase error
-     *
-     * @return string|null JavaScript constraint
-     */
-    public static function mapErrorToConstraint(Error $error): ?string
-    {
-        foreach (self::ERROR_MAP as $errorTypeCodes) {
-            foreach ($errorTypeCodes as $errorCode => $constraint) {
-                if ($error->getCode() == $errorCode) {
-                    return $constraint;
-                }
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -131,7 +122,7 @@ class ValidationErrorMapper
      *
      * @return string|null JavaScript constraint
      */
-    public static function mapErrorCodeToConatraint(int $errorCode): ?string
+    public static function mapErrorCodeToConstraint(int $errorCode): ?string
     {
         foreach(self::ERROR_MAP as $errorTypeCodes) {
             foreach($errorTypeCodes as $errorTypeCode => $constraint) {

@@ -41,28 +41,70 @@
                 <source>%s errors ⚠️</source>
             </trans-unit>
 
-            <trans-unit id="forms.validation.error.valuemissing" xml:space="preserve">
-                <source>This field is required.</source>
-            </trans-unit>
-            <trans-unit id="forms.validation.error.typemismatch" xml:space="preserve">
-                <source>The value entered does not match the expected type.</source>
-            </trans-unit>
-
             <!-- Error messages -->
             <trans-unit id="validation.error.1221560910" resname="validation.error.1221560910" xml:space="preserve">
-                <source>Please fill out this field.</source>
+                <source>This field is mandatory.</source>
             </trans-unit>
             <trans-unit id="validation.error.1221560718" resname="validation.error.1221560718" xml:space="preserve">
-                <source>Please fill out this field.</source>
+                <source>This field is mandatory.</source>
             </trans-unit>
             <trans-unit id="validation.error.1347992400" resname="validation.error.1347992400" xml:space="preserve">
-                <source>Please fill out this field.</source>
+                <source>This field is mandatory.</source>
             </trans-unit>
             <trans-unit id="validation.error.1347992453" resname="validation.error.1347992453" xml:space="preserve">
-                <source>Please fill out this field.</source>
+                <source>This field is mandatory.</source>
+            </trans-unit>
+            <trans-unit id="validation.error.1221551320" resname="validation.error.1221551320" xml:space="preserve">
+                <source>You can only enter letters or digits.</source>
+            </trans-unit>
+            <trans-unit id="validation.error.1428504122" resname="validation.error.1428504122" xml:space="preserve">
+                <source>Your text must be a minimum of %s characters in length and no longer than %s.</source>
+            </trans-unit>
+            <trans-unit id="validation.error.1238108068" resname="validation.error.1238108068" xml:space="preserve">
+                <source>You must enter text which is longer than %s characters.</source>
+            </trans-unit>
+            <trans-unit id="validation.error.1238108069" resname="validation.error.1238108069" xml:space="preserve">
+                <source>You must enter text which is no longer than %s characters.</source>
+            </trans-unit>
+            <trans-unit id="validation.error.1221559976" resname="validation.error.1221559976" xml:space="preserve">
+                <source>You must enter a valid email address.</source>
+            </trans-unit>
+            <trans-unit id="validation.error.1221560494" resname="validation.error.1221560494" xml:space="preserve">
+                <source>You must enter a valid number.</source>
+            </trans-unit>
+            <trans-unit id="validation.error.1221560288" resname="validation.error.1221560288" xml:space="preserve">
+                <source>You must enter a valid floating point number.</source>
+            </trans-unit>
+            <trans-unit id="validation.error.1221563685" resname="validation.error.1221563685" xml:space="preserve">
+                <source>You must enter a valid number.</source>
+            </trans-unit>
+            <trans-unit id="validation.error.1221561046" resname="validation.error.1221561046" xml:space="preserve">
+                <source>You must enter a valid number between %s and %s.</source>
+            </trans-unit>
+            <trans-unit id="validation.error.1221565130" resname="validation.error.1221565130" xml:space="preserve">
+                <source>You must enter a valid value. Please refer to the description of this field.</source>
+            </trans-unit>
+            <trans-unit id="validation.error.1475002976" resname="validation.error.1475002976" xml:space="preserve">
+                <source>You must enter a countable subject.</source>
+            </trans-unit>
+            <trans-unit id="validation.error.1475002994" resname="validation.error.1475002994" xml:space="preserve">
+                <source>You must select between %s to %s elements.</source>
+            </trans-unit>
+
+            <trans-unit id="validation.error.1221560910" resname="validation.error.1221560910" xml:space="preserve">
+                <source>Test.</source>
+            </trans-unit>
+            <trans-unit id="validation.error.1221560718" resname="validation.error.1221560718" xml:space="preserve">
+                <source>Test.</source>
+            </trans-unit>
+            <trans-unit id="validation.error.1347992400" resname="validation.error.1347992400" xml:space="preserve">
+                <source>Test.</source>
+            </trans-unit>
+            <trans-unit id="validation.error.1347992453" resname="validation.error.1347992453" xml:space="preserve">
+                <source>Test.</source>
             </trans-unit>
             <trans-unit id="validation.error.1580509091" resname="validation.error.1580509091" xml:space="preserve">
-                <source>Please fill out this field.</source>
+                <source>Test.</source>
             </trans-unit>
             <trans-unit id="validation.error.1221565130" resname="validation.error.1221565130" xml:space="preserve">
                 <source>You must enter a valid value. Please refer to the description of this field.</source>
