@@ -37,10 +37,12 @@
 
 namespace Tollwerk\TwForms\ViewHelpers\Form\Field;
 
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Error\Error;
 use TYPO3\CMS\Extbase\Error\Result;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+use TYPO3\CMS\Extbase\Validation\Validator\NotEmptyValidator;
 use TYPO3\CMS\Form\Domain\Model\Exception\FormDefinitionConsistencyException;
 use TYPO3\CMS\Form\Domain\Model\FormElements\AbstractFormElement;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
@@ -128,29 +130,24 @@ class AdditionalAttributesViewHelper extends AbstractViewHelper
             $elementValidators[get_class($validatorInstance)] = true;
         }
 
+        // Workaround: Required-Felder bekommen keinen sichtbaren NotEmptyValidator – wir fügen ihn manuell hinzu
+        if ($element->isRequired()) {
+            $elementValidators[NotEmptyValidator::class] = true;
+        }
+
         // Iterate through validators and generate data-errormsg* attributes
         if (count($elementValidators)) {
-            $validationErrorMessages = $properties['validationErrorMessages'] ?? [];
             foreach (array_keys($elementValidators) as $validatorClass) {
                 $errorCodeMap = ValidationErrorMapper::getInverseMap($validatorClass);
-                foreach ($errorCodeMap as $constraint => $errorCodes) {
+                foreach ($errorCodeMap as $constraintName => $errorCodes) {
                     foreach ($errorCodes as $errorCode) {
-                        $error = new Error('', $errorCode);
-                        $constraintObj = Constraint::fromError($error, $validationErrorMessages);
+                        $message = LocalizationUtility::translate('validation.error.' . $errorCode, 'tw_forms')
+                                   ?? LocalizationUtility::translate('validation.error.' . $errorCode, 'form')
+                                      ?? '';
 
-                        $constraintName = $constraintObj->getConstraint();
-                        $message = $constraintObj->getMessage();
-
-                        // Fallback: Try to load message from translation files if empty
-                        if (empty($message)) {
-                            $message = LocalizationUtility::translate('validation.error.' . $errorCode, 'tw_forms')
-                                       ?? LocalizationUtility::translate('validation.error.' . $errorCode, 'form')
-                                          ?? '';
-                        }
-
-                        if (!empty($constraintName) && !empty($message)) {
+                        if (!empty($message)) {
                             $additionalAttributes['data-errormsg' . ucfirst($constraintName)] = $message;
-                            break; // Only take the first matching message per constraint
+                            break; // Nur erste gültige Übersetzung pro Constraint verwenden
                         }
                     }
                 }

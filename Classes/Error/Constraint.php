@@ -49,6 +49,7 @@ class Constraint extends Error
     public const string RANGE_UNDERFLOW   = 'rangeUnderflow';
     public const string RANGE_OVERFLOW    = 'rangeOverflow';
     public const string PATTERN_MISMATCH  = 'patternMismatch';
+    public const string TOO_FEW_ITEMS = 'tooFewItems';
 
     /**
      * JavaScript constraint name

@@ -37,14 +37,22 @@
 
 namespace Tollwerk\TwForms\Domain\Validator;
 
-use Tollwerk\TwForms\Error\Constraint;
 use TYPO3\CMS\Extbase\Error\Error;
+use Tollwerk\TwForms\Error\Constraint;
+use TYPO3\CMS\Extbase\Validation\Validator\AlphanumericValidator;
+use TYPO3\CMS\Extbase\Validation\Validator\DateTimeValidator;
 use TYPO3\CMS\Extbase\Validation\Validator\EmailAddressValidator;
+use TYPO3\CMS\Extbase\Validation\Validator\FloatValidator;
+use TYPO3\CMS\Extbase\Validation\Validator\GenericObjectValidator;
+use TYPO3\CMS\Extbase\Validation\Validator\IntegerValidator;
 use TYPO3\CMS\Extbase\Validation\Validator\NotEmptyValidator;
 use TYPO3\CMS\Extbase\Validation\Validator\NumberRangeValidator;
+use TYPO3\CMS\Extbase\Validation\Validator\NumberValidator;
 use TYPO3\CMS\Extbase\Validation\Validator\RegularExpressionValidator;
 use TYPO3\CMS\Extbase\Validation\Validator\StringLengthValidator;
 use TYPO3\CMS\Extbase\Validation\Validator\UrlValidator;
+use TYPO3\CMS\Form\Mvc\Validation\CountValidator;
+use TYPO3\CMS\Form\Mvc\Validation\DateRangeValidator;
 
 /**
  * Extbase validation error mapper
@@ -64,30 +72,47 @@ class ValidationErrorMapper
      * @var string[]
      */
     const ERROR_MAP = [
+        AlphanumericValidator::class => [
+            1221551320 => Constraint::PATTERN_MISMATCH,
+        ],
+        StringLengthValidator::class => [
+            1428504122 => Constraint::TOO_SHORT,
+            1238108068 => Constraint::TOO_SHORT,
+            1238108069 => Constraint::TOO_LONG,
+        ],
+        EmailAddressValidator::class => [
+            1221559976 => Constraint::TYPE_MISMATCH,
+        ],
+        IntegerValidator::class => [
+            1221551320 => Constraint::TYPE_MISMATCH,
+        ],
+        FloatValidator::class => [
+            1221560288 => Constraint::TYPE_MISMATCH,
+        ],
+        NumberValidator::class => [
+            1221560494 => Constraint::TYPE_MISMATCH,
+        ],
+        NumberRangeValidator::class => [
+            1221563685 => Constraint::TYPE_MISMATCH,
+            1221561046 => Constraint::RANGE_UNDERFLOW,
+        ],
+        RegularExpressionValidator::class => [
+            1221565130 => Constraint::PATTERN_MISMATCH,
+        ],
+        DateRangeValidator::class => [
+
+        ],
+        DateTimeValidator::class => [
+            1238087674 => Constraint::TYPE_MISMATCH,
+        ],
         NotEmptyValidator::class => [
             1221560910 => Constraint::VALUE_MISSING,
             1221560718 => Constraint::VALUE_MISSING,
             1347992400 => Constraint::VALUE_MISSING,
             1347992453 => Constraint::VALUE_MISSING,
         ],
-        EmailAddressValidator::class => [
-            1221559976 => Constraint::TYPE_MISMATCH,
-        ],
-        UrlValidator::class => [
-            1238108078 => Constraint::TYPE_MISMATCH,
-        ],
-        StringLengthValidator::class => [
-            1238108067 => Constraint::TOO_SHORT,
-            1238110957 => Constraint::TOO_LONG,
-        ],
-        NumberRangeValidator::class => [
-            1234567890 => Constraint::RANGE_UNDERFLOW,
-            1234567891 => Constraint::RANGE_OVERFLOW,
-        ],
-        RegularExpressionValidator::class => [
-            1453211235 => Constraint::PATTERN_MISMATCH,
-        ],
     ];
+
 
     /**
      * Return an inverse error map (JavaScript to Extbase error codes) for a particular validator

@@ -25,7 +25,7 @@ TYPO3:
                 translation:
                   translationFiles:
                     10: 'EXT:form/Resources/Private/Language/locallang.xlf'
-                    20: 'EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf'
+                    20: 'EXT:tw_forms/Resources/Private/Language/locallang.xlf'
             Email:
               properties:
                 elementClassAttribute: 'FormEmail FormField__input'

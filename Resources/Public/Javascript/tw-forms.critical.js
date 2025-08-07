@@ -493,12 +493,13 @@ const PowermailValidators = {
     "badInput",
     "patternMismatch",
     "rangeOverflow",
-    "rangeUndeflow",
+    "rangeUnderflow",
     "stepMismatch",
     "tooLong",
     "tooShort",
     "typeMismatch",
     "valueMissing",
+    "customError"
   ];
 
   /**
@@ -578,44 +579,54 @@ const PowermailValidators = {
    * @returns {Object} Constraint key -> error message
    */
   FormField.prototype.validate = function (showErrors = false, options = {}) {
-    if (this.pristine && !(options && options.force)) return {};
+    if (this.pristine && !(options && options.force)) {
+      return {};
+    }
 
-    if (this.recursiveErrorMessages) return this.recursiveErrorMessages;
+    // Prevent recursive validation
+    if (this.recursiveErrorMessages) {
+      return this.recursiveErrorMessages;
+    }
 
     const errorMessages = {};
     let constraints = 0;
     let validity;
 
-    // Handle group fields
+    // Handle group fields (radio and checkbox groups)
     if (this.isGroup && !this.groupPrimaryEnhancer) {
       validity = this.validateGroup();
       if (validity.valueMissing) {
         errorMessages.valueMissing =
             this.element.getAttribute('data-powermail-required-message') ||
-            this.element.getAttribute('data-powermail-error-message') ||
-            'Bitte wählen Sie mindestens eine Option aus.';
+            this.element.getAttribute('data-errormsgvaluemissing') ||
+            this.errorMessages.valueMissing ||
+            this.element.validationMessage;
         constraints += 2 ** this.constraints.indexOf('valueMissing');
       }
     } else {
+      // Handle single fields
       validity = this.element.validity;
+
       if (validity.valueMissing) {
         errorMessages.valueMissing =
             this.element.getAttribute('data-powermail-required-message') ||
-            this.element.getAttribute('data-powermail-error-message') ||
+            this.element.getAttribute('data-errormsgvaluemissing') ||
             this.errorMessages.valueMissing ||
             this.element.validationMessage;
         constraints += 2 ** this.constraints.indexOf('valueMissing');
       } else if (!this.element.checkValidity()) {
-        this.constraints.forEach((c) => {
-          if (c === 'valueMissing') return;
-          if (validity[c]) {
-            const attr = 'data-powermail-' + c.toLowerCase() + '-message';
-            errorMessages[c] =
+        // Loop through known constraints and check each individually
+        this.constraints.forEach((constraint) => {
+          if (constraint === 'valueMissing') return; // already handled
+          if (validity[constraint]) {
+            const attr = 'data-powermail-' + constraint.toLowerCase() + '-message';
+            errorMessages[constraint] =
                 this.element.getAttribute(attr) ||
                 this.element.getAttribute('data-powermail-error-message') ||
-                this.errorMessages[c] ||
+                this.element.getAttribute('data-errormsg' + constraint.charAt(0).toUpperCase() + constraint.slice(1)) ||
+                this.errorMessages[constraint] ||
                 this.element.validationMessage;
-            constraints += 2 ** this.constraints.indexOf(c);
+            constraints += 2 ** this.constraints.indexOf(constraint);
           }
         });
       }
@@ -624,6 +635,7 @@ const PowermailValidators = {
     this.recursiveErrorMessages = errorMessages;
     this.updateErrorMessageBag(constraints, errorMessages);
     this.recursiveErrorMessages = null;
+
     return errorMessages;
   };
 

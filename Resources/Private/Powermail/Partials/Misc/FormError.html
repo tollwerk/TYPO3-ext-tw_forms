@@ -61,9 +61,6 @@
                       <f:then>
                         <a href="#powermail_field_{singleError.arguments.marker}_1"
                            class="Form__error-link">
-                          <vh:getter.getFieldPropertyFromMarkerAndForm marker="{singleError.arguments.marker}"
-                                                                       form="{form}"
-                                                                       property="title"/>:
                           <f:translate key="validationerror_{singleError.message}">
                             {singleError.message}
                           </f:translate>
@@ -72,9 +69,6 @@
                       <f:else>
                         <a href="#powermail_field_{singleError.arguments.marker}"
                            class="Form__error-link">
-                          <vh:getter.getFieldPropertyFromMarkerAndForm marker="{singleError.arguments.marker}"
-                                                                       form="{form}"
-                                                                       property="title"/>:
                           <f:translate key="validationerror_{singleError.message}">
                             {singleError.message}
                           </f:translate>
