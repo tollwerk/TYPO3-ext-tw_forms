@@ -83,17 +83,16 @@ class AdditionalAttributesViewHelper extends AbstractViewHelper
      */
     public function render(): array
     {
-        $element           = $this->arguments['element'];
+        $element = $this->arguments['element'];
         $validationResults = $this->arguments['validationResults'];
-        $properties        = $element->getProperties();
+        $properties = $element->getProperties();
         $additionalAttributes = $properties['fluidAdditionalAttributes'] ?? [];
 
-        // Skipped as JAWS reads both the error message AND the aria-describedby attribute
-        // All other screenreaders only read the aria-describedby attribute
+        // Set aria-errormessage pointing to the error container
         $additionalAttributes['aria-errormessage'] = $element->getUniqueIdentifier() . '-error';
 
-        // aria-describedby (error + description, if present)
-        $ariaDescribedBy   = GeneralUtility::trimExplode(
+        // Build aria-describedby with error ID and optional description
+        $ariaDescribedBy = GeneralUtility::trimExplode(
             ' ',
             $additionalAttributes['aria-describedby'] ?? '',
             true
@@ -101,54 +100,66 @@ class AdditionalAttributesViewHelper extends AbstractViewHelper
         array_unshift($ariaDescribedBy, $element->getUniqueIdentifier() . '-error');
 
         if (!empty($properties['elementDescription'])) {
-            $elementDescriptionIdentifier = implode(
-                '-',
-                [
-                    $element->getRootForm()->getIdentifier(),
-                    $element->getIdentifier(),
-                    'desc'
-                ]
-            );
+            $elementDescriptionIdentifier = implode('-', [
+                $element->getRootForm()->getIdentifier(),
+                $element->getIdentifier(),
+                'desc',
+            ]);
             if (!in_array($elementDescriptionIdentifier, $ariaDescribedBy)) {
                 $ariaDescribedBy[] = $elementDescriptionIdentifier;
             }
         }
+
         $additionalAttributes['aria-describedby'] = implode(' ', $ariaDescribedBy);
 
-        // Standard HTML5-required attribute handling
+        // Set required and aria-required if field is marked required
         if ($element->isRequired()) {
             $additionalAttributes['required'] = 'required';
             $additionalAttributes['aria-required'] = 'true';
         }
 
-        // aria-invalid only if validation errors exist
+        // Set aria-invalid only if validation errors exist
         $additionalAttributes['aria-invalid'] = $validationResults && $validationResults->hasErrors() ? 'true' : 'false';
 
-        // Prepare validator-to-constraint mapping
+        // Map validators to class names
         $elementValidators = [];
         foreach ($element->getValidators() as $validatorInstance) {
             $elementValidators[get_class($validatorInstance)] = true;
         }
 
-        // Workaround: Required-Felder bekommen keinen sichtbaren NotEmptyValidator – wir fügen ihn manuell hinzu
-        if ($element->isRequired()) {
-            $elementValidators[NotEmptyValidator::class] = true;
-        }
+        // Load custom error messages if defined in form definition
+        $validationErrorMessages = $properties['validationErrorMessages'] ?? [];
 
-        // Iterate through validators and generate data-errormsg* attributes
-        if (count($elementValidators)) {
-            foreach (array_keys($elementValidators) as $validatorClass) {
-                $errorCodeMap = ValidationErrorMapper::getInverseMap($validatorClass);
-                foreach ($errorCodeMap as $constraintName => $errorCodes) {
-                    foreach ($errorCodes as $errorCode) {
-                        $message = LocalizationUtility::translate('validation.error.' . $errorCode, 'tw_forms')
-                                   ?? LocalizationUtility::translate('validation.error.' . $errorCode, 'form')
-                                      ?? '';
+        // Loop through validators and assign matching error messages to data-errormsg-* attributes
+        foreach (array_keys($elementValidators) as $validatorClass) {
+            $errorCodeMap = ValidationErrorMapper::getInverseMap($validatorClass);
 
-                        if (!empty($message)) {
-                            $additionalAttributes['data-errormsg' . ucfirst($constraintName)] = $message;
-                            break; // Nur erste gültige Übersetzung pro Constraint verwenden
-                        }
+            foreach ($errorCodeMap as $constraintName => $errorCodes) {
+                foreach ($errorCodes as $errorCode) {
+                    // Try to use a custom error message first
+                    $constraint = Constraint::fromError(
+                        new Error('', $errorCode),
+                        $validationErrorMessages
+                    );
+
+                    $constraintName = $constraint->getConstraint();
+                    $message = $constraint->getMessage();
+
+                    // Fallback: use translations from custom or default XLF files
+                    if (empty($message)) {
+                        $message = LocalizationUtility::translate(
+                            'validation.error.' . $errorCode,
+                            'tw_forms'
+                        ) ?? LocalizationUtility::translate(
+                            'validation.error.' . $errorCode,
+                            'form'
+                        ) ?? '';
+                    }
+
+                    // Assign only the first matching message per constraint
+                    if (!empty($constraintName) && !empty($message)) {
+                        $additionalAttributes['data-errormsg' . ucfirst($constraintName)] = $message;
+                        break;
                     }
                 }
             }
