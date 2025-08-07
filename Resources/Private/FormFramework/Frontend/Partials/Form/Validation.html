@@ -37,20 +37,20 @@
     --></f:comment>
     <f:section name="ErrorSummary">
         <f:variable name="pattern"
-                    value="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.title.errors')}"/>
+                    value="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.title.errors')}"/>
         <f:variable name="count" value="{f:count(subject: validationResults.flattenedErrors)}"/>
         <f:variable name="title" value="{twforms:form.title(form: form, pattern: pattern, errors: count)}"/>
 
         <nav class="Form__error-navigation"
-             aria-label="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.nav.errors')}" tabindex="-1"
+             aria-label="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.nav.errors')}" tabindex="-1"
              data-title-website="{title.websiteName}"
              data-title-errors="{title.pattern}"
              data-title="{title.default}"
              {f:if(condition: hidden, then: ' hidden')}>
             <f:variable name="headingKeySingle"
-                        value="LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.error"/>
+                        value="LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.error"/>
             <f:variable name="headingKeyMultiple"
-                        value="LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.errors"/>
+                        value="LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.errors"/>
             <f:variable name="headingContent"
                         value="{f:if(condition: '{count} == 1', then: '{f:translate(key: headingKeySingle)}', else: '{f:translate(key: headingKeyMultiple, arguments: \'{0: count}\')}')}"/>
             <svg width="48" height="48" class="Form__error-icon" aria-hidden="true" focusable="false">

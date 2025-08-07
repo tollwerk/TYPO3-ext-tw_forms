@@ -12,7 +12,7 @@
          aria-labelledby="form-steps-{form.identifier}">
         <h2 class="FormStatus__heading"
             id="form-steps-{form.identifier}">
-            {f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.steps')}
+            {f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.steps')}
         </h2>
 
         <f:comment><!--If there's a next page: Place a submit button as first button in the form to enable implicit form submission --></f:comment>
@@ -22,7 +22,7 @@
                            type="submit"
                            tabindex="-1"
                            class="hide-element">
-                {f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:element.Page.renderingOptions.nextButtonLabel')}
+                {f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:element.Page.renderingOptions.nextButtonLabel')}
             </f:form.button>
         </f:if>
 
@@ -33,7 +33,7 @@
                 <f:variable name="pageCurrent"
                             value="{f:if(condition: '{statusPage.identifier} == {page.identifier}', then: 1, else: 0)}"/>
                 <f:variable name="label"
-                            value="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:page.{statusPage.identifier}.properties.label')}"/>
+                            value="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:page.{statusPage.identifier}.properties.label')}"/>
                 <li class="FormStatus__page{f:if(condition: pageCompleted, then: ' FormStatus__page--complete')}{f:if(condition: pageCurrent, then: ' FormStatus__page--current')}">
                     <f:if condition="{pageCurrent}">
                         <f:then>
@@ -45,7 +45,7 @@
                                            type="submit"
                                            class="FormStatus__page-link"
                                            formnovalidate="formnovalidate">{label}
-                                {f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.complete')}
+                                {f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.complete')}
                             </f:form.button>
                         </f:else>
                         <f:else>

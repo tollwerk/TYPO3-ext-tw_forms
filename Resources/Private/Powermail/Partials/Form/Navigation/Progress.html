@@ -10,7 +10,7 @@
      aria-labelledby="form-{formId}-progress-heading">
     <h2 class="Progress__heading"
         id="form-{formId}-progress-heading">
-        {f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.steps')}
+        {f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.steps')}
     </h2>
     <ol class="Progress__list">
         <f:for each="{form.pages}"
@@ -29,7 +29,7 @@
                             data-powermail-default-label="{page.title}"
                             data-powermail-morestep-current="{iterationPages.index}"
                             data-powermail-morestep-show="{iterationPages.index}"
-                            data-powermail-morestep-success="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf:form.complete')}"
+                            data-powermail-morestep-success="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.complete')}"
                     >
                         {page.title}
                     </button>
