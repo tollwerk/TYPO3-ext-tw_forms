@@ -37,12 +37,10 @@
 
 namespace Tollwerk\TwForms\ViewHelpers\Form\Field;
 
-use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Error\Error;
 use TYPO3\CMS\Extbase\Error\Result;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use TYPO3\CMS\Extbase\Validation\Validator\NotEmptyValidator;
 use TYPO3\CMS\Form\Domain\Model\Exception\FormDefinitionConsistencyException;
 use TYPO3\CMS\Form\Domain\Model\FormElements\AbstractFormElement;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
@@ -142,7 +140,7 @@ class AdditionalAttributesViewHelper extends AbstractViewHelper
                         $validationErrorMessages
                     );
 
-                    $constraintName = $constraint->getConstraint();
+                    $mappedConstraint = $constraint->getConstraint();
                     $message = $constraint->getMessage();
 
                     // Fallback: use translations from custom or default XLF files
@@ -157,8 +155,8 @@ class AdditionalAttributesViewHelper extends AbstractViewHelper
                     }
 
                     // Assign only the first matching message per constraint
-                    if (!empty($constraintName) && !empty($message)) {
-                        $additionalAttributes['data-errormsg' . ucfirst($constraintName)] = $message;
+                    if (!empty($mappedConstraint) && !empty($message)) {
+                        $additionalAttributes['data-errormsg' . ucfirst($mappedConstraint)] = $message;
                         break;
                     }
                 }

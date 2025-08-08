@@ -75,7 +75,7 @@
             <trans-unit id="validation.error.1221559976" resname="validation.error.1221559976" xml:space="preserve">
                 <source>Please enter a valid email address.</source>
             </trans-unit>
-            <!-- NumberValidator / TYPE_MISMATCH -->
+            <!-- IntegerValidator / TYPE_MISMATCH -->
             <trans-unit id="validation.error.1221560494" resname="validation.error.1221560494" xml:space="preserve">
                 <source>Please enter a valid number.</source>
             </trans-unit>
@@ -91,19 +91,33 @@
             <trans-unit id="validation.error.1221561046" resname="validation.error.1221561046" xml:space="preserve">
                 <source>Please enter a valid number between %s and %s.</source>
             </trans-unit>
-            <!-- GenericObjectValidator / TYPE_MISMATCH -->
+            <!-- RegularExpressionValidator / PATTERN_MISMATCH -->
             <trans-unit id="validation.error.1221565130" resname="validation.error.1221565130" xml:space="preserve">
                 <source>Please enter a valid value. Please refer to the description of this field.</source>
             </trans-unit>
+            <!-- DateRangeValidator / RANGE_OVERFLOW -->
             <trans-unit id="validation.error.1521293686" resname="validation.error.1521293686" xml:space="preserve">
                 <source>Please select a date before %s.</source>
             </trans-unit>
+            <!-- DateRangeValidator / RANGE_UNDERFLOW -->
             <trans-unit id="validation.error.1521293687" resname="validation.error.1521293687" xml:space="preserve">
                 <source>Please select a date after %s.</source>
             </trans-unit>
-
+            <!-- CountValidator / TOO_FEW_ITEMS -->
             <trans-unit id="validation.error.1475002994" resname="validation.error.1475002994" xml:space="preserve">
                 <source>Please select between %s to %s elements.</source>
+            </trans-unit>
+            <!-- CountValidator / TYPE_MISMATCH -->
+            <trans-unit id="validation.error.1475002976" resname="validation.error.1475002976" xml:space="preserve">
+                <source>Please select a valid value.</source>
+            </trans-unit>
+            <!-- DateRangeValidator / TYPE_MISMATCH -->
+            <trans-unit id="validation.error.1521293685" resname="validation.error.1521293685" xml:space="preserve">
+                <source>Please enter a valid date.</source>
+            </trans-unit>
+            <!-- DateTimeValidator / TYPE_MISMATCH -->
+            <trans-unit id="validation.error.1238087674" resname="validation.error.1238087674" xml:space="preserve">
+                <source>Please enter a valid date.</source>
             </trans-unit>
         </body>
     </file>

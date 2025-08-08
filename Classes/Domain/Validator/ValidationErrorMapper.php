@@ -37,20 +37,17 @@
 
 namespace Tollwerk\TwForms\Domain\Validator;
 
-use TYPO3\CMS\Extbase\Error\Error;
 use Tollwerk\TwForms\Error\Constraint;
 use TYPO3\CMS\Extbase\Validation\Validator\AlphanumericValidator;
 use TYPO3\CMS\Extbase\Validation\Validator\DateTimeValidator;
 use TYPO3\CMS\Extbase\Validation\Validator\EmailAddressValidator;
 use TYPO3\CMS\Extbase\Validation\Validator\FloatValidator;
-use TYPO3\CMS\Extbase\Validation\Validator\GenericObjectValidator;
 use TYPO3\CMS\Extbase\Validation\Validator\IntegerValidator;
 use TYPO3\CMS\Extbase\Validation\Validator\NotEmptyValidator;
 use TYPO3\CMS\Extbase\Validation\Validator\NumberRangeValidator;
 use TYPO3\CMS\Extbase\Validation\Validator\NumberValidator;
 use TYPO3\CMS\Extbase\Validation\Validator\RegularExpressionValidator;
 use TYPO3\CMS\Extbase\Validation\Validator\StringLengthValidator;
-use TYPO3\CMS\Extbase\Validation\Validator\UrlValidator;
 use TYPO3\CMS\Form\Mvc\Validation\CountValidator;
 use TYPO3\CMS\Form\Mvc\Validation\DateRangeValidator;
 
@@ -71,7 +68,7 @@ class ValidationErrorMapper
      *
      * @var string[]
      */
-    const ERROR_MAP = [
+    const array ERROR_MAP = [
         AlphanumericValidator::class => [
             1221551320 => Constraint::PATTERN_MISMATCH,
         ],
@@ -84,13 +81,13 @@ class ValidationErrorMapper
             1221559976 => Constraint::TYPE_MISMATCH,
         ],
         IntegerValidator::class => [
-            1221551320 => Constraint::TYPE_MISMATCH,
+            1221560494 => Constraint::TYPE_MISMATCH,
         ],
         FloatValidator::class => [
             1221560288 => Constraint::TYPE_MISMATCH,
         ],
         NumberValidator::class => [
-            1221560494 => Constraint::TYPE_MISMATCH,
+            1221563685 => Constraint::TYPE_MISMATCH,
         ],
         NumberRangeValidator::class => [
             1221563685 => Constraint::TYPE_MISMATCH,
@@ -100,10 +97,16 @@ class ValidationErrorMapper
             1221565130 => Constraint::PATTERN_MISMATCH,
         ],
         DateRangeValidator::class => [
-
+            1521293685 => Constraint::TYPE_MISMATCH,
+            1521293687 => Constraint::RANGE_UNDERFLOW,
+            1521293686 => Constraint::RANGE_OVERFLOW,
         ],
         DateTimeValidator::class => [
             1238087674 => Constraint::TYPE_MISMATCH,
+        ],
+        CountValidator::class => [
+            1475002976 => Constraint::TYPE_MISMATCH,
+            1475002994 => Constraint::TOO_FEW_ITEMS,
         ],
         NotEmptyValidator::class => [
             1221560910 => Constraint::VALUE_MISSING,
@@ -119,7 +122,7 @@ class ValidationErrorMapper
      *
      * @param string $validatorClass Validator class
      *
-     * @return array[]                              Inverse error map (JavaScript to Extbase error codes)
+     * @return array[] Inverse error map (JavaScript to Extbase error codes)
      *
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      * @codingStandardsIgnoreStart
