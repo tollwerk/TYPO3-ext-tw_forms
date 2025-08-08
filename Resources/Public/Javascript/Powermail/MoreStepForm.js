@@ -123,14 +123,24 @@ export default function MoreStepForm() {
    */
   let showListener = function () {
     // Handle step navigation buttons (Next/Previous)
-    let moreButtons = document.querySelectorAll('[data-powermail-morestep-next]');
+    // Bind to generic data-powermail-morestep-show so both next and previous work
+    let moreButtons = document.querySelectorAll('[data-powermail-morestep-show]');
 
     for (let i = 0; i < moreButtons.length; i++) {
       moreButtons[i].addEventListener('click', function (event) {
         event.preventDefault();
         let form = event.target.closest('form');
+        if (!form) { return false; }
         let currentIndex = getActivePageIndex(form);
         let nextIndex = parseInt(event.target.getAttribute('data-powermail-morestep-show'), 10);
+
+        // Backward navigation: always allowed without validation
+        if (nextIndex < currentIndex) {
+          that.showFieldset(nextIndex, form);
+          const validUntil = formValidUntilMap.get(form) || -1;
+          updateButtonStatus(form, nextIndex, validUntil);
+          return false;
+        }
 
         // Only validate when moving forward through the form
         if (nextIndex > currentIndex) {
@@ -272,34 +282,45 @@ export default function MoreStepForm() {
     validUntil = typeof validUntil === 'number' ? validUntil : -1;
 
     for (let i = 0; i < buttons.length; i++) {
-      buttons[i].classList.remove(buttonActiveClass, buttonValidClass, buttonDisabledClass);
+      // Reset classes and ARIA
+      buttons[i].classList.remove(buttonActiveClass, buttonValidClass, buttonDisabledClass, 'is-next');
       buttons[i].removeAttribute('disabled');
+      buttons[i].removeAttribute('aria-disabled');
       buttons[i].removeAttribute('aria-current');
+
       let baseLabel = buttons[i].dataset.powermailDefaultLabel || buttons[i].textContent.trim();
       let successLabel = buttons[i].dataset.powermailMorestepSuccess || '';
       let progressStep = buttons[i].closest('.ProgressStep');
-      progressStep.classList.add('ProgressStep--incomplete');
-      progressStep.classList.add('ProgressStep--sibling-incomplete');
 
+      // Reset ProgressStep state classes
+      progressStep.classList.remove('ProgressStep--complete', 'ProgressStep--incomplete', 'ProgressStep--next');
+
+      // Determine state based on active index and validation progress
       if (i === activeIdx) {
-        // Current active step
+        // Active step
         buttons[i].classList.add(buttonActiveClass);
         buttons[i].textContent = baseLabel;
         buttons[i].setAttribute('aria-current', 'step');
+        progressStep.classList.add('ProgressStep--incomplete');
       } else if (i <= validUntil) {
-        // Validated step - show success label
+        // Completed/validated step
         buttons[i].classList.add(buttonValidClass);
         buttons[i].textContent = successLabel ? `${baseLabel} ${successLabel}` : baseLabel;
-        progressStep.classList.remove('ProgressStep--incomplete');
         progressStep.classList.add('ProgressStep--complete');
-      } else if (i > validUntil + 1) {
-        // Disabled step (more than one step ahead)
-        buttons[i].classList.add(buttonDisabledClass);
-        buttons[i].setAttribute('disabled','disabled');
+      } else if (i === activeIdx + 1) {
+        // Immediate next step (not yet validated) – visually distinguishable but disabled
+        buttons[i].classList.add('is-next');
+        buttons[i].setAttribute('disabled', 'disabled');
+        buttons[i].setAttribute('aria-disabled', 'true');
         buttons[i].textContent = baseLabel;
+        progressStep.classList.add('ProgressStep--next');
       } else {
-        // Next available step
+        // Future steps beyond the next – disabled
+        buttons[i].classList.add(buttonDisabledClass);
+        buttons[i].setAttribute('disabled', 'disabled');
+        buttons[i].setAttribute('aria-disabled', 'true');
         buttons[i].textContent = baseLabel;
+        progressStep.classList.add('ProgressStep--incomplete');
       }
     }
   };
