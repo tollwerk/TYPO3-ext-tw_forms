@@ -24,7 +24,7 @@
                         id="{formId}-powermail-field-{field.marker}-{index.cycle}"
                         class="powermail_radio FormField__input FormField__group-element"
                         name="tx_powermail_pi1[field][{field.marker}]"
-                        additionalAttributes="{vh:validation.validationDataAttribute(field:field)}"
+                        additionalAttributes="{vh:validation.validationDataAttribute(field:field, iteration:index)}"
                         aria="{'errormessage': 'error-for-powermail-field-{formId}-{field.marker}', 'describedby': 'error-for-powermail-field-{formId}-{field.marker} desc-for-powermail-field-{formId}-{field.marker}'}">
               </f:form.radio>
             </f:then>
