@@ -14,24 +14,22 @@
                         value="{twforms:form.field.additionalAttributes(element: element, validationResults: validationResults)}"/>
             <f:render partial="Field/Field" contentAs="elementContent"
                       arguments="{element: element}">
-                <div class="FormField__wrapper">
+                <label for="{element.uniqueIdentifier}"
+                       class="{element.properties.containerClassAttribute}">
                     <f:render section="Checkbox" arguments="{
-                                    element: element,
-                                    additionalAttributes: additionalAttributes,
-                                    multiple: 0,
-                                    id: element.uniqueIdentifier,
-                                    value: element.properties.value
-                                }"/>
-                    <label for="{element.uniqueIdentifier}"
-                           class="FormField__label FormField__label--{element.type -> f:format.case(mode: 'lower')}">
-                        <f:render section="InlineLabel" contentAs="label">
-                            {formvh:translateElementProperty(element: element, property: 'label')}
-                            <f:if condition="{element.required}">
-                                <f:render partial="Field/Required"/>
-                            </f:if>
-                        </f:render>
-                    </label>
-                </div>
+                        element: element,
+                        additionalAttributes: additionalAttributes,
+                        multiple: 0,
+                        id: element.uniqueIdentifier,
+                        value: element.properties.value
+                        }"/>
+                    <f:render section="InlineLabel" contentAs="label">
+                        {formvh:translateElementProperty(element: element, property: 'label')}
+                        <f:if condition="{element.required}">
+                            <f:render partial="Field/Required"/>
+                        </f:if>
+                    </f:render>
+                </label>
             </f:render>
         </f:form.validationResults>
     </formvh:renderRenderable>
@@ -48,6 +46,7 @@
 
     --></f:comment>
     <f:section name="Checkbox">
+        <f:comment><!-- Semantic checkbox which is visually hidden --></f:comment>
         <f:form.checkbox
                 additionalAttributes="{additionalAttributes}"
                 multiple="{multiple}"
@@ -57,6 +56,11 @@
                 property="{element.identifier}"
                 value="{value}"
         />
+
+        <f:comment><!-- Visual replacement of the radio button via SVG --></f:comment>
+        <svg class="Icon" width="24" height="24" aria-hidden="true" focusable="false">
+            <use href="#checkmark"></use>
+        </svg>
     </f:section>
 
     <f:comment><!--

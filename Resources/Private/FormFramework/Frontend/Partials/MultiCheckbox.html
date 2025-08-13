@@ -26,22 +26,21 @@
                         </f:else>
                     </f:if>
 
-                    <div class="FormField__wrapper">
+                    <label for="{element.uniqueIdentifier}-{idIterator.index}"
+                           class="{element.properties.containerClassAttribute}">
                         <f:render partial="Checkbox" section="Checkbox" arguments="{
                             element: element,
                             additionalAttributes: additionalAttributes,
                             multiple: 1,
                             id: '{element.uniqueIdentifier}-{idIterator.index}',
                             value: value
-                        }"/>
-                        <label for="{element.uniqueIdentifier}-{idIterator.index}"
-                               class="FormField__label FormField__label--{element.type -> f:format.case(mode: 'lower')}">
-                            <f:render partial="Checkbox" section="InlineLabel" contentAs="label">
-                                {formvh:translateElementProperty(element: element, property: '{0: \'options\', 1:
-                                value}')}
-                            </f:render>
-                        </label>
-                    </div>
+                            }"
+                        />
+                        <f:render partial="Checkbox" section="InlineLabel" contentAs="label">
+                            {formvh:translateElementProperty(element: element, property: '{0: \'options\', 1:
+                            value}')}
+                        </f:render>
+                    </label>
                 </f:for>
             </f:render>
         </f:form.validationResults>

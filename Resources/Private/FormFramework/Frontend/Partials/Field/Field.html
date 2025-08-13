@@ -13,7 +13,7 @@
       data-namespace-typo3-fluid="true">
     <f:variable name="label" value="{formvh:translateElementProperty(element: element, property: 'label')}"/>
     <f:variable name="labelClasses"
-                value="{element.properties.containerClassAttribute}{f:if(condition: '{validationResults.errors.0}', then: ' has-error')}"/>
+                value="{f:if(condition: '{validationResults.errors.0}', then: ' has-error')}"/>
 
     <f:form.validationResults for="{element.rootForm.identifier}.{element.identifier}">
         <f:if condition="{element.renderingOptions.dontWrap}">

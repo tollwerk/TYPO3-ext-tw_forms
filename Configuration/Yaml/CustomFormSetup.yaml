@@ -7,7 +7,8 @@ TYPO3:
             AdvancedPassword: null
             Checkbox:
               properties:
-                elementClassAttribute: 'FormCheckbox FormField__input'
+                containerClassAttribute: 'Checkbox__wrapper'
+                elementClassAttribute: 'FormField__input'
             CountrySelect:
               formEditor:
                 group: null
@@ -34,6 +35,7 @@ TYPO3:
             ImageUpload: null
             MultiCheckbox:
               properties:
+                containerClassAttribute: 'Checkbox__wrapper'
                 elementClassAttribute: 'FormField__input FormField__group-element'
             MultiSelect: null
             SingleSelect:
