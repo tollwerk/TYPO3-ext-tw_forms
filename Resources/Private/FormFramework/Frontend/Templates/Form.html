@@ -16,8 +16,7 @@
                 addQueryString="{form.renderingOptions.addQueryString}"
                 argumentsToBeExcludedFromQueryString="{form.renderingOptions.argumentsToBeExcludedFromQueryString}"
                 additionalParams="{form.renderingOptions.additionalParams}"
-                additionalAttributes="{form.renderingOptions.additionalAttributes}"
-                novalidate="1">
+                additionalAttributes="{form.renderingOptions.additionalAttributes}">
                 <f:render partial="{form.currentPage.templateName}"
                           arguments="{form: form, page: form.currentPage}"/>
                 <f:render partial="Form/Navigation" arguments="{form: form}"/>
