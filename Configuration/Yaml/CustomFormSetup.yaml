@@ -7,7 +7,7 @@ TYPO3:
             AdvancedPassword: null
             Checkbox:
               properties:
-                containerClassAttribute: 'Checkbox__wrapper'
+                containerClassAttribute: 'CustomInput CustomInput--check'
                 elementClassAttribute: 'FormField__input'
             CountrySelect:
               formEditor:
@@ -35,7 +35,7 @@ TYPO3:
             ImageUpload: null
             MultiCheckbox:
               properties:
-                containerClassAttribute: 'Checkbox__wrapper'
+                containerClassAttribute: 'CustomInput CustomInput--check'
                 elementClassAttribute: 'FormField__input FormField__group-element'
             MultiSelect: null
             SingleSelect:
@@ -50,5 +50,5 @@ TYPO3:
             Password: null
             RadioButton:
               properties:
-                containerClassAttribute: 'FormRadioButton'
+                containerClassAttribute: 'CustomInput CustomInput--radio'
                 elementClassAttribute: 'FormField__input FormField__group-element'

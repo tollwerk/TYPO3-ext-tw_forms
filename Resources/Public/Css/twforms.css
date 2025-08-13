@@ -3,7 +3,7 @@
 	font-family: sans-serif;
 }
 
-form {
+.Form.Form--custom-validation {
 	--color-highlight: #000000;
 	--color-error: #ad0c01;
 	--color-error-dark: #a31b1a;
@@ -29,16 +29,16 @@ fieldset {
 	margin: 0;
 }
 
-/* Checkboxes
+/* Checkboxes and radio buttons
    ========================================================================== */
 
 /**
- * Custom checkboxes
+ * Custom checkboxes and radio buttons
  * @see https://www.sarasoueidan.com/blog/inclusively-hiding-and-styling-checkboxes-and-radio-buttons/
  */
 
-.Checkbox__wrapper {
-	/* create a postioning context for the checkbox within the label */
+.CustomInput {
+	/* create a positioning context for the input within the label */
 	position: relative;
 
 	display: flex;
@@ -51,12 +51,12 @@ fieldset {
 
 	cursor: pointer;
 
-	& + .Checkbox__wrapper {
+	& + .CustomInput {
 		margin-top: .25rem;
 	}
 }
 
-input[type="checkbox"] {
+.CustomInput .FormField__input {
 	/* remove the checkbox from flow */
 	position: absolute;
 
@@ -68,7 +68,7 @@ input[type="checkbox"] {
 	height: 1.125rem;
 }
 
-.Checkbox__wrapper .Icon {
+.CustomInput .Icon {
 	flex-shrink: 0;
 
 	width: 1.125rem;
@@ -80,22 +80,26 @@ input[type="checkbox"] {
 	fill: currentColor;
 }
 
-.Checkbox__wrapper input:checked + .Icon {
+.CustomInput.CustomInput--radio .Icon {
+	border-radius: 50%;
+}
+
+.CustomInput .FormField__input:checked + .Icon {
 	color: var(--color-highlight);
 }
 
-.Checkbox__wrapper input[type="checkbox"]:focus + .Icon {
+.CustomInput .FormField__input:focus + .Icon {
 	outline: 2px solid var(--color-highlight);
 	outline-offset: 2px;
 }
 
 /* Modern approach to focus styling: Only visible for keyboard users */
 @supports (selector(:focus-visible)) {
-	.Checkbox__wrapper input[type="checkbox"]:focus + .Icon {
+	.CustomInput .FormField__input:focus + .Icon {
 		outline: none;
 	}
 
-	.Checkbox__wrapper input[type="checkbox"]:focus + .Icon {
+	.CustomInput .FormField__input:focus + .Icon {
 		outline: 2px solid var(--color-highlight);
 		outline-offset: 2px;
 	}
@@ -103,16 +107,14 @@ input[type="checkbox"] {
 
 /* Support window high contrast mode */
 @media screen and (forced-colors: active) {
-	.Checkbox__wrapper .Icon {
+	.CustomInput .Icon {
 		border: 2px solid windowText;
 	}
 
-	.Checkbox__wrapper input[type="checkbox"]:focus + .Icon {
+	.CustomInput .FormField__input:focus + .Icon {
 		color: windowText;
 	}
 }
-
-
 
 .Form__error-navigation--visible {
 	display: flex;
@@ -131,7 +133,7 @@ input[type="checkbox"] {
 }
 
 .FormField--has-error {
-	& .FormField__input, & .FormField__textarea, & .Checkbox__wrapper .Icon {
+	& .FormField__input, & .FormField__textarea, & .Checkbox__wrapper .Icon, & .Radio__wrapper .Icon {
 		border: 3px solid var(--color-error);
 		box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--color-error);
 	}

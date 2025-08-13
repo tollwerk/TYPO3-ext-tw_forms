@@ -26,7 +26,8 @@
                         </f:else>
                     </f:if>
 
-                    <div class="FormField__wrapper">
+                    <label for="{element.uniqueIdentifier}-{idIterator.index}"
+                           class="{element.properties.containerClassAttribute}">
                         <f:form.radio
                                 property="{element.identifier}"
                                 id="{element.uniqueIdentifier}-{idIterator.index}"
@@ -35,13 +36,14 @@
                                 errorClass="{element.properties.elementErrorClassAttribute}"
                                 additionalAttributes="{additionalAttributes}"
                         />
-                        <label for="{element.uniqueIdentifier}-{idIterator.index}"
-                               class="FormField__label FormField__label--{element.type -> f:format.case(mode: 'lower')}">
-                            <f:render section="InlineLabel" contentAs="label">
-                                {formvh:translateElementProperty(element: element, property: '{0: \'options\', 1: value}')}
-                            </f:render>
-                        </label>
-                    </div>
+                        <f:comment><!-- Visual replacement of the radio button via SVG --></f:comment>
+                        <svg class="Icon" width="24" height="24" aria-hidden="true" focusable="false">
+                            <use href="#circle"></use>
+                        </svg>
+                        <f:render section="InlineLabel" contentAs="label">
+                            {formvh:translateElementProperty(element: element, property: '{0: \'options\', 1: value}')}
+                        </f:render>
+                    </label>
                 </f:for>
             </f:render>
         </f:form.validationResults>
