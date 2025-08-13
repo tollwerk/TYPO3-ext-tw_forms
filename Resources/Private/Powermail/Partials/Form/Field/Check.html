@@ -35,18 +35,13 @@
 <f:section name="Checkbox">
   <div class="{settings.styles.framework.fieldWrappingClasses}">
     <f:for each="{field.modifiedSettings}" as="setting" iteration="index">
-      <div
-        class="{settings.styles.framework.checkClasses} {vh:validation.errorClass(field:field, class:'powermail_field_error')}"
-      >
-        <f:comment
-          ><!-- Custom checkbox by Sara Soueidan
-                    @see https://www.sarasoueidan.com/blog/inclusively-hiding-and-styling-checkboxes-and-radio-buttons/
+        <f:comment><!-- Custom checkbox by Sara Soueidan
+        @see https://www.sarasoueidan.com/blog/inclusively-hiding-and-styling-checkboxes-and-radio-buttons/
                     -->
         </f:comment>
-        <label
-          class="FormField"
-          for="{formId}-powermail-field-{field.marker}-{index.cycle}"
-        >
+        <label class="{settings.styles.framework.checkClasses} {vh:validation.errorClass(field:field, class:'powermail_field_error')}"
+               for="{formId}-powermail-field-{field.marker}-{index.cycle}">
+
           <f:comment><!-- Semantic checkbox which is visually hidden --></f:comment>
           <f:comment><!-- Due to HTML spec only first radio button in a group should get validation attributes --></f:comment>
           <f:if condition="{index.isFirst}">
@@ -59,7 +54,7 @@
                       id="{formId}-powermail-field-{field.marker}-{index.cycle}"
                       additionalAttributes="{vh:validation.validationDataAttribute(field:field, iteration:index)}"
                       aria="{'errormessage': 'error-for-powermail-field-{formId}-{field.marker}', 'describedby': 'error-for-powermail-field-{formId}-{field.marker} desc-for-powermail-field-{formId}-{field.marker}'}"
-                      class="PowermailCheck__input powermail_checkbox powermail_checkbox_{field.uid} FormField__input FormField__group-element"/>
+                      class="powermail_checkbox powermail_checkbox_{field.uid} FormField__input FormField__group-element"/>
             </f:then>
             <f:else>
               <f:form.checkbox
@@ -68,24 +63,20 @@
                       value="{setting.value}"
                       checked="{vh:misc.prefillMultiField(field:field, mail:mail, cycle:index.cycle)}"
                       id="{formId}-powermail-field-{field.marker}-{index.cycle}"
-                      class="PowermailCheck__input powermail_checkbox powermail_checkbox_{field.uid} FormField__input FormField__group-element"
+                      class="powermail_checkbox powermail_checkbox_{field.uid} FormField__input FormField__group-element"
               />
             </f:else>
           </f:if>
 
-          <f:comment
-            ><!-- Visual replacement of the radio button via SVG --></f:comment
-          >
-          <!--<svg xmlns="http://www.w3.org/2000/svg"
-						 viewBox="0 0 26.512 23.211">
-						<path class="fill-path" d="M9.131 23.206L0 13.888l2.857-2.8 6.05 6.174L23.452-.006l3.06 2.576z"/>
-					</svg>-->
+            <f:comment><!-- Visual replacement of the radio button via SVG --></f:comment>
+            <svg class="Icon" width="24" height="24" aria-hidden="true" focusable="false">
+                <use href="#checkmark"></use>
+            </svg>
 
           <span class="PowermailCheck__text">
             <vh:string.escapeLabels>{setting.label}</vh:string.escapeLabels>
           </span>
         </label>
-      </div>
     </f:for>
 
     <f:comment><!-- Description --></f:comment>
