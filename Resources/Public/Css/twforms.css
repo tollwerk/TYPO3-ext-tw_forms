@@ -36,7 +36,7 @@ fieldset {
 .FormPage .FormField {
 	margin-top: 1em;
 
-	&:first-child {
+	&:first-of-type {
 		margin-top: 0;
 	}
 }
@@ -67,6 +67,25 @@ fieldset {
 
 .FormField__description {
 	margin-block: .5em 0;
+
+	& p {
+		margin: 0;
+	}
+}
+
+.Form__button {
+	display: block;
+	padding: .5em 1em;
+	border: 2px solid black;
+	margin-top: 1rem;
+
+	background: white;
+
+	cursor: pointer;
+
+	text-align: center;
+	text-decoration: none;
+	font-weight: bold;
 }
 
 /* Checkboxes and radio buttons
@@ -156,7 +175,7 @@ fieldset {
 	}
 }
 
-/* Error stylings
+/* Error styling
    ========================================================================== */
 
 .Form__error {
@@ -178,7 +197,6 @@ fieldset {
 	}
 }
 
-
 .Form__error-navigation--visible {
 	display: flex;
 	align-items: center;
@@ -187,6 +205,10 @@ fieldset {
 	border: 5px solid var(--color-error-dark);
 	padding: 1.5rem;
 	margin: 1rem 0;
+
+	& .Form__error-icon {
+		display: inline-flex;
+	}
 }
 
 .Form__error-heading {
@@ -195,33 +217,25 @@ fieldset {
 	margin: 0;
 }
 
+.Form__error-icon {
+	display: none;
+	margin-right: .25rem;
+}
+
 .FormField--has-error {
 	& .FormField__input, & .FormField__textarea, & .CustomInput .Icon {
 		border: 3px solid var(--color-error);
 		box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--color-error);
 	}
 
-	& .Powermail__error-icon {
+	& .Form__error-icon {
 		display: block;
 	}
 }
 
 
 
-.Form__button {
-	display: block;
-	padding: .5em 1em;
-	border: 2px solid black;
-	margin-top: 1rem;
 
-	background: white;
-
-	cursor: pointer;
-
-	text-align: center;
-	text-decoration: none;
-	font-weight: bold;
-}
 
 .Progress__button {
 	padding: 0;
@@ -288,18 +302,3 @@ fieldset {
 	top: 0.2rem;
 	width: 0.8rem;
 }
-
-
-.Powermail__error-icon {
-	display: none;
-	margin-right: .25rem;
-}
-
-.Powermail__description {
-	margin-top: .5em;
-
-	& p {
-		margin: 0;
-	}
-}
-
