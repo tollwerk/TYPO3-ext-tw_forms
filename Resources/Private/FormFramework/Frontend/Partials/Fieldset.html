@@ -6,7 +6,7 @@
         <fieldset id="{element.uniqueIdentifier}"
                   class="FormFieldset{f:if(condition: element.properties.elementClassAttribute, then: ' {element.properties.elementClassAttribute}')}">
             <f:if condition="{element.label}">
-                <legend><h2>{formvh:translateElementProperty(element: element, property: 'label')}</h2></legend>
+                <legend class="FormFieldset__legend">{formvh:translateElementProperty(element: element, property: 'label')}</legend>
             </f:if>
             <f:for each="{element.elements}" as="element">
                 <f:render partial="{element.templateName}" arguments="{element: element}" />

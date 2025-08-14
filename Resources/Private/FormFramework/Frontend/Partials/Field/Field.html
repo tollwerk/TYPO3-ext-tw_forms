@@ -12,8 +12,6 @@
       xmlns:twforms="http://typo3.org/ns/Tollwerk/TwForms/ViewHelpers"
       data-namespace-typo3-fluid="true">
     <f:variable name="label" value="{formvh:translateElementProperty(element: element, property: 'label')}"/>
-    <f:variable name="labelClasses"
-                value="{f:if(condition: '{validationResults.errors.0}', then: ' has-error')}"/>
 
     <f:form.validationResults for="{element.rootForm.identifier}.{element.identifier}">
         <f:if condition="{element.renderingOptions.dontWrap}">
@@ -21,7 +19,6 @@
                 <f:render section="LabelAndField" arguments="{
                         element: element,
                         elementContent: elementContent,
-                        labelClasses: labelClasses,
                         label: label,
                         validationResults: validationResults
                     }"/>
@@ -31,7 +28,6 @@
                     <f:render section="LabelAndField" arguments="{
                         element: element,
                         elementContent: elementContent,
-                        labelClasses: labelClasses,
                         label: label,
                         validationResults: validationResults
                      }"/>
@@ -46,7 +42,6 @@
 
         @param GenericFormElement element           Form element
         @param string elementContent                Element content (HTML)
-        @param string labelClasses                  Label CSS classes
         @param string label                         Label text
         @param int validationResults                Validation results
 
@@ -65,7 +60,7 @@
                         </f:if>
                     </f:variable>
                     <fieldset class="FormField__group">
-                        <legend class="FormField__label FormField__label--group {labelClasses}">{labelContent
+                        <legend class="FormField__label FormField__label--group">{labelContent
                             -> f:format.raw()}
                             <f:if condition="{element.required}">
                                 <f:render partial="Field/Required"/>
@@ -86,8 +81,8 @@
                     </f:variable>
                     <f:if condition="{element.type} != 'Checkbox'">
                         <label for="{element.uniqueIdentifier}"
-                               class="FormField__label FormField__label--{element.type -> f:format.case(mode: 'lower')} {labelClasses}">{labelContent
-                            -> f:format.raw()}
+                               class="FormField__label">
+                            {labelContent -> f:format.raw()}
                             <f:if condition="{element.required}">
                                 <f:render partial="Field/Required"/>
                             </f:if>
@@ -113,9 +108,9 @@
         <f:render partial="Field/Error" arguments="{element: element, validationResults: validationResults}"/>
         <f:format.raw>{elementContent}</f:format.raw>
         <f:if condition="{element.properties.elementDescription}">
-            <f:render section="Description" contentAs="content" arguments="{
-                    element: element,
-                    label: element.properties.elementDescription}">
+            <f:render section="Description"
+                      contentAs="content"
+                      arguments="{element: element, label: element.properties.elementDescription}">
                 <f:variable name="description"
                             value="{twforms:content.get(contentUids: '{0: element.properties.elementDescription}')}"/>
                 {description.0.bodytext -> f:format.raw()}

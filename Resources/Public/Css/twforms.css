@@ -1,7 +1,27 @@
+/* ==========================================================================
+   Basic CSS for extension twforms
+   ========================================================================== */
+
+/* Resets
+   ========================================================================== */
+
 * {
 	box-sizing: border-box;
 	font-family: sans-serif;
 }
+
+body {
+	margin: 0;
+}
+
+fieldset {
+	padding: 0;
+	border: none;
+	margin: 0;
+}
+
+/* Variables
+   ========================================================================== */
 
 .Form.Form--custom-validation {
 	--color-highlight: #000000;
@@ -9,24 +29,44 @@
 	--color-error-dark: #a31b1a;
 }
 
-body {
-	margin: 0;
+/* Element styling
+   ========================================================================== */
+
+/* Lobotomized owl selector doesn't work in this setup due to DOM manipulations */
+.FormPage .FormField {
+	margin-top: 1em;
+
+	&:first-child {
+		margin-top: 0;
+	}
 }
 
-main {
-	padding: 0 1.5rem;
-}
-
-.list-style-none {
-	list-style-type: none;
-	margin: 0;
+.FormPage__legend,
+.FormFieldset__legend {
 	padding: 0;
+	margin-bottom: 1em;
+
+	font-weight: bold;
+	font-size: 1.5rem;
 }
 
-fieldset {
-	padding: 0;
-	border: none;
-	margin: 0;
+.FormField__label {
+	display: block;
+	margin-bottom: .5em;
+
+	font-size: 1.25rem;
+	font-weight: 600;
+}
+
+.FormField__input, .FormField__textarea {
+	display: block;
+	width: 100%;
+	padding: .5em;
+	border: 2px solid black;
+}
+
+.FormField__description {
+	margin-block: .5em 0;
 }
 
 /* Checkboxes and radio buttons
@@ -116,6 +156,29 @@ fieldset {
 	}
 }
 
+/* Error stylings
+   ========================================================================== */
+
+.Form__error {
+	display: flex;
+	align-items: center;
+	margin-block: .5em;
+
+	color: var(--color-error);
+
+	font-weight: 700;
+
+	&[hidden] {
+		display: none;
+		margin: 0;
+	}
+
+	& p {
+		margin: 0;
+	}
+}
+
+
 .Form__error-navigation--visible {
 	display: flex;
 	align-items: center;
@@ -143,55 +206,6 @@ fieldset {
 	}
 }
 
-.FormField + .FormField {
-	margin-top: 1rem;
-}
-
-.FormField__wrapper {
-	display: flex;
-	align-items: center;
-	gap: .5rem;
-
-	& + .FormField__wrapper {
-		margin-top: .5rem;
-	}
-
-	& .FormField__input {
-		width: unset;
-		margin: unset;
-	}
-
-	& .FormField__label {
-		margin-block: unset;
-		font-weight: normal;
-	}
-}
-
-.FormField__label {
-	display: block;
-	margin-bottom: .5em;
-
-	font-weight: 600;
-}
-
-.FormField__input, .FormField__textarea {
-	display: block;
-	width: 100%;
-	padding: .5em;
-	border: 2px solid black;
-}
-
-legend {
-	padding: 0;
-	margin-bottom: 1em;
-
-	font-weight: bold;
-	font-size: 1.2rem;
-}
-
-.FormCheckbox__wrapper {
-	display: flex;
-}
 
 
 .Form__button {
@@ -275,19 +289,6 @@ legend {
 	width: 0.8rem;
 }
 
-.Form__error {
-	display: flex;
-	align-items: center;
-	margin-block: .5em;
-
-	color: var(--color-error);
-
-	font-weight: 700;
-
-	& p {
-		margin: 0;
-	}
-}
 
 .Powermail__error-icon {
 	display: none;
