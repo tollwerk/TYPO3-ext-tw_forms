@@ -96,18 +96,11 @@ class ValidationDataAttributeViewHelper extends AbstractValidationViewHelper
             if ($field->isMandatory()) {
                 if ($this->isNativeValidationEnabled()) {
                     $additionalAttributes['required'] = 'required';
-                    $additionalAttributes['aria-required'] = 'true';
-
-                    // remove required attribute if more checkboxes than 1
-                    if ($field->getType() === 'check' && $iteration['total'] > 1) {
-                        unset($additionalAttributes['required']);
-                        unset($additionalAttributes['aria-required']);
-                    }
                 } else {
                     $additionalAttributes['data-powermail-required'] = 'true';
-                    $additionalAttributes['aria-required'] = 'true';
 
                 }
+                $additionalAttributes['aria-required'] = 'true';
                 $additionalAttributes['data-powermail-required-message'] =
                     LocalizationUtility::translate('validationerror_mandatory');
                 if ($iteration['total'] > 1) {
@@ -121,9 +114,8 @@ class ValidationDataAttributeViewHelper extends AbstractValidationViewHelper
             }
             $additionalAttributes = $this->addErrorContainerAndClassHandlerAttributes($additionalAttributes, $field);
         }
-        $additionalAttributes = $this->addMultipleDataAttributeForCheckboxes($additionalAttributes, $field, $iteration);
 
-        return $additionalAttributes;
+        return $this->addMultipleDataAttributeForCheckboxes($additionalAttributes, $field, $iteration);
     }
 
     /**
