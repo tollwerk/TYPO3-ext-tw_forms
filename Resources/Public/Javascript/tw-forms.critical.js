@@ -1,11 +1,11 @@
 /**
- * Polyfills for older browsers to ensure compatibility
- * Provide missing methods for NodeList, Element, String, and SVGElement
+ * Polyfills
+ * Provides minimal shims for NodeList, Element, String, and SVGElement.
  */
 (function browserPolyfills(window, elementProto, stringProto, svgElementProto) {
   /**
-   * Polyfill for NodeList.forEach method
-   * Adds forEach functionality to NodeList objects in browsers that don't support it
+   * NodeList.forEach polyfill
+   * Adds forEach to NodeList when missing.
    */
   if (window.NodeList && !NodeList.prototype.forEach) {
     NodeList.prototype.forEach = function foreEach(callback, thisArg) {
@@ -16,8 +16,8 @@
   }
 
   /**
-   * Polyfill for Element.matches method
-   * Provides cross-browser support for element matching using CSS selectors
+   * Element.matches polyfill
+   * Adds selector matching support where missing.
    */
   if (!elementProto.matches) {
     elementProto.matches = function (selector) {
@@ -31,8 +31,8 @@
   }
 
   /**
-   * Polyfill for Element.closest method
-   * Traverses up the DOM tree to find the closest ancestor matching a selector
+   * Element.closest polyfill
+   * Finds the nearest ancestor matching a selector.
    */
   if (!elementProto.closest) {
     elementProto.closest = function closest(selector) {
@@ -46,8 +46,8 @@
   }
 
   /**
-   * Polyfill for String.format method
-   * Provides string formatting with placeholder replacement
+   * String.format polyfill
+   * Simple placeholder replacement.
    */
   if (!stringProto.format) {
     stringProto.format = function format(...args) {
@@ -58,8 +58,8 @@
   }
 
   /**
-   * Polyfill for classList support on SVG elements in IE11
-   * Provides classList functionality for SVG elements
+   * SVG classList polyfill (IE11)
+   * Minimal classList for SVG elements.
    */
   if (svgElementProto && !('classList' in svgElementProto)) {
     Object.defineProperty(svgElementProto, "classList", {
@@ -108,14 +108,14 @@
 })(window, Element.prototype, String.prototype, SVGElement.prototype);
 
 /**
- * Observer system for DOM mutations and form field enhancement
- * Manages automatic enhancement of form fields when they are added to the DOM
+ * Observer
+ * Watches DOM mutations and enhances matching nodes.
  */
 const tw_forms = window.tw_forms || { has: {} };
 window.tw_forms = tw_forms;
 
 (function mutationObserverSystem (window, document) {
-  // Prevent duplicate initialization
+  // Prevent duplicate initialization.
   if (
     (typeof exports !== "undefined" && exports.Observer) || window.tw_forms.Observer
   ) {
@@ -124,14 +124,14 @@ window.tw_forms = tw_forms;
 
   /**
    * Observer constructor
-   * Creates a MutationObserver to watch for DOM changes and enhance new form fields
+   * Sets up a MutationObserver to enhance added elements.
    */
   function Observer() {
     // Registry of selectors and their corresponding enhancement callbacks
     this.observed = [["[data-mutate-recursive]", this.process.bind(this)]];
     const checkNode = this.checkNode.bind(this);
 
-    // Create MutationObserver to watch for new DOM nodes
+    // Create MutationObserver to handle added nodes.
     const observer = new MutationObserver((mutations) =>
       mutations.forEach((mutation) =>
         Array.prototype.slice
@@ -141,7 +141,7 @@ window.tw_forms = tw_forms;
       )
     );
 
-    // Observe the entire document for changes
+    // Observe the whole document for changes.
     observer.observe(document.documentElement, {
       characterData: true,
       attributes: false,
@@ -191,8 +191,8 @@ window.tw_forms = tw_forms;
 })(typeof global !== "undefined" ? global : window, document);
 
 /**
- * Global dirty flag handling
- * Used for all forms: no validation before first submit/next, live after
+ * Dirty/pristine handling
+ * No live validation before first submit/next; enabled afterward.
  */
 document.addEventListener('DOMContentLoaded', function initializeFormStates () {
   document.querySelectorAll('form').forEach(form => {
@@ -209,23 +209,73 @@ document.addEventListener('DOMContentLoaded', function initializeFormStates () {
 });
 
 /**
- * Global Form Submission Handler
- * Triggers dirty state for single-page forms after the first submit attempt
- * Multi-step forms handle their pristine state independently
+ * Submit handler
+ * Marks single-page forms as dirty on first submit.
  */
 document.addEventListener('submit', function(e) {
   const form = e.target.closest('form');
+  if (!form) return;
 
-  // Only set a dirty flag for single-page forms (not multistep)
-  if (form && !Array.isArray(form._stepPristine)) {
-    form.dataset.dirty = "1";
+  // Respect formnovalidate on the submitter
+  const noValidate = e && e.submitter && e.submitter.hasAttribute('formnovalidate');
+
+  // Multistep Powermail forms: run JS validation before server submit
+  if (Array.isArray(form._stepPristine)) {
+    if (!noValidate) {
+      // Determine current visible step index
+      const fieldsets = Array.from(form.querySelectorAll('.powermail_fieldset'));
+      let currentIndex = 0;
+      for (let i = 0; i < fieldsets.length; i++) {
+        if (fieldsets[i].style.display !== 'none') { currentIndex = i; break; }
+      }
+
+      // Mark current step as not pristine and enable live validation for its fields
+      form._stepPristine[currentIndex] = false;
+      const currentFieldset = fieldsets[currentIndex];
+      if (currentFieldset) {
+        currentFieldset.querySelectorAll('input, select, textarea').forEach((el) => {
+          if (el.enhancer && typeof el.enhancer.setPristine === 'function') {
+            el.enhancer.setPristine(false);
+          }
+        });
+      }
+
+      // Validate visible fields; prevent submit if there are errors
+      let isValid = true;
+      const elements = Array.from(form.elements);
+      elements.forEach((el) => {
+        if (window.isFieldVisible && window.isFieldVisible(el) && el.enhancer) {
+          const errors = el.enhancer.validate(true, { force: true });
+          if (errors && Object.keys(errors).length > 0) {
+            isValid = false;
+          }
+        }
+      });
+
+      if (!isValid) {
+        // Show error navigation when available
+        if (form.enhancer && form.enhancer.errorNavigation) {
+          form.enhancer.errorNavigation.removeAttribute('hidden');
+          form.enhancer.errorNavigation.classList.add('Form__error-navigation--visible');
+          form.enhancer.errorNavigation.focus();
+        }
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        return false;
+      }
+    }
+    // Allow submit to continue for multistep when valid or novalidate
+    return;
   }
+
+  // Single-page forms: set dirty flag on first submit
+  form.dataset.dirty = "1";
 }, true);
 
 
 /**
- * Powermail custom validators
- * Additional validation functions for Powermail form fields beyond native HTML5 validation
+ * Powermail validators
+ * Extra checks in addition to native HTML5 validation.
  */
 const PowermailValidators = {
   /**
@@ -415,11 +465,11 @@ const PowermailValidators = {
 };
 
 /**
- * FormField class for enhanced form field validation and error handling
- * Provides real-time validation, error message display, and group validation
+ * FormField
+ * Enhances inputs with validation, error messages, and group handling.
  */
 (function formFields(w, d) {
-  // Determine best scroll method available
+  // Determine best scroll method available.
   let scrollIntoView = d.documentElement.scrollIntoView
     ? "scrollIntoView"
     : null;
@@ -428,11 +478,8 @@ const PowermailValidators = {
   }
 
   /**
-   * FormField: Enhances single form fields or field groups with validation logic and error display.
-   *
-   * Used for both native TYPO3 and Powermail-specific validations.
-   *
-   * @param {HTMLElement} element - The form element to enhance
+   * FormField constructor
+   * @param {HTMLElement} element - The input/textarea to enhance.
    */
   function FormField(element) {
     this.element = element;
@@ -503,7 +550,7 @@ const PowermailValidators = {
   ];
 
   /**
-   * Initializes group logic by finding primary enhancer and linking related elements
+   * Initialize group handling and link sibling enhancers.
    */
   FormField.prototype.initGroupContext = function () {
     const groupName = this.element.name;
@@ -537,7 +584,7 @@ const PowermailValidators = {
   };
 
   /**
-   * Collects all error messages defined as data attributes for known constraints
+   * Read per-constraint messages from data attributes.
    */
   FormField.prototype.setupErrorMessages = function () {
     this.constraints.forEach((c) => {
@@ -549,7 +596,7 @@ const PowermailValidators = {
   };
 
   /**
-   * Collects all currently rendered errors and stores constraint bitmask
+   * Read initially rendered errors and store constraint bitmask.
    */
   FormField.prototype.setupInitialConstraints = function () {
     this.errorMessageBag.querySelectorAll('[data-constraint]').forEach((el) => {
@@ -562,7 +609,7 @@ const PowermailValidators = {
   };
 
   /**
-   * Returns whether the field is pristine and suppresses errors if so
+   * Set pristine state (suppresses errors when true).
    * @param {boolean} pristine
    */
   FormField.prototype.setPristine = function (pristine) {
@@ -573,10 +620,10 @@ const PowermailValidators = {
   };
 
   /**
-   * Validates a single field or field group
-   * @param {boolean} showErrors - Whether to display error messages
-   * @param {Object} options - Extra options, e.g., force validation
-   * @returns {Object} Constraint key -> error message
+   * Validate a single field or field group.
+   * @param {boolean} showErrors - Whether to display error messages.
+   * @param {Object} options - Extra options (e.g., force).
+   * @returns {Object} Map of constraint -> message.
    */
   FormField.prototype.validate = function (showErrors = false, options = {}) {
     if (this.pristine && !(options && options.force)) {
@@ -640,7 +687,7 @@ const PowermailValidators = {
   };
 
   /**
-   * Validates a group of radio/checkboxes by checking if at least one is selected
+   * Validate a radio/checkbox group (at least one selected).
    * @returns {ValidityState}
    */
   FormField.prototype.validateGroup = function () {
@@ -655,8 +702,8 @@ const PowermailValidators = {
   };
 
   /**
-   * Builds a validity object with overrides for testing custom group constraints
-   * @param {Object} override - Constraint values to override
+   * Build a ValidityState-like object with overrides.
+   * @param {Object} override - Constraint overrides.
    * @returns {ValidityState}
    */
   FormField.prototype.overrideValidityState = function (override) {
@@ -669,11 +716,16 @@ const PowermailValidators = {
   };
 
   /**
-   * Applies error messages to the DOM
-   * @param {number} constraints - Constraint bitmask
-   * @param {Object} errorMessages - Key -> message map
+   * Render error messages and update ARIA/state.
+   * @param {number} constraints - Constraint bitmask.
+   * @param {Object} errorMessages - Map of constraint -> message.
    */
   FormField.prototype.updateErrorMessageBag = function (constraints, errorMessages) {
+    // If errorMessageBag is null, we can't update error messages
+    if (!this.errorMessageBag) {
+      return;
+    }
+
     const hasErrors = Object.keys(errorMessages).length > 0;
     const errorString = JSON.stringify(errorMessages);
 
@@ -717,7 +769,7 @@ const PowermailValidators = {
    * Scrolls the wrapper into view
    */
   FormField.prototype.focusWrapper = function () {
-    if ('scrollIntoView' in this.wrapper) {
+    if (this.wrapper && ('scrollIntoView' in this.wrapper)) {
       this.wrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   };

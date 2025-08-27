@@ -129,10 +129,12 @@ export default function MoreStepForm() {
     for (let i = 0; i < moreButtons.length; i++) {
       moreButtons[i].addEventListener('click', function (event) {
         event.preventDefault();
-        let form = event.target.closest('form');
+        const btn = event.currentTarget;
+        let form = btn.closest('form');
         if (!form) { return false; }
         let currentIndex = getActivePageIndex(form);
-        let nextIndex = parseInt(event.target.getAttribute('data-powermail-morestep-show'), 10);
+        let nextIndex = parseInt(btn.getAttribute('data-powermail-morestep-show'));
+        console.log(nextIndex);
 
         // Backward navigation: always allowed without validation
         if (nextIndex < currentIndex) {
@@ -203,8 +205,9 @@ export default function MoreStepForm() {
       for (let j = 0; j < progressButtons.length; j++) {
         progressButtons[j].addEventListener('click', function(event) {
           event.preventDefault();
-          let form = event.target.closest('form');
-          let index = Array.from(progressButtons).indexOf(event.target);
+          const btn = event.currentTarget;
+          let form = btn.closest('form');
+          let index = Array.from(progressButtons).indexOf(btn);
           let validUntil = formValidUntilMap.get(form) || -1;
           let currentIndex = getActivePageIndex(form);
 
