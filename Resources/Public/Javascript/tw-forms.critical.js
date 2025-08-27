@@ -212,199 +212,92 @@ document.addEventListener('DOMContentLoaded', function initializeFormStates () {
  * Submit handler
  * Marks single-page forms as dirty on first submit.
  */
-document.addEventListener('submit', function(e) {
-  const form = e.target.closest('form');
-  if (!form) return;
+document.addEventListener('submit', function (e) {
+    const form = e.target.closest('form');
+    if (!form) return;
 
-  // Respect formnovalidate on the submitter
-  const noValidate = e && e.submitter && e.submitter.hasAttribute('formnovalidate');
+    // Multistep Powermail/native forms: always validate current step on client
+    if (Array.isArray(form._stepPristine)) {
+        // Determine current visible step index
+        const fieldsets = Array.from(form.querySelectorAll('.powermail_fieldset'));
+        let currentIndex = 0;
+        for (let i = 0; i < fieldsets.length; i++) {
+            if (fieldsets[i].style.display !== 'none') {
+                currentIndex = i;
+                break;
+            }
+        }
 
-  // Multistep Powermail forms: run JS validation before server submit
-  if (Array.isArray(form._stepPristine)) {
-    if (!noValidate) {
-      // Determine current visible step index
-      const fieldsets = Array.from(form.querySelectorAll('.powermail_fieldset'));
-      let currentIndex = 0;
-      for (let i = 0; i < fieldsets.length; i++) {
-        if (fieldsets[i].style.display !== 'none') { currentIndex = i; break; }
-      }
+        // Mark the current step as not pristine and enable live validation for its fields
+        form._stepPristine[currentIndex] = false;
+        const currentFieldset = fieldsets[currentIndex];
+        if (currentFieldset) {
+            currentFieldset.querySelectorAll('input, select, textarea').forEach((el) => {
+                if (el.enhancer && typeof el.enhancer.setPristine === 'function') {
+                    el.enhancer.setPristine(false);
+                }
+            });
+        }
 
-      // Mark current step as not pristine and enable live validation for its fields
-      form._stepPristine[currentIndex] = false;
-      const currentFieldset = fieldsets[currentIndex];
-      if (currentFieldset) {
-        currentFieldset.querySelectorAll('input, select, textarea').forEach((el) => {
-          if (el.enhancer && typeof el.enhancer.setPristine === 'function') {
-            el.enhancer.setPristine(false);
-          }
+        // Validate visible fields; prevent submit if there are errors
+        let isValid = true;
+        const elements = Array.from(form.elements);
+        elements.forEach((el) => {
+            if (window.isFieldVisible && window.isFieldVisible(el) && el.enhancer) {
+                const errors = el.enhancer.validate(true, { force: true });
+                if (errors && Object.keys(errors).length > 0) {
+                    isValid = false;
+                }
+            }
         });
-      }
 
-      // Validate visible fields; prevent submit if there are errors
-      let isValid = true;
-      const elements = Array.from(form.elements);
-      elements.forEach((el) => {
-        if (window.isFieldVisible && window.isFieldVisible(el) && el.enhancer) {
-          const errors = el.enhancer.validate(true, { force: true });
-          if (errors && Object.keys(errors).length > 0) {
-            isValid = false;
-          }
+        if (!isValid) {
+            if (form.enhancer && form.enhancer.errorNavigation) {
+                form.enhancer.errorNavigation.removeAttribute('hidden');
+                form.enhancer.errorNavigation.classList.add('Form__error-navigation--visible');
+                form.enhancer.errorNavigation.focus();
+            }
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
         }
-      });
 
-      if (!isValid) {
-        // Show error navigation when available
-        if (form.enhancer && form.enhancer.errorNavigation) {
-          form.enhancer.errorNavigation.removeAttribute('hidden');
-          form.enhancer.errorNavigation.classList.add('Form__error-navigation--visible');
-          form.enhancer.errorNavigation.focus();
-        }
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        return false;
-      }
+        // Allow submitting to continue for multistep when valid
+        return;
     }
-    // Allow submit to continue for multistep when valid or novalidate
-    return;
-  }
 
-  // Single-page forms: set dirty flag on first submit
-  form.dataset.dirty = "1";
+    // Single-page forms: set a dirty flag on the first submit
+    form.dataset.dirty = '1';
 }, true);
 
 
+
 /**
- * Powermail validators
- * Extra checks in addition to native HTML5 validation.
+ * Powermail validators for functionality not available in HTML5
+ * Only includes validators that complement native HTML5 validation
  */
 const PowermailValidators = {
   /**
-   * Validate email format using custom regex pattern
-   * @param {HTMLElement} field - Form field element to validate
-   * @returns {boolean} True if validation fails
-   */
-  email: (field) => {
-    if (!field.value) return false;
-    if (
-      field.type === "email" ||
-      field.getAttribute("data-powermail-type") === "email"
-    ) {
-      const pattern =
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@(([^<>()[\]\\.,;:\s@"]+\.)+[^<>()[\]\\.,;:\s@"]{2,})$/i;
-      return !pattern.test(field.value);
-    }
-    return false;
-  },
-
-  /**
-   * Validate URL format using regex pattern
-   * @param {HTMLElement} field - Form field element to validate
-   * @returns {boolean} True if validation fails
-   */
-  url: (field) => {
-    if (!field.value) return false;
-    if (
-      field.type === "url" ||
-      field.getAttribute("data-powermail-type") === "url"
-    ) {
-      const pattern = new RegExp(
-        "^(https?:\\/\\/)?" +
-          "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" +
-          "((\\d{1,3}\\.){3}\\d{1,3}))" +
-          "(\\:\\d+)?(\\/[-a-zA-Z\\d%_.~+]*)*" +
-          "(\\?[;&a-zA-Z\\d%_.~+=-]*)?" +
-          "(\\#[-a-zA-Z\\d_]*)?$",
-        "i"
-      );
-      return !pattern.test(field.value);
-    }
-    return false;
-  },
-
-  /**
-   * Validate field against custom pattern attribute
-   * @param {HTMLElement} field - Form field element to validate
-   * @returns {boolean} True if validation fails
-   */
-  pattern: (field) => {
-    if (!field.value) return false;
-    const pattern =
-      field.getAttribute("data-powermail-pattern") ||
-      field.getAttribute("pattern");
-    if (pattern) {
-      try {
-        const regex = new RegExp(pattern);
-        return !regex.test(field.value);
-      } catch (e) {
-        return false;
-      }
-    }
-    return false;
-  },
-
-  /**
-   * Validate numeric input
-   * @param {HTMLElement} field - Form field element to validate
-   * @returns {boolean} True if validation fails
-   */
-  number: (field) => {
-    if (!field.value) return false;
-    if (
-      field.type === "number" ||
-      field.getAttribute("data-powermail-type") === "integer"
-    ) {
-      return isNaN(field.value);
-    }
-    return false;
-  },
-
-  /**
-   * Validate minimum value constraint
-   * @param {HTMLElement} field - Form field element to validate
-   * @returns {boolean} True if validation fails
-   */
-  minimum: (field) => {
-    if (!field.value) return false;
-    const min =
-      field.getAttribute("min") || field.getAttribute("data-powermail-min");
-    if (min !== null) {
-      return parseFloat(field.value) < parseFloat(min);
-    }
-    return false;
-  },
-
-  /**
-   * Validate maximum value constraint
-   * @param {HTMLElement} field - Form field element to validate
-   * @returns {boolean} True if validation fails
-   */
-  maximum: (field) => {
-    if (!field.value) return false;
-    const max =
-      field.getAttribute("max") || field.getAttribute("data-powermail-max");
-    if (max !== null) {
-      return parseFloat(field.value) > parseFloat(max);
-    }
-    return false;
-  },
-
-  /**
-   * Validate string length constraints
+   * Validate string length constraints with range syntax
    * @param {HTMLElement} field - Form field element to validate
    * @returns {boolean} True if validation fails
    */
   length: (field) => {
-    if (!field.value) return false;
-    const lengthConfig = field.getAttribute("data-powermail-length");
-    if (lengthConfig) {
-      const [min, max] = lengthConfig
-        .replace("[", "")
-        .replace("]", "")
-        .split(",")
-        .map(Number);
-      return field.value.length < min || field.value.length > max;
-    }
-    return false;
+      if (!field.hasAttribute('data-powermail-length')) {
+          return false;
+      }
+
+      if (field.value === '') {
+          return false;
+      }
+      const lengthConfiguration = field.getAttribute('data-powermail-length');
+      const length = lengthConfiguration
+          .replace('[', '')
+          .replace(']', '')
+          .split(',');
+      const minimum = length[0].trim();
+      const maximum = length[1].trim();
+      return parseInt(field.value.length) < parseInt(minimum) || parseInt(field.value.length) > parseInt(maximum);
   },
 
   /**
@@ -413,15 +306,16 @@ const PowermailValidators = {
    * @returns {boolean} True if validation fails
    */
   equalto: (field) => {
-    const selector = field.getAttribute("data-powermail-equalto");
-    if (selector) {
-      const form = field.closest("form");
-      const compareField = form.querySelector(selector);
-      if (compareField) {
-        return compareField.value !== field.value;
+      if (!field.hasAttribute('data-powermail-equalto')) {
+          return false;
       }
-    }
-    return false;
+
+      const comparisonSelector = field.getAttribute('data-powermail-equalto');
+      const comparisonField = field.closest('form').querySelector(comparisonSelector);
+      if (comparisonField !== null) {
+          return comparisonField.value !== field.value;
+      }
+      return false;
   },
 
   /**
@@ -430,16 +324,23 @@ const PowermailValidators = {
    * @returns {boolean} True if validation fails
    */
   powermailfilesize: (field) => {
-    if (field.type !== "file" || !field.files || !field.files.length)
-      return false;
-    const sizeConfig = field.getAttribute("data-powermail-powermailfilesize");
-    if (sizeConfig) {
-      const maxSize = parseInt(sizeConfig.split(",")[0], 10);
-      for (let i = 0; i < field.files.length; i++) {
-        if (field.files[i].size > maxSize) return true;
+      if (field.type !== 'file' || !field.hasAttribute('data-powermail-powermailfilesize')) {
+          return false;
       }
-    }
-    return false;
+
+      if (field.value === '') {
+          return false;
+      }
+      const files = field.files;
+      const sizeConfiguration = field.getAttribute('data-powermail-powermailfilesize')
+          .split(',');
+      const maxSize = parseInt(sizeConfiguration[0]);
+      for (let i = 0; i < files.length; i++) {
+          if (files[i].size > maxSize) {
+              return true;
+          }
+      }
+      return false;
   },
 
   /**
@@ -448,20 +349,20 @@ const PowermailValidators = {
    * @returns {boolean} True if validation fails
    */
   powermailfileextensions: (field) => {
-    if (field.type !== "file" || !field.files || !field.files.length)
-      return false;
-    const accept = field.getAttribute("accept");
-    if (accept) {
-      const allowed = accept
-        .split(",")
-        .map((ext) => ext.trim().replace(".", "").toLowerCase());
-      for (let i = 0; i < field.files.length; i++) {
-        const ext = field.files[i].name.split(".").pop().toLowerCase();
-        if (!allowed.includes(ext)) return true;
+      if (field.type !== 'file' || !field.hasAttribute('accept')) {
+          return false;
       }
-    }
-    return false;
-  },
+
+      if (field.value === '') {
+          return false;
+      }
+      const extension = field.value.split('.').pop().toLowerCase();
+      const allowedExtensions = field
+          .getAttribute('accept')
+          .split(',')
+          .map(e => e.trim().replace('.', '').toLowerCase());
+      return allowedExtensions.includes(extension) === false;
+  }
 };
 
 /**
@@ -679,6 +580,24 @@ const PowermailValidators = {
       }
     }
 
+      // Additional Powermail validators for functionality not available in HTML5
+      // Only run these if HTML5 validation passed or for specific custom validations
+      if (!this.isGroup) {
+          Object.keys(PowermailValidators).forEach((validatorName) => {
+              if (PowermailValidators[validatorName](this.element)) {
+                  const attr = 'data-powermail-' + validatorName.toLowerCase() + '-message';
+                  errorMessages['customError'] =
+                      // Powermail-specific message for this validator
+                      this.element.getAttribute(attr) ||
+                      // Generic Powermail fallback
+                      this.element.getAttribute('data-powermail-error-message') ||
+                      // Local in-memory fallback (if set via setupErrorMessages)
+                      this.errorMessages['customError']
+                  constraints += 2 ** this.constraints.indexOf('customError');
+              }
+          });
+      }
+
     this.recursiveErrorMessages = errorMessages;
     this.updateErrorMessageBag(constraints, errorMessages);
     this.recursiveErrorMessages = null;
@@ -741,11 +660,11 @@ const PowermailValidators = {
       if (hasErrors) {
         this.errorMessageBag.removeAttribute('hidden');
         this.element.setAttribute('aria-invalid', 'true');
-        this.wrapper.classList.add('FormField--has-error');
+          if (this.wrapper) this.wrapper.classList.add('FormField--has-error');
       } else {
         this.errorMessageBag.setAttribute('hidden', 'hidden');
         this.element.setAttribute('aria-invalid', 'false');
-        this.wrapper.classList.remove('FormField--has-error');
+          if (this.wrapper) this.wrapper.classList.remove('FormField--has-error');
       }
 
       this.errorMessageBag.querySelectorAll('[data-constraint]').forEach((el) => el.remove());
@@ -771,8 +690,12 @@ const PowermailValidators = {
   FormField.prototype.focusWrapper = function () {
     // Only scroll into view if the field has been interacted with (not pristine)
     // This prevents unwanted auto-scrolling during initial form validation on page load
-    if (this.wrapper && ('scrollIntoView' in this.wrapper) && !this.pristine) {
-      this.wrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (scrollIntoView && this.wrapper && !this.pristine) {
+          this.wrapper[scrollIntoView]({
+              block: 'center',
+              inline: 'start',
+              behavior: 'smooth'
+          });
     }
   };
 
@@ -791,4 +714,16 @@ const PowermailValidators = {
       return new FormField(field);
     }
   );
+
+    /**
+     * Run setup on DOMContentLoaded
+     * Ensures all FormField enhancers are initialized on page load
+     * and FormValidation is activated.
+     */
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.FormField__input, .FormField__textarea')
+            .forEach(el => {
+                if (!el.enhancer) new FormField(el);
+            });
+    });
 })(typeof global !== "undefined" ? global : window, document);

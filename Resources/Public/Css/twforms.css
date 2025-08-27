@@ -36,7 +36,7 @@ fieldset {
 .FormPage .FormField {
 	margin-top: 1em;
 
-	&:first-of-type {
+	&:first-child {
 		margin-top: 0;
 	}
 }
@@ -48,6 +48,10 @@ fieldset {
 
 	font-weight: bold;
 	font-size: 1.5rem;
+
+	& ~ .FormField {
+		margin-top: 0;
+	}
 }
 
 .FormField__label {

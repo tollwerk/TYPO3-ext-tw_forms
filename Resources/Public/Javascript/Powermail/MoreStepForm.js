@@ -5,8 +5,6 @@ import Utility from './Utility/Utility';
  * validates fields before allowing forward navigation,
  * and visually updates progress navigation (status, tick, disable)
  *
- * Patched: Each step keeps its own pristine-flag (no error hints in new step
- * until "Next" has been tried at least once inside it).
  */
 export default function MoreStepForm() {
   'use strict';
@@ -114,7 +112,6 @@ export default function MoreStepForm() {
 
     return isValid;
   };
-
 
 
   /**
