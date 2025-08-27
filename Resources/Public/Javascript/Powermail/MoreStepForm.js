@@ -134,7 +134,6 @@ export default function MoreStepForm() {
         if (!form) { return false; }
         let currentIndex = getActivePageIndex(form);
         let nextIndex = parseInt(btn.getAttribute('data-powermail-morestep-show'));
-        console.log(nextIndex);
 
         // Backward navigation: always allowed without validation
         if (nextIndex < currentIndex) {

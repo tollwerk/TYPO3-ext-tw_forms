@@ -769,7 +769,9 @@ const PowermailValidators = {
    * Scrolls the wrapper into view
    */
   FormField.prototype.focusWrapper = function () {
-    if (this.wrapper && ('scrollIntoView' in this.wrapper)) {
+    // Only scroll into view if the field has been interacted with (not pristine)
+    // This prevents unwanted auto-scrolling during initial form validation on page load
+    if (this.wrapper && ('scrollIntoView' in this.wrapper) && !this.pristine) {
       this.wrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   };

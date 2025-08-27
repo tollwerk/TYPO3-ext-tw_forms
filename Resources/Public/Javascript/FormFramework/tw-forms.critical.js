@@ -359,7 +359,9 @@ window.tw_forms = tw_forms;
      * Scroll the fields wrapper into the view
      */
     FormField.prototype.focusWrapper = function focusWrapper() {
-        if (scrollIntoView) {
+        // Only scroll into view if the field has been interacted with (not pristine)
+        // This prevents unwanted auto-scrolling during initial form validation on page load
+        if (scrollIntoView && !this.pristine) {
             this.wrapper[scrollIntoView]({
                 block: 'center',
                 inline: 'start',
