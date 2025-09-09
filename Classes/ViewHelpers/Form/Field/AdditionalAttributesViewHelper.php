@@ -134,6 +134,9 @@ class AdditionalAttributesViewHelper extends AbstractViewHelper
 
             foreach ($errorCodeMap as $constraintName => $errorCodes) {
                 foreach ($errorCodes as $errorCode) {
+
+
+
                     // Try to use a custom error message first
                     $constraint = Constraint::fromError(
                         new Error('', $errorCode),
@@ -143,14 +146,43 @@ class AdditionalAttributesViewHelper extends AbstractViewHelper
                     $mappedConstraint = $constraint->getConstraint();
                     $message = $constraint->getMessage();
 
+
+
                     // Fallback: use translations from custom or default XLF files
                     if (empty($message)) {
+
+                        // Get arguments for translation.
+                        $translationArguments = [];
+                        switch($errorCode) {
+                            // StringLengthValidator / TOO_SHORT
+                            case 1238108068:
+                                $translationArguments[] = $additionalAttributes['minlength'];
+                                break;
+                            // StringLengthValidator / TOO_SHORT (another one)
+                            case 1428504122:
+                                $translationArguments[] = $additionalAttributes['minlength'];
+                                $translationArguments[] = $additionalAttributes['maxlength'];
+                                break;
+                            // StringLengthValidator / TOO_LONG
+                            case 1238108069:
+                                $translationArguments[] = $additionalAttributes['maxlength'];
+                                break;
+                            // NumberRangeValidator / RANGE_UNDERFLOW
+                            case 1221561046:
+                                $translationArguments[] = $additionalAttributes['min'];
+                                $translationArguments[] = $additionalAttributes['max'];
+                                break;
+                        }
+
+                        // Get translation.
                         $message = LocalizationUtility::translate(
                             'validation.error.' . $errorCode,
-                            'tw_forms'
+                            'tw_forms',
+                            $translationArguments
                         ) ?? LocalizationUtility::translate(
                             'validation.error.' . $errorCode,
-                            'form'
+                            'form',
+                            $translationArguments
                         ) ?? '';
                     }
 
