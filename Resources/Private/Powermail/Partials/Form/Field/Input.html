@@ -1,6 +1,6 @@
-{namespace vh=In2code\Powermail\ViewHelpers} {namespace
-f=TYPO3\CMS\Fluid\ViewHelpers} {namespace
-t=TRAW\Powermailautocomplete\ViewHelpers}
+{namespace vh=In2code\Powermail\ViewHelpers}
+{namespace f=TYPO3\CMS\Fluid\ViewHelpers}
+{namespace t=TRAW\Powermailautocomplete\ViewHelpers}
 
 <div
   class="{settings.styles.framework.fieldAndLabelWrappingClasses} powermail_fieldwrap powermail_fieldwrap_type_input powermail_fieldwrap_{field.marker}{f:if(condition: '{field.css}', then: ' {field.css} ')}"
@@ -13,7 +13,7 @@ t=TRAW\Powermailautocomplete\ViewHelpers}
 
   <f:comment><!-- Input --></f:comment>
   <div class="{settings.styles.framework.fieldWrappingClasses}">
-    <f:form.textfield
+    <twforms:form.textfield
       type="{vh:validation.fieldTypeFromValidation(field:field)}"
       property="{field.marker}"
       placeholder="{field.placeholder}"

@@ -78,6 +78,10 @@
      * @param {Event} e Submit event (null when called for updates)
      */
     FormValidation.prototype.validate = function validate(e) {
+        if (!this.errorNavigation) {
+            return;
+        }
+
         // Check if validation should be skipped (formnovalidate attribute)
         const novalidate = e && e.submitter && e.submitter.hasAttribute('formnovalidate');
         // Mark form as interacted with
@@ -136,6 +140,9 @@
         let errorCount = 0;
 
         // Clear existing error summary content
+        if (!this.errorSummary) {
+            return;
+        }
         while (this.errorSummary.childNodes.length) {
             this.errorSummary.removeChild(this.errorSummary.firstChild);
         }
