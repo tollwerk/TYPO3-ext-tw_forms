@@ -9,4 +9,9 @@ call_user_func(function(){
         'Configuration/TypoScript',
         'Tollwerk Enhanced TYPO3 forms'
     );
+    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile(
+        $extensionKey,
+        'Configuration/TypoScript/Styles',
+        'Tollwerk Enhanced TYPO3 forms: Styles',
+    );
 });

@@ -1,0 +1,23 @@
+/* ==========================================================================
+   Additional CSS for custom Powermail setup
+   ========================================================================== */
+
+.powermail_confirmation .powermail_all_label {
+	font-weight: 700;
+}
+
+.powermail_confirmation dl dd + dt {
+	margin-top: 1rem;
+}
+
+.powermail_confirmation .btn-group {
+	display: flex;
+	gap: 1rem;
+}
+
+@media screen and (min-width: 992px) {
+	.powermail_confirmation dl {
+		display: grid;
+		grid-template-columns: 1fr 2fr;
+	}
+}

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="messages" date="2016-12-08T10:17:19Z">
+        <header/>
+        <body>
+            <!-- General form -->
+            <trans-unit id="form.navigation">
+                <source>Form</source>
+            </trans-unit>
+            <trans-unit id="form.steps">
+                <source>Form progress</source>
+            </trans-unit>
+            <trans-unit id="form.steps.pattern">
+                <source>Step %s of %s | %s</source>
+            </trans-unit>
+            <trans-unit id="form.next">
+                <source>Next</source>
+            </trans-unit>
+            <trans-unit id="form.required">
+                <source>(required)</source>
+            </trans-unit>
+            <trans-unit id="form.optional">
+                <source>(optional)</source>
+            </trans-unit>
+            <trans-unit id="form.complete">
+                <source>(complete)</source>
+            </trans-unit>
+            <trans-unit id="form.select">
+                <source>Please select...</source>
+            </trans-unit>
+            <trans-unit id="form.error">
+                <source>There are still issues with 1 of your entries</source>
+            </trans-unit>
+            <trans-unit id="form.errors">
+                <source>There are still issues with %s of your entries</source>
+            </trans-unit>
+            <trans-unit id="form.nav.errors">
+                <source>Problematic form fields</source>
+            </trans-unit>
+            <trans-unit id="form.title.errors">
+                <source>%s errors ⚠️</source>
+            </trans-unit>
+
+            <!-- Error messages -->
+            <!-- NotEmptyValidator / VALUE_MISSING -->
+            <trans-unit id="validation.error.1221560910" resname="validation.error.1221560910" xml:space="preserve">
+                <source>Please fill out this field.</source>
+            </trans-unit>
+            <trans-unit id="validation.error.1221560718" resname="validation.error.1221560718" xml:space="preserve">
+                <source>Please fill out this field.</source>
+            </trans-unit>
+            <trans-unit id="validation.error.1347992400" resname="validation.error.1347992400" xml:space="preserve">
+                <source>Please fill out this field.</source>
+            </trans-unit>
+            <trans-unit id="validation.error.1347992453" resname="validation.error.1347992453" xml:space="preserve">
+                <source>Please fill out this field.</source>
+            </trans-unit>
+            <!-- IntegerValidator / PATTERN_MISMATCH -->
+            <trans-unit id="validation.error.1221551320" resname="validation.error.1221551320" xml:space="preserve">
+                <source>Please enter only letters or digits.</source>
+            </trans-unit>
+            <!-- StringLengthValidator / TOO_SHORT -->
+            <trans-unit id="validation.error.1428504122" resname="validation.error.1428504122" xml:space="preserve">
+                <source>Please enter a text with a minimum of %s characters in length and no longer than %s.</source>
+            </trans-unit>
+            <!-- StringLengthValidator / TOO_SHORT -->
+            <trans-unit id="validation.error.1238108068" resname="validation.error.1238108068" xml:space="preserve">
+                <source>Please enter text which is longer than %s characters.</source>
+            </trans-unit>
+            <!-- StringLengthValidator / TOO_LONG -->
+            <trans-unit id="validation.error.1238108069" resname="validation.error.1238108069" xml:space="preserve">
+                <source>Please enter text which is no longer than %s characters.</source>
+            </trans-unit>
+            <!-- EmailAddressValidator / TYPE_MISMATCH -->
+            <trans-unit id="validation.error.1221559976" resname="validation.error.1221559976" xml:space="preserve">
+                <source>Please enter a valid email address.</source>
+            </trans-unit>
+            <!-- IntegerValidator / TYPE_MISMATCH -->
+            <trans-unit id="validation.error.1221560494" resname="validation.error.1221560494" xml:space="preserve">
+                <source>Please enter a valid number.</source>
+            </trans-unit>
+            <!-- FloatValidator / TYPE_MISMATCH -->
+            <trans-unit id="validation.error.1221560288" resname="validation.error.1221560288" xml:space="preserve">
+                <source>Please enter a valid floating point number.</source>
+            </trans-unit>
+            <!-- NumberRangeValidator / TYPE_MISMATCH -->
+            <trans-unit id="validation.error.1221563685" resname="validation.error.1221563685" xml:space="preserve">
+                <source>Please enter a valid number.</source>
+            </trans-unit>
+            <!-- NumberRangeValidator / RANGE_UNDERFLOW -->
+            <trans-unit id="validation.error.1221561046" resname="validation.error.1221561046" xml:space="preserve">
+                <source>Please enter a valid number between %s and %s.</source>
+            </trans-unit>
+            <!-- RegularExpressionValidator / PATTERN_MISMATCH -->
+            <trans-unit id="validation.error.1221565130" resname="validation.error.1221565130" xml:space="preserve">
+                <source>Please enter a valid value. Please refer to the description of this field.</source>
+            </trans-unit>
+            <!-- DateRangeValidator / RANGE_OVERFLOW -->
+            <trans-unit id="validation.error.1521293686" resname="validation.error.1521293686" xml:space="preserve">
+                <source>Please select a date before %s.</source>
+            </trans-unit>
+            <!-- DateRangeValidator / RANGE_UNDERFLOW -->
+            <trans-unit id="validation.error.1521293687" resname="validation.error.1521293687" xml:space="preserve">
+                <source>Please select a date after %s.</source>
+            </trans-unit>
+            <!-- CountValidator / TOO_FEW_ITEMS -->
+            <trans-unit id="validation.error.1475002994" resname="validation.error.1475002994" xml:space="preserve">
+                <source>Please select between %s to %s elements.</source>
+            </trans-unit>
+            <!-- CountValidator / TYPE_MISMATCH -->
+            <trans-unit id="validation.error.1475002976" resname="validation.error.1475002976" xml:space="preserve">
+                <source>Please select a valid value.</source>
+            </trans-unit>
+            <!-- DateRangeValidator / TYPE_MISMATCH -->
+            <trans-unit id="validation.error.1521293685" resname="validation.error.1521293685" xml:space="preserve">
+                <source>Please enter a valid date.</source>
+            </trans-unit>
+            <!-- DateTimeValidator / TYPE_MISMATCH -->
+            <trans-unit id="validation.error.1238087674" resname="validation.error.1238087674" xml:space="preserve">
+                <source>Please enter a valid date.</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

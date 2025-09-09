@@ -1,0 +1,48 @@
+<f:comment><!--
+
+    Render a checkbox list
+
+    @param GenericFormElement element
+
+--></f:comment>
+<html data-namespace-typo3-fluid="true"
+      xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers">
+    <formvh:renderRenderable renderable="{element}">
+        <f:form.validationResults for="{element.rootForm.identifier}.{element.identifier}">
+            <f:render partial="Field/Field" contentAs="elementContent"
+                      arguments="{element: element}">
+
+                <f:for each="{element.properties.options}" as="label" key="value" iteration="idIterator">
+                    <f:comment><!-- Due to HTML spec only first checkbox in a group should get validation attributes --></f:comment>
+                    <f:if condition="{idIterator.isFirst}">
+                        <f:then>
+                            <f:variable name="additionalAttributes"
+                                        value="{twforms:form.field.additionalAttributes(element: element, validationResults: validationResults)}"/>
+                        </f:then>
+                        <f:else>
+                            <f:variable name="additionalAttributes"
+                                        value="{}"/>
+                        </f:else>
+                    </f:if>
+
+                    <label for="{element.uniqueIdentifier}-{idIterator.index}"
+                           class="{element.properties.containerClassAttribute}">
+                        <f:render partial="Checkbox" section="Checkbox" arguments="{
+                            element: element,
+                            additionalAttributes: additionalAttributes,
+                            multiple: 1,
+                            id: '{element.uniqueIdentifier}-{idIterator.index}',
+                            value: value
+                            }"
+                        />
+                        <f:render partial="Checkbox" section="InlineLabel" contentAs="label">
+                            {formvh:translateElementProperty(element: element, property: '{0: \'options\', 1:
+                            value}')}
+                        </f:render>
+                    </label>
+                </f:for>
+            </f:render>
+        </f:form.validationResults>
+    </formvh:renderRenderable>
+</html>

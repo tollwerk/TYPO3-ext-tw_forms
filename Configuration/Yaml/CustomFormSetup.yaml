@@ -4,38 +4,51 @@ TYPO3:
       prototypes:
         standard:
           formElementsDefinition:
+            AdvancedPassword: null
+            Checkbox:
+              properties:
+                containerClassAttribute: 'CustomInput CustomInput--check'
+                elementClassAttribute: 'FormField__input'
+            CountrySelect:
+              formEditor:
+                group: null
+            Date: null
+            DatePicker: null
             Form:
               persistenceManager:
               renderingOptions:
                 templateRootPaths:
-                  20: 'EXT:tw_forms/Resources/Private/Frontend/Templates/'
+                  20: 'EXT:tw_forms/Resources/Private/FormFramework/Frontend/Templates/'
                 partialRootPaths:
-                  20: 'EXT:tw_forms/Resources/Private/Frontend/Partials/'
+                  20: 'EXT:tw_forms/Resources/Private/FormFramework/Frontend/Partials/'
                 elementClassAttribute: 'Form'
                 novalidate: 1
                 translation:
                   translationFiles:
                     10: 'EXT:form/Resources/Private/Language/locallang.xlf'
-                    20: 'EXT:tw_forms/Resources/Private/Language/locallang_forms.xlf'
+                    20: 'EXT:tw_forms/Resources/Private/Language/locallang.xlf'
             Email:
               properties:
                 elementClassAttribute: 'FormEmail FormField__input'
-            Checkbox:
+            FileUpload: null
+            Hidden: null
+            ImageUpload: null
+            MultiCheckbox:
               properties:
-                elementClassAttribute: 'FormCheckbox FormField__input'
+                containerClassAttribute: 'CustomInput CustomInput--check'
+                elementClassAttribute: 'FormField__input FormField__group-element'
+            MultiSelect: null
             SingleSelect:
               properties:
-                elementClassAttribute: 'FormSelect'
+                elementClassAttribute: 'FormSelect FormField__input'
             Text:
               properties:
                 elementClassAttribute: 'FormText FormField__input'
             Textarea:
               properties:
                 elementClassAttribute: 'FormTextarea FormField__textarea'
-            Password:
-              properties:
-                elementClassAttribute: 'FormPassword FormField__input'
+            Password: null
             RadioButton:
               properties:
-                containerClassAttribute: 'FormRadioButton'
-                elementClassAttribute: ''
+                containerClassAttribute: 'CustomInput CustomInput--radio'
+                elementClassAttribute: 'FormField__input FormField__group-element'

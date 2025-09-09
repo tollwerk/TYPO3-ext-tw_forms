@@ -37,7 +37,7 @@
 
 namespace Tollwerk\TwForms\Utility;
 
-use Tollwerk\TwForms\Domain\Provider\FlexPageTitleProvider;
+use Tollwerk\TwForms\PageTitle\FormErrorTitleProvider;
 use TYPO3\CMS\Core\PageTitle\PageTitleProviderInterface;
 use TYPO3\CMS\Core\TypoScript\TypoScriptService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -71,12 +71,12 @@ class PageTitleUtility
      * @return string New page title (with replacements)
      * @throws Exception
      */
-    public static function setPageTitle(string $title, array $replacementProvider = []): string
+    public static function setPageTitle(string $title, array $replacementProvider = [])
     {
         $replacement = self::getReplacement($replacementProvider);
         $title       = $replacement ? sprintf($title, $replacement) : $title;
 
-        return GeneralUtility::makeInstance(FlexPageTitleProvider::class)->setTitle($title);
+        return GeneralUtility::makeInstance(FormErrorTitleProvider::class)->setTitle($title);
     }
 
     /**

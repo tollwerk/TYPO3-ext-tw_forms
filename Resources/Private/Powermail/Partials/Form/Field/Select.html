@@ -1,0 +1,32 @@
+{namespace vh=In2code\Powermail\ViewHelpers} {namespace
+f=TYPO3\CMS\Fluid\ViewHelpers} {namespace
+t=TRAW\Powermailautocomplete\ViewHelpers}
+
+<div
+  class="{settings.styles.framework.fieldAndLabelWrappingClasses} powermail_fieldwrap powermail_fieldwrap_type_select powermail_fieldwrap_{field.marker}{f:if(condition: '{field.css}', then: ' {field.css} ')}"
+>
+  <f:comment><!-- Label --></f:comment>
+  <f:render partial="Form/FieldLabel" arguments="{_all}" />
+
+  <f:comment><!-- Error container --></f:comment>
+  <f:render partial="Form/FieldError" arguments="{_all}" />
+
+  <div class="{settings.styles.framework.fieldWrappingClasses}">
+    <vh:form.selectField
+      options="{field.modifiedSettings}"
+      property="{field.marker}"
+      class="powermail_select {settings.styles.framework.fieldClasses} {vh:validation.errorClass(field:field, class:'powermail_field_error')}"
+      id="{formId}-powermail-field-{field.marker}"
+      additionalAttributes="{twforms:validation.validationDataAttribute(field:field)}"
+      aria="{'errormessage': 'error-for-powermail-field-{formId}-{field.marker}', 'describedby': 'error-for-powermail-field-{formId}-{field.marker} desc-for-powermail-field-{formId}-{field.marker}'}"
+      value="{vh:misc.prefillField(field:field, mail:mail)}"
+      prependOptionLabel="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.select')}"
+      prependOptionValue=""
+    />
+  </div>
+
+  <f:comment><!-- Description --></f:comment>
+  <f:if condition="{field.description}">
+    <f:render partial="Form/FieldDescription" arguments="{_all}" />
+  </f:if>
+</div>

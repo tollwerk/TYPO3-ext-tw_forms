@@ -1,0 +1,78 @@
+<f:comment><!--
+
+    Render a checkbox
+
+    @param GenericFormElement element      Form element
+
+--></f:comment>
+<html data-namespace-typo3-fluid="true"
+      xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers">
+    <formvh:renderRenderable renderable="{element}">
+        <f:form.validationResults for="{element.rootForm.identifier}.{element.identifier}">
+            <f:variable name="additionalAttributes"
+                        value="{twforms:form.field.additionalAttributes(element: element, validationResults: validationResults)}"/>
+            <f:render partial="Field/Field" contentAs="elementContent"
+                      arguments="{element: element}">
+                <label for="{element.uniqueIdentifier}"
+                       class="{element.properties.containerClassAttribute}">
+                    <f:render section="Checkbox" arguments="{
+                        element: element,
+                        additionalAttributes: additionalAttributes,
+                        multiple: 0,
+                        id: element.uniqueIdentifier,
+                        value: element.properties.value
+                        }"/>
+                    <f:render section="InlineLabel" contentAs="label">
+                        {formvh:translateElementProperty(element: element, property: 'label')}
+                        <f:if condition="{element.required}">
+                            <f:render partial="Field/Required"/>
+                        </f:if>
+                    </f:render>
+                </label>
+            </f:render>
+        </f:form.validationResults>
+    </formvh:renderRenderable>
+
+    <f:comment><!--
+
+    Render the checkbox
+
+    @param GenericFormElement element       Form element
+    @param array additionalAttributes       Additional attributes
+    @param boolean multiple                 Multiple checkboxes
+    @param string id                        ID
+    @param string value                     Value
+
+    --></f:comment>
+    <f:section name="Checkbox">
+        <f:comment><!-- Semantic checkbox which is visually hidden --></f:comment>
+        <f:form.checkbox
+                additionalAttributes="{additionalAttributes}"
+                multiple="{multiple}"
+                class="{element.properties.elementClassAttribute}"
+                errorClass="{element.properties.elementErrorClassAttribute}"
+                id="{id}"
+                property="{element.identifier}"
+                value="{value}"
+        />
+
+        <f:comment><!-- Visual replacement of the radio button via SVG --></f:comment>
+        <svg class="Icon" width="24" height="24" aria-hidden="true" focusable="false">
+            <use href="#checkmark"></use>
+        </svg>
+    </f:section>
+
+    <f:comment><!--
+
+    Render an inline label
+
+    @param string label         Label text
+
+    --></f:comment>
+    <f:section name="InlineLabel">
+        <f:if condition="{label -> f:format.trim()}">
+            <span class="FormField__label-wrap">{label -> f:format.trim() -> f:format.raw()}</span>
+        </f:if>
+    </f:section>
+</html>

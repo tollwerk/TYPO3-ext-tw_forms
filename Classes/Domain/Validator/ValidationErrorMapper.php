@@ -38,10 +38,18 @@
 namespace Tollwerk\TwForms\Domain\Validator;
 
 use Tollwerk\TwForms\Error\Constraint;
-use TYPO3\CMS\Extbase\Error\Error;
+use TYPO3\CMS\Extbase\Validation\Validator\AlphanumericValidator;
+use TYPO3\CMS\Extbase\Validation\Validator\DateTimeValidator;
 use TYPO3\CMS\Extbase\Validation\Validator\EmailAddressValidator;
+use TYPO3\CMS\Extbase\Validation\Validator\FloatValidator;
+use TYPO3\CMS\Extbase\Validation\Validator\IntegerValidator;
 use TYPO3\CMS\Extbase\Validation\Validator\NotEmptyValidator;
-use TYPO3\CMS\Extbase\Validation\Validator\UrlValidator;
+use TYPO3\CMS\Extbase\Validation\Validator\NumberRangeValidator;
+use TYPO3\CMS\Extbase\Validation\Validator\NumberValidator;
+use TYPO3\CMS\Extbase\Validation\Validator\RegularExpressionValidator;
+use TYPO3\CMS\Extbase\Validation\Validator\StringLengthValidator;
+use TYPO3\CMS\Form\Mvc\Validation\CountValidator;
+use TYPO3\CMS\Form\Mvc\Validation\DateRangeValidator;
 
 /**
  * Extbase validation error mapper
@@ -60,27 +68,61 @@ class ValidationErrorMapper
      *
      * @var string[]
      */
-    const ERROR_MAP = [
+    const array ERROR_MAP = [
+        AlphanumericValidator::class => [
+            1221551320 => Constraint::PATTERN_MISMATCH,
+        ],
+        StringLengthValidator::class => [
+            1428504122 => Constraint::TOO_SHORT,
+            1238108068 => Constraint::TOO_SHORT,
+            1238108069 => Constraint::TOO_LONG,
+        ],
+        EmailAddressValidator::class => [
+            1221559976 => Constraint::TYPE_MISMATCH,
+        ],
+        IntegerValidator::class => [
+            1221560494 => Constraint::TYPE_MISMATCH,
+        ],
+        FloatValidator::class => [
+            1221560288 => Constraint::TYPE_MISMATCH,
+        ],
+        NumberValidator::class => [
+            1221563685 => Constraint::TYPE_MISMATCH,
+        ],
+        NumberRangeValidator::class => [
+            1221563685 => Constraint::TYPE_MISMATCH,
+            1221561046 => Constraint::RANGE_UNDERFLOW,
+        ],
+        RegularExpressionValidator::class => [
+            1221565130 => Constraint::PATTERN_MISMATCH,
+        ],
+        DateRangeValidator::class => [
+            1521293685 => Constraint::TYPE_MISMATCH,
+            1521293687 => Constraint::RANGE_UNDERFLOW,
+            1521293686 => Constraint::RANGE_OVERFLOW,
+        ],
+        DateTimeValidator::class => [
+            1238087674 => Constraint::TYPE_MISMATCH,
+        ],
+        CountValidator::class => [
+            1475002976 => Constraint::TYPE_MISMATCH,
+            1475002994 => Constraint::TOO_FEW_ITEMS,
+        ],
         NotEmptyValidator::class => [
             1221560910 => Constraint::VALUE_MISSING,
             1221560718 => Constraint::VALUE_MISSING,
             1347992400 => Constraint::VALUE_MISSING,
             1347992453 => Constraint::VALUE_MISSING,
         ],
-        EmailAddressValidator::class => [
-            1221559976 => Constraint::TYPE_MISMATCH,
-        ],
-        UrlValidator::class => [
-            1238108078 => Constraint::TYPE_MISMATCH,
-        ],
     ];
+
 
     /**
      * Return an inverse error map (JavaScript to Extbase error codes) for a particular validator
      *
      * @param string $validatorClass Validator class
      *
-     * @return array[]                              Inverse error map (JavaScript to Extbase error codes)
+     * @return array[] Inverse error map (JavaScript to Extbase error codes)
      *
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      * @codingStandardsIgnoreStart
@@ -88,40 +130,17 @@ class ValidationErrorMapper
     public static function getInverseMap(string $validatorClass): array
     {
         $inverseMap = [];
+
         if (!empty(self::ERROR_MAP[$validatorClass])) {
             foreach (self::ERROR_MAP[$validatorClass] as $errorCode => $constraint) {
-                $constraintCode = Constraint::CODES[$constraint];
-                if (empty($inverseMap[$constraint])) {
-                    $inverseMap[$constraint] = [$constraintCode];
+                if (!isset($inverseMap[$constraint])) {
+                    $inverseMap[$constraint] = [];
                 }
-
-                if(!empty($inverseMap[$constraint])) {
-                    $inverseMap[$constraint][] = $constraintCode;
-                }
+                $inverseMap[$constraint][] = $errorCode;
             }
         }
 
         return $inverseMap;
-    }
-
-    /**
-     * Map an Extbase error to a JavaScript constraint
-     *
-     * @param Error $error Extbase error
-     *
-     * @return string|null JavaScript constraint
-     */
-    public static function mapErrorToConstraint(Error $error): ?string
-    {
-        foreach (self::ERROR_MAP as $errorTypeCodes) {
-            foreach ($errorTypeCodes as $errorCode => $constraint) {
-                if ($error->getCode() == $errorCode) {
-                    return $constraint;
-                }
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -131,7 +150,7 @@ class ValidationErrorMapper
      *
      * @return string|null JavaScript constraint
      */
-    public static function mapErrorCodeToConatraint(int $errorCode): ?string
+    public static function mapErrorCodeToConstraint(int $errorCode): ?string
     {
         foreach(self::ERROR_MAP as $errorTypeCodes) {
             foreach($errorTypeCodes as $errorTypeCode => $constraint) {

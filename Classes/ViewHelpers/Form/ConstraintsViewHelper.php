@@ -38,11 +38,8 @@
 namespace Tollwerk\TwForms\ViewHelpers\Form;
 
 use Tollwerk\TwForms\Error\Constraint;
-use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
-use TYPO3\CMS\Form\Domain\Model\FormElements\GenericFormElement;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3\CMS\Extbase\Error\Error;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 /**
  * Mapped Errors view helper
@@ -56,45 +53,32 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
  */
 class ConstraintsViewHelper extends AbstractViewHelper
 {
-    use CompileWithRenderStatic;
-
     /**
-     * Compile a list of additional attributes for a form field
-     *
-     * @param array                     $arguments             Arguments
-     * @param \Closure                  $renderChildrenClosure RenderChildrenClosure
-     * @param RenderingContextInterface $renderingContext      RenderingContext
-     *
-     * @return mixed
-     *
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     * @codingStandardsIgnoreStart
+     * Register ViewHelper arguments
      */
-    public static function renderStatic(
-        array $arguments,
-        \Closure $renderChildrenClosure,
-        RenderingContextInterface $renderingContext
-    ) {
-        $constraints = [];
-        foreach ($arguments['errors'] as $error) {
-            $constraint = Constraint::fromError($error, $arguments['validationErrorMessages'] ?? []);
-            $constraints[get_class($error).':'.$error->getCode()] = $constraint;
-        }
-
-        return array_values($constraints);
+    public function initializeArguments(): void
+    {
+        $this->registerArgument('errors', 'array', 'Form validation errors', true);
+        $this->registerArgument('validationErrorMessages', 'array',
+            'Optional: element.properties.validationErrorMessages', false, []);
     }
 
     /**
-     * Initialize all arguments. You need to override this method and call
-     * $this->registerArgument(...) inside this method, to register all your arguments.
+     * Render array of Constraint objects for given Extbase errors
      *
-     * @return void
-     * @api
+     * @return Constraint[]
      */
-    public function initializeArguments()
+    public function render(): array
     {
-        $this->registerArgument('errors', 'array', 'Form validation errors', true);
-        $this->registerArgument('validationErrorMessages', 'array', 'Array with values from {element.properties.validationErrorMessages}. Can be empty.', false, []);
+        $constraints = [];
+
+        /** @var Error $error */
+        foreach ($this->arguments['errors'] as $error) {
+            $constraint                                               = Constraint::fromError($error,
+                $this->arguments['validationErrorMessages']);
+            $constraints[get_class($error) . ':' . $error->getCode()] = $constraint;
+        }
+
+        return array_values($constraints);
     }
 }

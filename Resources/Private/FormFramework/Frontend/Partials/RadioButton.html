@@ -1,0 +1,64 @@
+<f:comment><!--
+
+    @param GenericFormElement element          Form element
+
+--></f:comment>
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+    <formvh:renderRenderable renderable="{element}">
+        <f:form.validationResults for="{element.identifier}">
+            <f:render partial="Field/Field" arguments="{
+                    element: element,
+                    validationResults: validationResults,
+                    doNotShowLabel: 0
+                }" contentAs="elementContent">
+                <f:for each="{element.properties.options}" as="label" key="value" iteration="idIterator">
+                    <f:comment><!-- Due to HTML spec only first radio button in a group should get validation attributes --></f:comment>
+                    <f:if condition="{idIterator.isFirst}">
+                        <f:then>
+                            <f:variable name="additionalAttributes"
+                                        value="{twforms:form.field.additionalAttributes(element: element, validationResults: validationResults)}"/>
+                        </f:then>
+                        <f:else>
+                            <f:variable name="additionalAttributes"
+                                        value="{}"/>
+                        </f:else>
+                    </f:if>
+
+                    <label for="{element.uniqueIdentifier}-{idIterator.index}"
+                           class="{element.properties.containerClassAttribute}">
+                        <f:form.radio
+                                property="{element.identifier}"
+                                id="{element.uniqueIdentifier}-{idIterator.index}"
+                                class="{element.properties.elementClassAttribute}"
+                                value="{value}"
+                                errorClass="{element.properties.elementErrorClassAttribute}"
+                                additionalAttributes="{additionalAttributes}"
+                        />
+                        <f:comment><!-- Visual replacement of the radio button via SVG --></f:comment>
+                        <svg class="Icon" width="24" height="24" aria-hidden="true" focusable="false">
+                            <use href="#circle"></use>
+                        </svg>
+                        <f:render section="InlineLabel" contentAs="label">
+                            {formvh:translateElementProperty(element: element, property: '{0: \'options\', 1: value}')}
+                        </f:render>
+                    </label>
+                </f:for>
+            </f:render>
+        </f:form.validationResults>
+    </formvh:renderRenderable>
+
+    <f:comment><!--
+
+    Render an inline label
+
+    @param string label         Label text
+
+    --></f:comment>
+    <f:section name="InlineLabel">
+        <f:if condition="{label -> f:format.trim()}">
+            <span class="FormField__label-wrap">{label -> f:format.trim() -> f:format.raw()}</span>
+        </f:if>
+    </f:section>
+</html>

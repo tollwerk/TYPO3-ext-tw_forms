@@ -1,0 +1,4 @@
+page = PAGE
+
+page.includeCSS.twforms = EXT:tw_forms/Resources/Public/Css/twforms.css
+page.includeCSS.powermail = EXT:tw_forms/Resources/Public/Css/powermail.css

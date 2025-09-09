@@ -1,0 +1,79 @@
+plugin.tx_powermail {
+    # Validation settings
+    settings {
+        validation {
+            native = 1
+            client = 1
+            server = 1
+        }
+
+        setup {
+            styles {
+                framework {
+                    formClasses = Form Form--custom-validation
+                    fieldAndLabelWrappingClasses = FormField
+                    fieldWrappingClasses = FormField__field
+                    labelClasses = FormField__label
+                    fieldClasses = FormField__input
+                    checkClasses = CustomInput CustomInput--check
+                    radioClasses = CustomInput CustomInput--radio
+                    offsetClasses = FormField__offset
+                    submitClasses = FormField__submit
+                }
+            }
+        }
+    }
+
+    # Overwrite root paths
+    view {
+        templateRootPaths {
+            0 = EXT:powermail/Resources/Private/Templates/
+            1 = {$plugin.tx_powermail.view.templateRootPath}
+            99 = EXT:tw_forms/Resources/Private/Powermail/Templates
+        }
+
+        partialRootPaths {
+            0 = EXT:powermail/Resources/Private/Partials/
+            1 = {$plugin.tx_powermail.view.partialRootPath}
+            99 = EXT:tw_forms/Resources/Private/Powermail/Partials
+        }
+
+        layoutRootPaths {
+            0 = EXT:powermail/Resources/Private/Layouts/
+            1 = {$plugin.tx_powermail.view.layoutRootPath}
+            99 = EXT:tw_forms/Resources/Private/Powermail/Layouts
+        }
+    }
+
+    # Overwrite language keys (has to be explicit, not only in language file)
+    _LOCAL_LANG {
+        validationerror_container_label = Problematic form fields
+        validationerror_mandatory = Please fill out this field.
+        validationerror_mandatory_multi = Please fill out one of these fields.
+        validationerror_validation = Your input is not allowed.
+        validationerror_validation.1 = Please enter a valid e-mail address.
+        validationerror_validation.2 = Please enter a valid URL (e.g. https://example.com).
+        validationerror_validation.3 = Please enter a valid phone number.
+        validationerror_validation.4 = Please enter only digits.
+        validationerror_validation.5 = Please enter only letters.
+        validationerror_validation.6 = Please increase the number.
+        validationerror_validation.7 = Please descrease the number.
+        validationerror_validation.8 = The number is too high or too low.
+        validationerror_validation.9 = Your entry is not valid (too many or too few characters).
+        validationerror_validation.10 = Error during validation.
+        de.validationerror_container_label = Problematische Formularfelder
+        de.validationerror_mandatory = Bitte füllen Sie dieses Feld aus.
+        de.validationerror_mandatory_multi = Bitte wählen Sie mindestens eine Option aus.
+        de.validationerror_validation = Diese Eingabe ist ungültig.
+        de.validationerror_validation.1 = Bitte geben Sie eine gültige E-Mail-Adresse ein.
+        de.validationerror_validation.2 = Bitte geben Sie eine gültige URL ein (z. B. https://example.com).
+        de.validationerror_validation.3 = Bitte geben Sie eine gültige Telefonnummer ein.
+        de.validationerror_validation.4 = Bitte geben Sie nur Ziffern ein.
+        de.validationerror_validation.5 = Bitte geben Sie nur Buchstaben ein.
+        de.validationerror_validation.6 = Bitte erhöhen Sie die Zahl.
+        de.validationerror_validation.7 = Bitte verringern Sie die Zahl.
+        de.validationerror_validation.8 = Die Zahl ist zu hoch oder zu niedrig.
+        de.validationerror_validation.9 = Ihre Eingabe ist nicht gültig (zu viele oder zu wenige Zeichen).
+        de.validationerror_validation.10 = Fehler bei der Validierung.
+    }
+}

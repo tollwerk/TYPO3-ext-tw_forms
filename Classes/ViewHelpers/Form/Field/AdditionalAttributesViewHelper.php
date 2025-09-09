@@ -37,19 +37,15 @@
 
 namespace Tollwerk\TwForms\ViewHelpers\Form\Field;
 
-use Closure;
-use Tollwerk\TwForms\Domain\Validator\ValidationErrorMapper;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Error\Error;
 use TYPO3\CMS\Extbase\Error\Result;
-use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Form\Domain\Model\Exception\FormDefinitionConsistencyException;
 use TYPO3\CMS\Form\Domain\Model\FormElements\AbstractFormElement;
-use TYPO3\CMS\Form\Domain\Model\FormElements\GenericFormElement;
-use TYPO3\CMS\Form\Service\TranslationService;
-use TYPO3\CMS\Form\ViewHelpers\RenderRenderableViewHelper;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
+use Tollwerk\TwForms\Domain\Validator\ValidationErrorMapper;
+use Tollwerk\TwForms\Error\Constraint;
 
 /**
  * Prepare additional attributes for form fields
@@ -63,137 +59,142 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
  */
 class AdditionalAttributesViewHelper extends AbstractViewHelper
 {
-    use CompileWithRenderStatic;
+    /**
+     * Initialize all arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments(): void
+    {
+        $this->registerArgument('element', AbstractFormElement::class, 'Form element', true);
+        $this->registerArgument('validationResults', Result::class, 'Validation results', false, null);
+    }
 
     /**
      * Compile a list of additional attributes for a form field
      *
-     * @param array                     $arguments             Arguments
-     * @param Closure                   $renderChildrenClosure Render Children Closure
-     * @param RenderingContextInterface $renderingContext      Rendering Context
-     *
-     * @return mixed
+     * @return array
      * @throws FormDefinitionConsistencyException
      *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public static function renderStatic(
-        array $arguments,
-        Closure $renderChildrenClosure,
-        RenderingContextInterface $renderingContext
-    ) {
-        $element              = $arguments['element'];
-        $validationResults    = $arguments['validationResults'];
-        $properties           = $element->getProperties();
+    public function render(): array
+    {
+        $element = $this->arguments['element'];
+        $validationResults = $this->arguments['validationResults'];
+        $properties = $element->getProperties();
         $additionalAttributes = $properties['fluidAdditionalAttributes'] ?? [];
 
-        // Skipped as JAWS reads both the error message AND the aria-describedby attribute
-        // All other screenreaders only read the aria-describedby attribute
+        // Set aria-errormessage pointing to the error container
         $additionalAttributes['aria-errormessage'] = $element->getUniqueIdentifier() . '-error';
-        $ariaDescribedBy                           = GeneralUtility::trimExplode(
+
+        // Build aria-describedby with error ID and optional description
+        $ariaDescribedBy = GeneralUtility::trimExplode(
             ' ',
             $additionalAttributes['aria-describedby'] ?? '',
             true
         );
+        array_unshift($ariaDescribedBy, $element->getUniqueIdentifier() . '-error');
+
         if (!empty($properties['elementDescription'])) {
-            $elementDescriptionIdentifier = implode(
-                '-',
-                [
-                    $element->getRootForm()->getIdentifier(),
-                    $element->getIdentifier(),
-                    'desc'
-                ]
-            );
+            $elementDescriptionIdentifier = implode('-', [
+                $element->getRootForm()->getIdentifier(),
+                $element->getIdentifier(),
+                'desc',
+            ]);
             if (!in_array($elementDescriptionIdentifier, $ariaDescribedBy)) {
                 $ariaDescribedBy[] = $elementDescriptionIdentifier;
             }
         }
-        array_unshift($ariaDescribedBy, $element->getUniqueIdentifier() . '-error');
+
         $additionalAttributes['aria-describedby'] = implode(' ', $ariaDescribedBy);
+
+        // Set required and aria-required if field is marked required
         if ($element->isRequired()) {
-            $additionalAttributes['required']      = 'required';
+            $additionalAttributes['required'] = 'required';
             $additionalAttributes['aria-required'] = 'true';
         }
-        $additionalAttributes['aria-invalid'] = $validationResults->hasErrors() ? 'true' : 'false';
 
+        // Set aria-invalid only if validation errors exist
+        $additionalAttributes['aria-invalid'] = $validationResults && $validationResults->hasErrors() ? 'true' : 'false';
+
+        // Map validators to class names
         $elementValidators = [];
         foreach ($element->getValidators() as $validatorInstance) {
             $elementValidators[get_class($validatorInstance)] = true;
         }
 
-        if (count($elementValidators)) {
-            $formRuntime = $renderingContext
-                ->getViewHelperVariableContainer()
-                ->get(RenderRenderableViewHelper::class, 'formRuntime');
+        // Load custom error messages if defined in form definition
+        $validationErrorMessages = $properties['validationErrorMessages'] ?? [];
 
-            // Get error codes and constraint name for JavaScript.
-            $errorCodesByConstraint = [];
-            $elementProperties = $element->getProperties();
-            if (!empty($elementProperties['validationErrorMessages'])) {
-                foreach($elementProperties['validationErrorMessages'] as $validationErrorMessage) {
-                    $constraint = ValidationErrorMapper::mapErrorCodeToConatraint($validationErrorMessage['code']);
-                    if (!$constraint) {
-                        continue;
-                    }
-                    if (!array_key_exists($constraint, $errorCodesByConstraint)) {
-                        $errorCodesByConstraint[$constraint] = [];
-                    }
+        // Loop through validators and assign matching error messages to data-errormsg-* attributes
+        foreach (array_keys($elementValidators) as $validatorClass) {
+            $errorCodeMap = ValidationErrorMapper::getInverseMap($validatorClass);
 
-                    $errorCodesByConstraint[$constraint][] = $validationErrorMessage['code'];
-                }
-            } else {
-                // Run through all  element validators
-                foreach (array_keys($elementValidators) as $validatorClass) {
-                    // Run through all potential constraints
-                    foreach (ValidationErrorMapper::getInverseMap($validatorClass) as $constraint => $constraintErrorCodes) {
-                        if (!array_key_exists($constraint, $errorCodesByConstraint)) {
-                            $errorCodesByConstraint[$constraint] = [];
-                        }
+            foreach ($errorCodeMap as $constraintName => $errorCodes) {
+                foreach ($errorCodes as $errorCode) {
 
-                        // Run through all associated Extbase error codes
-                        foreach ($constraintErrorCodes as $errorCode) {
-                            $errorCodesByConstraint[$constraint][] = $errorCode;
-                        }
-                    }
-                }
-            }
 
-            foreach($errorCodesByConstraint as $constraint => $errorCodes) {
-                foreach($errorCodes as $errorCode) {
-                    // Try to get a translated error message
-                    $translationService = GeneralUtility::makeInstance(TranslationService::class);
-                    $errorMessage = $translationService->translateFormElementError(
-                        $element,
-                        $errorCode,
-                        [],
-                        'default',
-                        $formRuntime
+
+                    // Try to use a custom error message first
+                    $constraint = Constraint::fromError(
+                        new Error('', $errorCode),
+                        $validationErrorMessages
                     );
-                    // Add as constraint error message attribute
-                    if (strlen($errorMessage)) {
-                        $additionalAttributes['data-errormsg-' . $constraint] = $errorMessage;
+
+                    $mappedConstraint = $constraint->getConstraint();
+                    $message = $constraint->getMessage();
+
+
+
+                    // Fallback: use translations from custom or default XLF files
+                    if (empty($message)) {
+
+                        // Get arguments for translation.
+                        $translationArguments = [];
+                        switch($errorCode) {
+                            // StringLengthValidator / TOO_SHORT
+                            case 1238108068:
+                                $translationArguments[] = $additionalAttributes['minlength'];
+                                break;
+                            // StringLengthValidator / TOO_SHORT (another one)
+                            case 1428504122:
+                                $translationArguments[] = $additionalAttributes['minlength'];
+                                $translationArguments[] = $additionalAttributes['maxlength'];
+                                break;
+                            // StringLengthValidator / TOO_LONG
+                            case 1238108069:
+                                $translationArguments[] = $additionalAttributes['maxlength'];
+                                break;
+                            // NumberRangeValidator / RANGE_UNDERFLOW
+                            case 1221561046:
+                                $translationArguments[] = $additionalAttributes['min'];
+                                $translationArguments[] = $additionalAttributes['max'];
+                                break;
+                        }
+
+                        // Get translation.
+                        $message = LocalizationUtility::translate(
+                            'validation.error.' . $errorCode,
+                            'tw_forms',
+                            $translationArguments
+                        ) ?? LocalizationUtility::translate(
+                            'validation.error.' . $errorCode,
+                            'form',
+                            $translationArguments
+                        ) ?? '';
+                    }
+
+                    // Assign only the first matching message per constraint
+                    if (!empty($mappedConstraint) && !empty($message)) {
+                        $additionalAttributes['data-errormsg' . ucfirst($mappedConstraint)] = $message;
                         break;
                     }
                 }
             }
-
-
         }
 
         return $additionalAttributes;
-    }
-
-    /**
-     * Initialize all arguments. You need to override this method and call
-     * $this->registerArgument(...) inside this method, to register all your arguments.
-     *
-     * @return void
-     * @api
-     */
-    public function initializeArguments()
-    {
-        $this->registerArgument('element', AbstractFormElement::class, 'Form element', true);
-        $this->registerArgument('validationResults', Result::class, 'Validation results', false, null);
     }
 }
