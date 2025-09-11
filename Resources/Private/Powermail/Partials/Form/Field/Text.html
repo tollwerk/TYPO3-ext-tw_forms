@@ -1,6 +1,6 @@
 
-<div class="powermail_fieldwrap powermail_fieldwrap_type_text powermail_fieldwrap_{field.marker} {field.css} {settings.styles.framework.fieldAndLabelWrappingClasses}">
+<div class="{settings.styles.framework.fieldAndLabelWrappingClasses} powermail_fieldwrap powermail_fieldwrap_type_text powermail_fieldwrap_{field.marker}{f:if(condition: '{field.css}', then: ' {field.css} ')}">
 	<div class="{settings.styles.framework.fieldWrappingClasses} {settings.styles.framework.offsetClasses}">
-		<f:format.nl2br>{field.text}</f:format.nl2br>
+		<f:format.html>{field.text}</f:format.html>
 	</div>
 </div>
