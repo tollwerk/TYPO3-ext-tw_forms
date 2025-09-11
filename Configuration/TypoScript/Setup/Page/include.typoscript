@@ -1,9 +1,7 @@
 page = PAGE
 
-# TODO: Minify JS and include it instead of source files
-
 # tw_forms critical javascript and polyfills. Must be included inside <head> of the document!
-page.includeJSLibs.tw_forms_critical = EXT:tw_forms/Resources/Public/Javascript/tw-forms.critical.js
+page.includeJSLibs.tw_forms_critical = EXT:tw_forms/Resources/Public/Javascript/tw-forms.critical.min.js
 
 # powermail default javascript. Needs to be deactivated due to own javascript.
 page.includeJSFooter.powermailForm >
@@ -12,7 +10,7 @@ page.includeJSFooter.powermailForm >
 page.includeJSFooter.tw_forms_utility = EXT:tw_forms/Resources/Public/Javascript/Powermail/Utility/tw-forms.utility.js
 
 # tw_forms default javascript. Depends on tw-forms.critical.min.js
-page.includeJSFooter.tw_forms_default = EXT:tw_forms/Resources/Public/Javascript/tw-forms.default.js
+page.includeJSFooter.tw_forms_default = EXT:tw_forms/Resources/Public/Javascript/tw-forms.default.min.js
 
 # powermail multistepform javascript. Only necessary for powermail setup.
 page.includeJSFooter.tw_forms_powermail_multistep = EXT:tw_forms/Resources/Public/Javascript/Powermail/MoreStepForm.min.js
