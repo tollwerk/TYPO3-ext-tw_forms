@@ -46,7 +46,7 @@ plugin.tx_powermail {
     }
 
     # Overwrite language keys (has to be explicit, not only in language file)
-    _LOCAL_LANG {
+    _LOCAL_LANG.default {
         validationerror_container_label = Problematic form fields
         validationerror_mandatory = Please fill out this field.
         validationerror_mandatory_multi = Please fill out one of these fields.
@@ -61,19 +61,22 @@ plugin.tx_powermail {
         validationerror_validation.8 = The number is too high or too low.
         validationerror_validation.9 = Your entry is not valid (too many or too few characters).
         validationerror_validation.10 = Error during validation.
-        de.validationerror_container_label = Problematische Formularfelder
-        de.validationerror_mandatory = Bitte füllen Sie dieses Feld aus.
-        de.validationerror_mandatory_multi = Bitte wählen Sie mindestens eine Option aus.
-        de.validationerror_validation = Diese Eingabe ist ungültig.
-        de.validationerror_validation.1 = Bitte geben Sie eine gültige E-Mail-Adresse ein.
-        de.validationerror_validation.2 = Bitte geben Sie eine gültige URL ein (z. B. https://example.com).
-        de.validationerror_validation.3 = Bitte geben Sie eine gültige Telefonnummer ein.
-        de.validationerror_validation.4 = Bitte geben Sie nur Ziffern ein.
-        de.validationerror_validation.5 = Bitte geben Sie nur Buchstaben ein.
-        de.validationerror_validation.6 = Bitte erhöhen Sie die Zahl.
-        de.validationerror_validation.7 = Bitte verringern Sie die Zahl.
-        de.validationerror_validation.8 = Die Zahl ist zu hoch oder zu niedrig.
-        de.validationerror_validation.9 = Ihre Eingabe ist nicht gültig (zu viele oder zu wenige Zeichen).
-        de.validationerror_validation.10 = Fehler bei der Validierung.
+    }
+
+    _LOCAL_LANG.de {
+        validationerror_container_label = Problematische Formularfelder
+        validationerror_mandatory = Bitte füllen Sie dieses Feld aus.
+        validationerror_mandatory_multi = Bitte wählen Sie mindestens eine Option aus.
+        validationerror_validation = Diese Eingabe ist ungültig.
+        validationerror_validation.1 = Bitte geben Sie eine gültige E-Mail-Adresse ein.
+        validationerror_validation.2 = Bitte geben Sie eine gültige URL ein (z. B. https://example.com).
+        validationerror_validation.3 = Bitte geben Sie eine gültige Telefonnummer ein.
+        validationerror_validation.4 = Bitte geben Sie nur Ziffern ein.
+        validationerror_validation.5 = Bitte geben Sie nur Buchstaben ein.
+        validationerror_validation.6 = Bitte erhöhen Sie die Zahl.
+        validationerror_validation.7 = Bitte verringern Sie die Zahl.
+        validationerror_validation.8 = Die Zahl ist zu hoch oder zu niedrig.
+        validationerror_validation.9 = Ihre Eingabe ist nicht gültig (zu viele oder zu wenige Zeichen).
+        validationerror_validation.10 = Fehler bei der Validierung.
     }
 }

@@ -52,6 +52,18 @@
                 <source>%s errors ⚠️</source>
                 <target state="translated">%s Fehler ⚠️</target>
             </trans-unit>
+            <trans-unit id="form.confirmation" approved="yes">
+                <source>Are these values correct?</source>
+                <target state="translated">Sind diese Eingaben korrekt?</target>
+            </trans-unit>
+            <trans-unit id="form.confirmation_prev" approved="yes">
+                <source>Previous</source>
+                <target state="translated">Zurück</target>
+            </trans-unit>
+            <trans-unit id="form.confirmation_next">
+                <source>Next</source>
+                <target state="translated">Weiter</target>
+            </trans-unit>
 
             <!-- Error messages -->
             <!-- NotEmptyValidator / VALUE_MISSING -->

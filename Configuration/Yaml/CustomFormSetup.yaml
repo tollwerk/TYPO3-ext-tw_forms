@@ -38,17 +38,26 @@ TYPO3:
                 containerClassAttribute: 'CustomInput CustomInput--check'
                 elementClassAttribute: 'FormField__input FormField__group-element'
             MultiSelect: null
+            Number:
+              properties:
+                elementClassAttribute: 'FormNumber FormField__input'
+            Password: null
+            RadioButton:
+              properties:
+                containerClassAttribute: 'CustomInput CustomInput--radio'
+                elementClassAttribute: 'FormField__input FormField__group-element'
             SingleSelect:
               properties:
                 elementClassAttribute: 'FormSelect FormField__input'
+            Telephone:
+              properties:
+                elementClassAttribute: 'FormTelephone FormField__input'
             Text:
               properties:
                 elementClassAttribute: 'FormText FormField__input'
             Textarea:
               properties:
                 elementClassAttribute: 'FormTextarea FormField__textarea'
-            Password: null
-            RadioButton:
+            Url:
               properties:
-                containerClassAttribute: 'CustomInput CustomInput--radio'
-                elementClassAttribute: 'FormField__input FormField__group-element'
+                elementClassAttribute: 'FormUrl FormField__input'

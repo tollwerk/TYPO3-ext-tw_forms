@@ -12,7 +12,7 @@ Show Confirmation Page
 
 <f:section name="main">
 	<div class="powermail_confirmation" data-powermail-form="{mail.form.uid}">
-		<h3><f:translate key="confirmation_message" /></h3>
+		<h3>{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.confirmation')}</h3>
 
 		<dl><f:format.raw>{powermail_all}</f:format.raw></dl>
 
@@ -30,7 +30,7 @@ Show Confirmation Page
 					additionalAttributes="{vh:validation.enableJavascriptValidationAndAjax(form: mail.form)}">
 				<f:render section="HiddenFields" arguments="{_all}" />
 				<f:form.submit
-						value="{f:translate(key: 'confirmation_prev')}"
+						value="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.confirmation_prev')}"
 						additionalAttributes="{data-powermail-form-ajax:'confirmation'}"
 						class="Form__button btn btn-danger" />
 			</f:form>
@@ -49,7 +49,7 @@ Show Confirmation Page
 					additionalAttributes="{vh:validation.enableJavascriptValidationAndAjax(form: mail.form)}">
 				<f:render section="HiddenFields" arguments="{_all}" />
 				<f:form.submit
-						value="{f:translate(key: 'confirmation_next')}"
+						value="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.confirmation_next')}"
 						additionalAttributes="{data-powermail-form-ajax:'submit'}"
 						class="Form__button btn btn-primary" />
 			</f:form>
