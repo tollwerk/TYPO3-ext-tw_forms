@@ -384,7 +384,7 @@ export default function MoreStepForm() {
         if (buttonIndex === activeIndex) {
             return {
                 type: 'active',
-                ariaAttributes: { 'aria-current': 'page' },
+                ariaAttributes: { 'aria-current': 'step' },
                 progressStepClass: 'ProgressStep--active',
                 progressItemClass: 'Progress__item--sibling-active'
             };
