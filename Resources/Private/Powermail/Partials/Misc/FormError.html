@@ -2,44 +2,42 @@
 {namespace twforms=Tollwerk\TwForms\ViewHelpers}
 
 <f:form.validationResults>
-  <f:variable
-    name="pattern"
-    value="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.title.errors')}"
-  />
-  <f:variable
-    name="count"
-    value="{f:count(subject: validationResults.flattenedErrors.mail)}"
-  />
-  <f:variable
-    name="title"
-    value="{twforms:form.title(form: form, pattern: pattern, errors: count)}"
-  />
+    <f:comment><!-- Give id to form in case several are present on one site --></f:comment>
+    <f:variable name="formId">powermail-form-{form.uid}</f:variable>
 
-  <nav
-    class="Form__error-navigation powermail_message powermail_message_error"
-    aria-label="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.nav.errors')}"
-    tabindex="-1"
-    {f:if(condition: '{count} == 0', then: 'hidden', else: '')}
-    data-title="{title.default}"
-    data-title-errors="{title.pattern}"
-  >
-    <f:variable name="headingKeySingle"
-                value="LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.error"/>
-    <f:variable name="headingKeyMultiple"
-                value="LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.errors"/>
-    <f:variable name="headingContent"
-                value="{f:if(condition: '{count} == 1', then: '{f:translate(key: headingKeySingle)}', else: '{f:translate(key: headingKeyMultiple, arguments: \'{0: count}\')}')}"/>
-    <svg width="48" height="48" aria-hidden="true" focusable="false">
-      <use href="#warning-sign"></use>
-    </svg>
-    <h2 class="Form__error-heading"
-        id="{formId}-errors"
-        data-heading-single="{f:translate(key: headingKeySingle)}"
-        data-heading-multiple="{f:translate(key: headingKeyMultiple)}">
-      {headingContent}
-    </h2>
+    <f:variable name="pattern"
+                value="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.title.errors')}"/>
 
-    <ol class="Form__error-summary">
+    <f:variable name="count"
+                value="{f:count(subject: validationResults.flattenedErrors.mail)}"/>
+
+    <f:variable name="title"
+                value="{twforms:form.title(form: form, pattern: pattern, errors: count)}"/>
+
+    <nav class="Form__error-navigation powermail_message powermail_message_error"
+         aria-label="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.nav.errors')}"
+         tabindex="-1"
+         data-title="{title.default}"
+         data-title-errors="{title.pattern}"
+         {f:if(condition: '{count} == 0', then: 'hidden', else: '')}>
+
+        <f:variable name="headingKeySingle"
+                    value="LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.error"/>
+        <f:variable name="headingKeyMultiple"
+                    value="LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.errors"/>
+        <f:variable name="headingContent"
+                    value="{f:if(condition: '{count} == 1', then: '{f:translate(key: headingKeySingle)}', else: '{f:translate(key: headingKeyMultiple, arguments: \'{0: count}\')}')}"/>
+        <svg width="48" height="48" aria-hidden="true" focusable="false">
+          <use href="#warning-sign"></use>
+        </svg>
+        <h2 class="Form__error-heading"
+            id="{formId}-errors"
+            data-heading-single="{f:translate(key: headingKeySingle)}"
+            data-heading-multiple="{f:translate(key: headingKeyMultiple)}">
+          {headingContent}
+        </h2>
+
+        <ol class="Form__error-summary">
       <f:if condition="{validationResults.flattenedErrors}">
         <f:for each="{validationResults.flattenedErrors}" as="errors">
           <f:for each="{errors}" as="singleError">
@@ -59,20 +57,24 @@
                                             || {vh:getter.getFieldPropertyFromMarkerAndForm(marker: singleError.arguments.marker, form: form, property: 'type')} == 'radio'"
                     >
                       <f:then>
-                        <a href="#powermail_field_{singleError.arguments.marker}_1"
-                           class="Form__error-link">
-                          <f:translate key="validationerror_{singleError.message}">
-                            {singleError.message}
-                          </f:translate>
-                        </a>
+                          <a href="#{formId}-powermail-field-{singleError.arguments.marker}-1"
+                             class="Form__error-link">
+                              <vh:getter.getFieldPropertyFromMarkerAndForm
+                                      marker="{singleError.arguments.marker}"
+                                      form="{form}"
+                                      property="title"/>:
+                              <f:translate key="validationerror_{singleError.message}">{singleError.message}</f:translate>
+                          </a>
                       </f:then>
                       <f:else>
-                        <a href="#powermail_field_{singleError.arguments.marker}"
-                           class="Form__error-link">
-                          <f:translate key="validationerror_{singleError.message}">
-                            {singleError.message}
-                          </f:translate>
-                        </a>
+                          <a href="#{formId}-powermail-field-{singleError.arguments.marker}"
+                             class="Form__error-link">
+                              <vh:getter.getFieldPropertyFromMarkerAndForm
+                                      marker="{singleError.arguments.marker}"
+                                      form="{form}"
+                                      property="title"/>:
+                              <f:translate key="validationerror_{singleError.message}">{singleError.message}</f:translate>
+                          </a>
                       </f:else>
                     </f:if>
                   </f:if>
@@ -83,5 +85,5 @@
         </f:for>
       </f:if>
     </ol>
-  </nav>
+    </nav>
 </f:form.validationResults>
