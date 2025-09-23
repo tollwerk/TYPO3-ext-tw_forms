@@ -58,7 +58,8 @@
                     >
                       <f:then>
                           <a href="#{formId}-powermail-field-{singleError.arguments.marker}-1"
-                             class="Form__error-link">
+                             class="Form__error-link"
+                             data-field-title="{vh:getter.getFieldPropertyFromMarkerAndForm(marker: singleError.arguments.marker, form: form, property: 'title')}">
                               <vh:getter.getFieldPropertyFromMarkerAndForm
                                       marker="{singleError.arguments.marker}"
                                       form="{form}"
@@ -68,7 +69,8 @@
                       </f:then>
                       <f:else>
                           <a href="#{formId}-powermail-field-{singleError.arguments.marker}"
-                             class="Form__error-link">
+                             class="Form__error-link"
+                             data-field-title="{vh:getter.getFieldPropertyFromMarkerAndForm(marker: singleError.arguments.marker, form: form, property: 'title')}">
                               <vh:getter.getFieldPropertyFromMarkerAndForm
                                       marker="{singleError.arguments.marker}"
                                       form="{form}"

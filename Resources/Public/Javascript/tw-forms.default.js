@@ -149,21 +149,40 @@
 
         // Create error links for each invalid field
         for (const f in errorMessages) {
+            // Ensure the key is a direct property of errorMessages (not inherited)
             if (Object.prototype.hasOwnProperty.call(errorMessages, f)) {
                 errorCount += 1;
+
+                // Initialize a variable to store the field's human-readable title
+                let fieldTitle = '';
+
+                // Try to find the DOM element with an id matching the field name
+                const fieldElement = this.element.querySelector(`#${f}`);
+                if (fieldElement) {
+                    // If found, read its data-title attribute if available
+                    fieldTitle = fieldElement.getAttribute('data-title') || '';
+                }
+
                 // Create a clickable link that focuses the problematic field
                 const errorLink = document.createElement('a');
                 errorLink.className = 'Form__error-link';
                 errorLink.href = `#${f}`;
+
                 // Combine multiple error messages for the same field
-                errorLink.textContent = Object.values(errorMessages[f])
-                    .join('; ');
+                const errorTexts = Object.values(errorMessages[f]).join('; ');
+
+                // Set the link text to "Field Title: error messages" if a title exists, else just the messages
+                errorLink.textContent = fieldTitle ? `${fieldTitle}: ${errorTexts}` : errorTexts;
+
+                // Attach an event handler so clicking focuses the field or performs other defined actions
                 errorLink.addEventListener('click', errorLinkHandler.bind(this));
 
                 // Wrap link in list item for proper semantic structure
                 const errorListItem = document.createElement('li');
                 errorListItem.className = 'Form__error-description';
                 errorListItem.appendChild(errorLink);
+
+                // Append the list item to the error summary container
                 this.errorSummary.appendChild(errorListItem);
             }
         }
