@@ -19,6 +19,11 @@ fieldset {
 	margin: 0;
 }
 
+/* Reset for gray background in Firefox */
+select {
+	background-color: #ffffff;
+}
+
 /* Variables
    ========================================================================== */
 
