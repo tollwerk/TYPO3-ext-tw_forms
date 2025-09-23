@@ -1,6 +1,8 @@
 {namespace vh=In2code\Powermail\ViewHelpers}
 
-<fieldset class="{settings.styles.framework.fieldAndLabelWrappingClasses} powermail_fieldwrap powermail_fieldwrap_type_radio powermail_fieldwrap_{field.marker}{f:if(condition: '{field.css}', then: ' {field.css} ')}">
+<fieldset class="{settings.styles.framework.fieldAndLabelWrappingClasses} powermail_fieldwrap powermail_fieldwrap_type_radio powermail_fieldwrap_{field.marker}{f:if(condition: '{field.css}', then: ' {field.css} ')}"
+          aria-describedby="error-for-powermail-field-{formId}-{field.marker} desc-for-powermail-field-{formId}-{field.marker}"
+>
   <f:comment><!-- A11y: Every <fieldset> needs an accessible name (i.e., via <legend>) --></f:comment>
   <f:render partial="Form/Fieldset/Legend"
             arguments="{field: field, settings: settings}"/>
@@ -25,7 +27,7 @@
                         class="powermail_radio FormField__input FormField__group-element"
                         name="tx_powermail_pi1[field][{field.marker}]"
                         additionalAttributes="{twforms:validation.validationDataAttribute(field:field, iteration:index)}"
-                        aria="{'errormessage': 'error-for-powermail-field-{formId}-{field.marker}', 'describedby': 'error-for-powermail-field-{formId}-{field.marker} desc-for-powermail-field-{formId}-{field.marker}'}"
+                        aria="{'errormessage': 'error-for-powermail-field-{formId}-{field.marker}'}"
                         data-title="{field.title}">
               </f:form.radio>
             </f:then>
