@@ -8,49 +8,50 @@
       xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
-    <f:variable name="btnClasses" value="{form.formDefinition.renderingOptions.submitButtonClassAttribute}"/>
-    <f:if condition="{form.nextPage}">
-        <f:then>
+    <div class="Form__button-wrapper">
+        <f:if condition="{form.nextPage}">
+            <f:then>
+                <f:render partial="Button" contentAs="text" arguments="{
+                        property: '__currentPage',
+                        type: 'submit',
+                        value: form.nextPage.index,
+                        classes: 'Form__button Form__button--next'
+                    }">
+                    <formvh:translateElementProperty element="{form.currentPage}"
+                                                     renderingOptionProperty="nextButtonLabel"/>
+                </f:render>
+            </f:then>
+            <f:else>
+                <f:render partial="Button" contentAs="text"
+                          arguments="{property: '__currentPage', type: 'submit', value: '{form.pages -> f:count()}', classes: 'Form__button Form__button--next'}">
+                    <f:variable name="icon"
+                                value="{formvh:translateElementProperty(element: form, renderingOptionProperty: 'submitButtonIcon')}"/>
+                    <f:if condition="{icon}">
+                        <f:then>
+                            <span class="FormButton__icon"></span>
+                            <span class="FormButton__text"><formvh:translateElementProperty element="{form}"
+                                                                                            renderingOptionProperty="submitButtonLabel"/></span>
+                        </f:then>
+                        <f:else>
+                            <formvh:translateElementProperty element="{form}"
+                                                             renderingOptionProperty="submitButtonLabel"/>
+                        </f:else>
+                    </f:if>
+                </f:render>
+            </f:else>
+        </f:if>
+        <f:if condition="{form.previousPage}">
             <f:render partial="Button" contentAs="text" arguments="{
                     property: '__currentPage',
                     type: 'submit',
-                    value: form.nextPage.index,
-                    classes: 'FormButton--next {btnClasses}'
+                    value: form.previousPage.index,
+                    classes: 'Form__button Form__button--previous',
+                    novalidate: 1,
+                    style: 'outline'
                 }">
                 <formvh:translateElementProperty element="{form.currentPage}"
-                                                 renderingOptionProperty="nextButtonLabel"/>
+                                                 renderingOptionProperty="previousButtonLabel"/>
             </f:render>
-        </f:then>
-        <f:else>
-            <f:render partial="Button" contentAs="text"
-                      arguments="{property: '__currentPage', type: 'submit', value: '{form.pages -> f:count()}', classes: 'FormButton--next {btnClasses}'}">
-                <f:variable name="icon"
-                            value="{formvh:translateElementProperty(element: form, renderingOptionProperty: 'submitButtonIcon')}"/>
-                <f:if condition="{icon}">
-                    <f:then>
-                        <span class="FormButton__icon"></span>
-                        <span class="FormButton__text"><formvh:translateElementProperty element="{form}"
-                                                                                        renderingOptionProperty="submitButtonLabel"/></span>
-                    </f:then>
-                    <f:else>
-                        <formvh:translateElementProperty element="{form}"
-                                                         renderingOptionProperty="submitButtonLabel"/>
-                    </f:else>
-                </f:if>
-            </f:render>
-        </f:else>
-    </f:if>
-    <f:if condition="{form.previousPage}">
-        <f:render partial="Button" contentAs="text" arguments="{
-                property: '__currentPage',
-                type: 'submit',
-                value: form.previousPage.index,
-                classes: 'FormButton--previous {btnClasses}',
-                novalidate: 1,
-                style: 'outline'
-            }">
-            <formvh:translateElementProperty element="{form.currentPage}"
-                                             renderingOptionProperty="previousButtonLabel"/>
-        </f:render>
-    </f:if>
+        </f:if>
+    </div>
 </html>
