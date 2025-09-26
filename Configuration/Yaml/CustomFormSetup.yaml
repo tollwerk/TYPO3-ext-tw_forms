@@ -21,7 +21,7 @@ TYPO3:
                   20: 'EXT:tw_forms/Resources/Private/FormFramework/Frontend/Templates/'
                 partialRootPaths:
                   20: 'EXT:tw_forms/Resources/Private/FormFramework/Frontend/Partials/'
-                elementClassAttribute: 'Form'
+                elementClassAttribute: 'Form Form--custom-validation'
                 novalidate: 1
                 translation:
                   translationFiles:

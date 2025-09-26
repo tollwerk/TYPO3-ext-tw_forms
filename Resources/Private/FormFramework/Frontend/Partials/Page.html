@@ -25,14 +25,15 @@
             <f:comment><!-- Multistep form --></f:comment>
             <f:if condition="{page.rootForm.pages -> f:count()} > 1">
                 <f:then>
+                    <f:variable name="isMultiStep" value="true" />
                     <fieldset class="FormPage">
                         <legend class="FormPage__legend"
                                 id="{form.identifier}-{page.identifier}">
-                            {formvh:translateElementProperty(element: page, property: 'label')}
+                            <h3>{formvh:translateElementProperty(element: page, property: 'label')}</h3>
                         </legend>
                         <f:for each="{page.elements}" as="element">
                             <f:render partial="{element.templateName}"
-                                      arguments="{element: element}"/>
+                                      arguments="{element: element, isMultiStep: isMultiStep}"/>
                         </f:for>
                     </fieldset>
                 </f:then>
