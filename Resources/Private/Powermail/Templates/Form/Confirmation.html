@@ -11,12 +11,12 @@ Show Confirmation Page
 
 
 <f:section name="main">
-	<div class="powermail_confirmation" data-powermail-form="{mail.form.uid}">
-		<h3>{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.confirmation')}</h3>
+	<div class="Form__summary" data-powermail-form="{mail.form.uid}">
+		<h3 class="Form__summary-heading">{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.confirmation')}</h3>
 
-		<dl><f:format.raw>{powermail_all}</f:format.raw></dl>
+		<dl class="Form__summary-list"><f:format.raw>{powermail_all}</f:format.raw></dl>
 
-		<div class="btn-group" role="group">
+		<div class="Form__button-wrapper" role="group">
 			<f:comment>
 				Link: Back to form
 			</f:comment>
@@ -32,7 +32,7 @@ Show Confirmation Page
 				<f:form.submit
 						value="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.confirmation_prev')}"
 						additionalAttributes="{data-powermail-form-ajax:'confirmation'}"
-						class="Form__button btn btn-danger" />
+						class="Form__button" />
 			</f:form>
 
 
@@ -51,7 +51,7 @@ Show Confirmation Page
 				<f:form.submit
 						value="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.confirmation_next')}"
 						additionalAttributes="{data-powermail-form-ajax:'submit'}"
-						class="Form__button btn btn-primary" />
+						class="Form__button" />
 			</f:form>
 		</div>
 	</div>

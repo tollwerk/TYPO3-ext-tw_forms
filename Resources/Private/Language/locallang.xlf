@@ -41,7 +41,7 @@
                 <source>%s errors ⚠️</source>
             </trans-unit>
             <trans-unit id="form.confirmation">
-                <source>Are these values correct?</source>
+                <source>Please check your details</source>
             </trans-unit>
             <trans-unit id="form.confirmation_prev">
                 <source>Previous</source>
