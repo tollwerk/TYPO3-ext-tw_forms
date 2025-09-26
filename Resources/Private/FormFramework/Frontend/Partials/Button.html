@@ -15,17 +15,18 @@
       data-namespace-typo3-fluid="true">
     <f:variable name="btnType"
                 value="{f:if(condition: '{type}', then: '{type}', else: 'button')}"/>
+
     <f:if condition="{novalidate}">
         <f:then>
             <f:form.button name="{name}" value="{value}" property="{property}" type="{btnType}"
-                           class="Form__button"
+                           class="{classes}"
                            formnovalidate="formnovalidate">
                 {text -> f:format.raw()}
             </f:form.button>
         </f:then>
         <f:else>
             <f:form.button name="{name}" value="{value}" property="{property}" type="{btnType}"
-                           class="Form__button">
+                           class="{classes}">
                 {text -> f:format.raw()}
             </f:form.button>
         </f:else>
