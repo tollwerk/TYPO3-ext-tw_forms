@@ -50,43 +50,46 @@
                             <!-- This is a regular form field - add it to the current definition list -->
                             <!-- Definition term: the field label -->
                         </f:comment>
-                        <dt>{formvh:translateElementProperty(element: formValue.element, property: 'label')}</dt>
 
-                        <f:comment><!-- Definition description: the field value --></f:comment>
-                        <dd>
-                            <f:if condition="{formValue.value}">
-                                <f:then>
-                                    <f:comment><!-- Check if this is an image upload field --></f:comment>
-                                    <f:if condition="{0: formValue.element.type} == {0: 'ImageUpload'}">
-                                        <f:then>
-                                            <f:comment><!-- Render the uploaded image with configured dimensions --></f:comment>
-                                            <f:image image="{formValue.value}" maxWidth="{formValue.element.properties.imageMaxWidth}" maxHeight="{formValue.element.properties.imageMaxHeight}" alt="{formvh:translateElementProperty(element: formValue.element, property: 'altText')}" />
-                                        </f:then>
-                                        <f:else>
-                                            <f:comment> <!-- Check if this is a multi-value field (checkbox, multi-select, etc.) --></f:comment>
-                                            <f:if condition="{formValue.isMultiValue}">
-                                                <f:then>
-                                                    <f:comment><!-- Render multiple values as an unordered list --></f:comment>
-                                                    <ul>
-                                                        <f:for each="{formValue.processedValue}" as="value">
-                                                            <li>{value}</li>
-                                                        </f:for>
-                                                    </ul>
-                                                </f:then>
-                                                <f:else>
-                                                    <f:comment><!-- Render single value with preserved line breaks --></f:comment>
-                                                    <f:format.nl2br>{formValue.processedValue}</f:format.nl2br>
-                                                </f:else>
-                                            </f:if>
-                                        </f:else>
-                                    </f:if>
-                                </f:then>
-                                <f:else>
-                                    <f:comment><!-- Show dash if no value was provided --></f:comment>
-                                    -
-                                </f:else>
-                            </f:if>
-                        </dd>
+                        <div class="Form__summary-list-item">
+                            <dt>{formvh:translateElementProperty(element: formValue.element, property: 'label')}</dt>
+
+                            <f:comment><!-- Definition description: the field value --></f:comment>
+                            <dd>
+                                <f:if condition="{formValue.value}">
+                                    <f:then>
+                                        <f:comment><!-- Check if this is an image upload field --></f:comment>
+                                        <f:if condition="{0: formValue.element.type} == {0: 'ImageUpload'}">
+                                            <f:then>
+                                                <f:comment><!-- Render the uploaded image with configured dimensions --></f:comment>
+                                                <f:image image="{formValue.value}" maxWidth="{formValue.element.properties.imageMaxWidth}" maxHeight="{formValue.element.properties.imageMaxHeight}" alt="{formvh:translateElementProperty(element: formValue.element, property: 'altText')}" />
+                                            </f:then>
+                                            <f:else>
+                                                <f:comment> <!-- Check if this is a multi-value field (checkbox, multi-select, etc.) --></f:comment>
+                                                <f:if condition="{formValue.isMultiValue}">
+                                                    <f:then>
+                                                        <f:comment><!-- Render multiple values as an unordered list --></f:comment>
+                                                        <ul>
+                                                            <f:for each="{formValue.processedValue}" as="value">
+                                                                <li>{value}</li>
+                                                            </f:for>
+                                                        </ul>
+                                                    </f:then>
+                                                    <f:else>
+                                                        <f:comment><!-- Render single value with preserved line breaks --></f:comment>
+                                                        <f:format.nl2br>{formValue.processedValue}</f:format.nl2br>
+                                                    </f:else>
+                                                </f:if>
+                                            </f:else>
+                                        </f:if>
+                                    </f:then>
+                                    <f:else>
+                                        <f:comment><!-- Show dash if no value was provided --></f:comment>
+                                        -
+                                    </f:else>
+                                </f:if>
+                            </dd>
+                        </div>
                     </f:else>
                 </f:if>
             </formvh:renderAllFormValues>
