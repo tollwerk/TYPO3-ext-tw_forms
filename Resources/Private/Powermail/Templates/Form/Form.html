@@ -24,7 +24,7 @@ Render Powermail Form
                 name="field"
                 enctype="multipart/form-data"
                 addQueryString="{settings.misc.addQueryString}"
-                class="{settings.styles.framework.formClasses} powermail_form powermail_form_{form.uid}{f:if(condition: '{form.css}', then: ' {form.css}')} {vh:misc.morestepClass(activate:'{form.pages -> f:count()} > 1}')}">
+                class="{settings.styles.framework.formClasses} powermail_form powermail_form_{form.uid}{f:if(condition: '{form.css}', then: ' {form.css}')} {vh:misc.morestepClass(activate:settings.main.moresteps)}">
 
           <f:comment><!-- Render a form heading if Backend doesn't say 'noLabel' --></f:comment>
           <f:if condition="{form.css} != 'nolabel'">

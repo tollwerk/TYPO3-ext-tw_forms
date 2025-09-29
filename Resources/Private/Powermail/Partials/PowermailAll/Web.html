@@ -1,25 +1,70 @@
 {namespace vh=In2code\Powermail\ViewHelpers}
+{namespace f=TYPO3\CMS\Fluid\ViewHelpers}
 
-<f:comment>
-	Mail: {mail}
-	Answer: {answer}
-</f:comment>
+<f:comment><!--
+    Render all answers grouped by page
+    Each page gets an H4 heading followed by a definition list with all fields
+--></f:comment>
 
-<dt class="powermail_all_label powermail_all_type_{answer.field.type} powermail_all_marker_{answer.field.marker}">
-    {answer.field.title}
-</dt>
-<dd class="powermail_all_value powermail_all_type_{answer.field.type} powermail_all_marker_{answer.field.marker}">
-    <f:if condition="{vh:condition.isArray(val:answer.value)}">
-        <f:else>
-            <f:format.nl2br><vh:misc.manipulateValueWithTypoScript answer="{answer}" type="{type}">{answer.value}</vh:misc.manipulateValueWithTypoScript></f:format.nl2br>
-        </f:else>
-        <f:then>
-            <f:for each="{answer.value}" as="subValue" iteration="index">
-                <f:if condition="{subValue}">
-                    <vh:misc.manipulateValueWithTypoScript answer="{answer}" type="{type}">{subValue}</vh:misc.manipulateValueWithTypoScript><f:if condition="{index.isLast}"><f:else>, </f:else></f:if>
-                </f:if>
-            </f:for>
-        </f:then>
+<f:variable name="currentPageUid" value="0" />
+
+<f:for each="{mail.answers}" as="answer">
+    <f:comment><!--Check if we're on a new page--></f:comment>
+    <f:if condition="{answer.field.page.uid} != {currentPageUid}">
+        <f:comment><!--Close the previous definition list if this isn't the first page--></f:comment>
+        <f:if condition="{currentPageUid} > 0">
+            </dl>
+        </f:if>
+
+        <f:comment><!--Render page heading--></f:comment>
+        <f:if condition="{answer.field.page.css} == 'nolabel'">
+            <f:then>
+                <h4 class="hide-element">
+                    <vh:string.escapeLabels>{answer.field.page.title}</vh:string.escapeLabels>
+                </h4>
+            </f:then>
+            <f:else>
+                <h4>
+                    <vh:string.escapeLabels>{answer.field.page.title}</vh:string.escapeLabels>
+                </h4>
+            </f:else>
+        </f:if>
+
+        <f:comment><!--Open new definition list for this page--></f:comment>
+        <dl class="Form__summary-list">
+
+            <f:comment><!--Update current page UID--></f:comment>
+            <f:variable name="currentPageUid" value="{answer.field.page.uid}" />
     </f:if>
-</dd>
 
+    <f:comment><!--Render the field--></f:comment>
+    <div class="Form__summary-list-item">
+        <dt><vh:string.escapeLabels>{answer.field.title}</vh:string.escapeLabels></dt>
+        <dd>
+            <f:if condition="{vh:condition.isArray(val:answer.value)}">
+                <f:then>
+                    <f:comment><!--Multi-value field--></f:comment>
+                    <f:for each="{answer.value}" as="subValue" iteration="index">
+                        <f:if condition="{subValue}">
+                            <vh:misc.manipulateValueWithTypoScript answer="{answer}" type="web">{subValue}</vh:misc.manipulateValueWithTypoScript><f:if condition="{index.isLast}"><f:else>, </f:else></f:if>
+                        </f:if>
+                    </f:for>
+                </f:then>
+                <f:else>
+                    <f:comment><!--Single value field--></f:comment>
+                    <f:if condition="{answer.value}">
+                        <f:then>
+                            <f:format.nl2br><vh:misc.manipulateValueWithTypoScript answer="{answer}" type="web">{answer.value}</vh:misc.manipulateValueWithTypoScript></f:format.nl2br>
+                        </f:then>
+                        <f:else>
+                            -
+                        </f:else>
+                    </f:if>
+                </f:else>
+            </f:if>
+        </dd>
+    </div>
+</f:for>
+
+<f:comment><!--Close the last definition list--></f:comment>
+</dl>

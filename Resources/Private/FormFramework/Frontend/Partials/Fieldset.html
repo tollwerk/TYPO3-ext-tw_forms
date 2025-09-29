@@ -6,7 +6,16 @@
         <fieldset id="{element.uniqueIdentifier}"
                   class="FormFieldset{f:if(condition: element.properties.elementClassAttribute, then: ' {element.properties.elementClassAttribute}')}">
             <f:if condition="{element.label}">
-                <legend class="FormFieldset__legend">{formvh:translateElementProperty(element: element, property: 'label')}</legend>
+                <legend class="FormFieldset__legend">
+                    <f:if condition="{isMultiStep}">
+                        <f:then>
+                            <h4>{formvh:translateElementProperty(element: element, property: 'label')}</h4>
+                        </f:then>
+                        <f:else>
+                            <h3>{formvh:translateElementProperty(element: element, property: 'label')}</h3>
+                        </f:else>
+                    </f:if>
+                </legend>
             </f:if>
             <f:for each="{element.elements}" as="element">
                 <f:render partial="{element.templateName}" arguments="{element: element}" />

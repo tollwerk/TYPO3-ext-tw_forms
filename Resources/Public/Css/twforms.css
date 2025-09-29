@@ -7,7 +7,6 @@
 
 * {
 	box-sizing: border-box;
-	font-family: sans-serif;
 }
 
 body {
@@ -18,6 +17,23 @@ fieldset {
 	padding: 0;
 	border: none;
 	margin: 0;
+}
+
+/* Reset for gray background in Firefox */
+select {
+	background-color: #ffffff;
+}
+
+/* SR-only class */
+.hide-element {
+	width: 1px !important;
+	height: 1px !important;
+	position: absolute !important;
+	overflow: hidden !important;
+	clip: rect(0 0 0 0) !important;
+	margin: -1px !important;
+	padding: 0 !important;
+	border: 0 !important;
 }
 
 /* Variables
@@ -94,11 +110,16 @@ fieldset {
 	}
 }
 
+.Form__button-wrapper {
+	display: flex;
+	gap: 1em;
+	margin-top: 1em;
+}
+
 .Form__button {
 	display: block;
 	padding: .5em 1em;
 	border: 2px solid black;
-	margin-top: 1rem;
 
 	background: white;
 
@@ -111,6 +132,64 @@ fieldset {
 	&:focus {
 		outline: 2px solid var(--color-highlight);
 		outline-offset: 2px;
+	}
+}
+
+/* Summary / confirmation styling
+   ========================================================================== */
+
+.Form__summary-list {
+	margin: 0;
+
+	& dt {
+		font-weight: 700;
+	}
+
+	& dd + dt {
+		margin-top: 1rem;
+	}
+
+	& .btn-group {
+		display: flex;
+		gap: 1rem;
+	}
+}
+
+@media screen and (min-width: 992px) {
+	.Form__summary-list {
+		& dd + dt {
+			margin-top: 0;
+		}
+
+		& dt, dd {
+			padding: .5em;
+		}
+
+		& dt {
+			border-left: 1px solid black;
+			border-right: 1px solid black;
+		}
+
+		& dd {
+			border-right: 1px solid black;
+			margin-left: 0;
+		}
+	}
+
+	.Form__summary-list-item {
+		display: grid;
+		grid-template-columns: 1fr 2fr;
+		align-items: stretch;
+
+		&:nth-child(even) {
+			background-color: #f2f2f2;
+		}
+
+		border-top: 1px solid black;
+
+		&:last-of-type {
+			border-bottom: 1px solid black;
+		}
 	}
 }
 

@@ -20,7 +20,8 @@
               additionalAttributes="{twforms:validation.validationDataAttribute(field:field)}"
               class="{settings.styles.framework.fieldClasses} powermail_textarea {vh:validation.errorClass(field:field, class:'powermail_field_error')}"
               aria="{'errormessage': 'error-for-powermail-field-{formId}-{field.marker}', 'describedby': 'error-for-powermail-field-{formId}-{field.marker} desc-for-powermail-field-{formId}-{field.marker}'}"
-              autocomplete="{t:autocomplete(field:field)}"/>
+              autocomplete="{t:autocomplete(field:field)}"
+              data-title="{field.title}"/>
   </div>
 
   <f:comment><!-- Description --></f:comment>

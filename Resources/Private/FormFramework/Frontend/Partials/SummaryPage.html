@@ -1,0 +1,102 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+    <f:comment>
+        <!-- Summary of the form
+        One definition list per page/section with all fields grouped under their respective H4 headings -->
+    </f:comment>
+
+    <f:comment><!-- Render the current page renderable --></f:comment>
+    <formvh:renderRenderable renderable="{page}">
+        <fieldset class="Form__summary">
+            <legend class="FormPage__legend">
+
+                <f:comment><!-- Main heading for the summary page --></f:comment>
+                <h3 class="Form__summary-heading">
+                    <f:if condition="{page.label}">
+                        <f:then>
+                            <f:comment><!-- Use the page label if available --></f:comment>
+                            {formvh:translateElementProperty(element: page, property: 'label')}
+                        </f:then>
+                        <f:else>
+                            <f:comment><!-- Fallback to default confirmation text --></f:comment>
+                            {f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.confirmation')}
+                        </f:else>
+                    </f:if>
+                </h3>
+            </legend>
+
+            <f:comment><!-- Loop through all form values from the entire form --></f:comment>
+            <formvh:renderAllFormValues renderable="{page.rootForm}" as="formValue">
+                <f:if condition="{formValue.isSection}">
+                    <f:then>
+                        <f:comment>
+                            <!-- This is a section (page) heading -->
+                            <!-- Close the previous definition list if this is not the first section -->
+                        </f:comment>
+                        <f:if condition="{iteration.isFirst} == 0">
+                            </dl>
+                        </f:if>
+
+                        <f:comment><!-- Render the section heading as H4 --></f:comment>
+                        <h4>{formvh:translateElementProperty(element: formValue.element, property: 'label')}</h4>
+
+                        <f:comment><!-- Open a new definition list for this section --></f:comment>
+                        <dl class="Form__summary-list">
+                    </f:then>
+                    <f:else>
+                        <f:comment>
+                            <!-- This is a regular form field - add it to the current definition list -->
+                            <!-- Definition term: the field label -->
+                        </f:comment>
+
+                        <div class="Form__summary-list-item">
+                            <dt>{formvh:translateElementProperty(element: formValue.element, property: 'label')}</dt>
+
+                            <f:comment><!-- Definition description: the field value --></f:comment>
+                            <dd>
+                                <f:if condition="{formValue.value}">
+                                    <f:then>
+                                        <f:comment><!-- Check if this is an image upload field --></f:comment>
+                                        <f:if condition="{0: formValue.element.type} == {0: 'ImageUpload'}">
+                                            <f:then>
+                                                <f:comment><!-- Render the uploaded image with configured dimensions --></f:comment>
+                                                <f:image image="{formValue.value}" maxWidth="{formValue.element.properties.imageMaxWidth}" maxHeight="{formValue.element.properties.imageMaxHeight}" alt="{formvh:translateElementProperty(element: formValue.element, property: 'altText')}" />
+                                            </f:then>
+                                            <f:else>
+                                                <f:comment> <!-- Check if this is a multi-value field (checkbox, multi-select, etc.) --></f:comment>
+                                                <f:if condition="{formValue.isMultiValue}">
+                                                    <f:then>
+                                                        <f:comment><!-- Render multiple values as an unordered list --></f:comment>
+                                                        <ul>
+                                                            <f:for each="{formValue.processedValue}" as="value">
+                                                                <li>{value}</li>
+                                                            </f:for>
+                                                        </ul>
+                                                    </f:then>
+                                                    <f:else>
+                                                        <f:comment><!-- Render single value with preserved line breaks --></f:comment>
+                                                        <f:format.nl2br>{formValue.processedValue}</f:format.nl2br>
+                                                    </f:else>
+                                                </f:if>
+                                            </f:else>
+                                        </f:if>
+                                    </f:then>
+                                    <f:else>
+                                        <f:comment><!-- Show dash if no value was provided --></f:comment>
+                                        -
+                                    </f:else>
+                                </f:if>
+                            </dd>
+                        </div>
+                    </f:else>
+                </f:if>
+            </formvh:renderAllFormValues>
+
+            <f:comment><!-- Close the last definition list --></f:comment>
+            </dl>
+
+        </fieldset>
+    </formvh:renderRenderable>
+</html>
