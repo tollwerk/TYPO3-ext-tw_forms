@@ -1,15 +1,17 @@
 {namespace vh=In2code\Powermail\ViewHelpers}
+{namespace f=TYPO3\CMS\Fluid\ViewHelpers}
+
 <f:layout name="Default" />
 
 <f:section name="main">
     <div class="Form__summary" data-powermail-form="{mail.form.uid}">
         <h3 class="Form__summary-heading">{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.confirmation')}</h3>
 
-        <f:comment>Render custom summary grouped by pages</f:comment>
+        <f:comment><!--Render custom summary grouped by pages--></f:comment>
         <f:render partial="PowermailAll/Web" arguments="{mail: mail}" />
 
         <div class="Form__button-wrapper" role="group">
-            <f:comment>Back button</f:comment>
+            <f:comment><!--Back button--></f:comment>
             <f:form
                     action="form"
                     section="c{ttContentData.uid}"
@@ -25,7 +27,7 @@
                         class="Form__button" />
             </f:form>
 
-            <f:comment>Submit button</f:comment>
+            <f:comment><!--Submit button--></f:comment>
             <f:form
                     action="checkCreate"
                     section="c{ttContentData.uid}"
