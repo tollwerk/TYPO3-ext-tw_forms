@@ -682,9 +682,6 @@ const PowermailValidators = {
             if (typeof this.element.form.enhancer?.update === 'function') {
                 queueMicrotask(() => this.element.form.enhancer.update());
             }
-
-            // Optionally scroll the wrapper into view on error (implementation handles pristine checks).
-            this.focusWrapper();
         }
     };
 
