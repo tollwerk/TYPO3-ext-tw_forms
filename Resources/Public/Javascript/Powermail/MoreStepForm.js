@@ -56,6 +56,9 @@ export default function MoreStepForm() {
         updateNavigationState(form, index);
         hideErrorNavigation(form);
         resetPristineStateForStep(form, index);
+
+        // Scroll to top of form for better UX when changing pages
+        scrollToForm(form);
     };
 
     /**
@@ -299,6 +302,17 @@ export default function MoreStepForm() {
                 }
             });
         }
+    };
+
+    /**
+     * Scroll to the top of the form for better UX on page change
+     * @param {HTMLFormElement} form
+     */
+    let scrollToForm = function(form) {
+        form.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
     };
 
     /**
