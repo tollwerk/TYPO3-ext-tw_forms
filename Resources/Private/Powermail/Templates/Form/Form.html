@@ -7,50 +7,52 @@ Render Powermail Form
 {ttContentData} All values from content element with plugin
 
 <f:section name="main">
-  <f:alias map="{flashMessageClass:'powermail_message_error'}">
-    <f:render partial="Misc/FlashMessages" arguments="{_all}" />
-  </f:alias>
+    <f:alias map="{flashMessageClass:'powermail_message_error'}">
+        <f:render partial="Misc/FlashMessages" arguments="{_all}" />
+    </f:alias>
 
-  <f:comment><!-- Only render if a form is present --></f:comment>
-  <f:if condition="{form}">
-    <f:then>
-      <f:comment><!-- Give id to form in case several are present on one site --></f:comment>
-      <f:variable name="formId">powermail-form-{form.uid}</f:variable>
+    <f:comment><!-- Only render if a form is present --></f:comment>
+    <f:if condition="{form}">
+        <f:then>
+            <f:comment><!-- Give id to form in case several are present on one site --></f:comment>
+            <f:variable name="formId">powermail-form-{form.uid}</f:variable>
 
-      <div class="Powermail">
-        <f:form
-                action="{action}"
-                section="c{ttContentData.uid}"
-                name="field"
-                enctype="multipart/form-data"
-                addQueryString="{settings.misc.addQueryString}"
-                class="{settings.styles.framework.formClasses} powermail_form powermail_form_{form.uid}{f:if(condition: '{form.css}', then: ' {form.css}')} {vh:misc.morestepClass(activate:settings.main.moresteps)}">
+            <div class="Powermail">
+                <f:form action="{action}"
+                        section="c{ttContentData.uid}"
+                        name="field"
+                        enctype="multipart/form-data"
+                        addQueryString="{settings.misc.addQueryString}"
+                        additionalAttributes="{aria-labelledby: '{formId}-heading'}"
+                        class="{settings.styles.framework.formClasses} powermail_form powermail_form_{form.uid}{f:if(condition: '{form.css}', then: ' {form.css}')} {vh:misc.morestepClass(activate:settings.main.moresteps)}">
 
-          <f:comment><!-- Render a form heading if Backend doesn't say 'noLabel' --></f:comment>
-          <f:if condition="{form.css} != 'nolabel'">
-            <h2>{form.title}</h2>
-          </f:if>
+                    <f:comment><!-- Render a form heading if Backend doesn't say 'noLabel' --></f:comment>
+                    <h2 class="{f:if(condition: '{form.css} == \'nolabel\'', then: 'hide-element')}"
+                        id="{formId}-heading">
+                        {form.title}
+                    </h2>
 
-          <f:comment><!-- Render button list for multistep forms --></f:comment>
-          <f:if condition="{form.pages -> f:count()} > 1">
-            <f:render partial="Form/Navigation/Progress" arguments="{_all}"/>
-          </f:if>
+                    <f:comment><!-- Render button list for multistep forms --></f:comment>
+                    <f:if condition="{form.pages -> f:count()} > 1">
+                        <f:render partial="Form/Navigation/Progress" arguments="{_all}"/>
+                    </f:if>
 
-          <f:comment><!-- Render form errors for client- and serverside validation --></f:comment>
-          <f:render partial="Misc/FormError" arguments="{_all}"/>
+                    <f:comment><!-- Render form errors for client- and serverside validation --></f:comment>
+                    <f:render partial="Misc/FormError" arguments="{_all}"/>
 
-          <f:for each="{form.pages}" as="page" iteration="iterationPages">
-            <f:render partial="Form/Page" arguments="{_all}"/>
-          </f:for>
-          <f:form.hidden name="mail[form]"
-                         value="{form.uid}"
-                         class="powermail_form_uid"
-                         respectSubmittedDataValue="false"
-          />
-          <f:render partial="Misc/HoneyPod" arguments="{form:form}"/>
-        </f:form>
+                    <f:for each="{form.pages}" as="page" iteration="iterationPages">
+                        <f:render partial="Form/Page" arguments="{_all}"/>
+                    </f:for>
 
-        <svg xmlns="http://www.w3.org/2000/svg"
+                    <f:form.hidden name="mail[form]"
+                                   value="{form.uid}"
+                                   class="powermail_form_uid"
+                                   respectSubmittedDataValue="false"/>
+
+                    <f:render partial="Misc/HoneyPod" arguments="{form:form}"/>
+                </f:form>
+
+                <svg xmlns="http://www.w3.org/2000/svg"
              display="none">
             <symbol id="warning-sign"
                     viewBox="0 0 50 50">
@@ -68,10 +70,10 @@ Render Powermail Form
                         cx="40" cy="40" r="40"/>
             </symbol>
         </svg>
-      </div>
-    </f:then>
-    <f:else>
-      <f:translate key="error_no_form" />
-    </f:else>
-  </f:if>
+            </div>
+        </f:then>
+        <f:else>
+            <f:translate key="error_no_form" />
+        </f:else>
+    </f:if>
 </f:section>
