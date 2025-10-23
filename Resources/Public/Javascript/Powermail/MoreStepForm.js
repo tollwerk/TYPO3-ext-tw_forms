@@ -43,8 +43,9 @@ export default function MoreStepForm() {
      * Display a specific step and update UI state
      * @param {number} index - Zero-based step index
      * @param {HTMLFormElement} form - Parent form element
+     * @param {boolean} shouldFocus - Whether to focus form and set tabindex (default: true)
      */
-    this.showFieldset = function(index, form) {
+    this.showFieldset = function(index, form, shouldFocus = true) {
         if (!form.classList.contains(formClass)) return;
 
         hideAllFieldsets(form);
@@ -56,6 +57,13 @@ export default function MoreStepForm() {
         updateNavigationState(form, index);
         hideErrorNavigation(form);
         resetPristineStateForStep(form, index);
+
+        // Set focus to form element for accessibility and scroll to top
+        if (shouldFocus) {
+            form.setAttribute('tabindex', '-1');
+            form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            form.focus({ preventScroll: true });
+        }
     };
 
     /**
@@ -88,7 +96,7 @@ export default function MoreStepForm() {
      */
     let initializeForm = function(form) {
         setValidUntil(form, -1);
-        that.showFieldset(0, form);
+        that.showFieldset(0, form, false); // Don't focus on initial load
     };
 
     /**

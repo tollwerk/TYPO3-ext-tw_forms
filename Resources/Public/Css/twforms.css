@@ -48,6 +48,11 @@ select {
 /* Element styling
    ========================================================================== */
 
+/* Form element in powermail multi page setup has tabindex="-1" to announce its name when a new page is navigated to via JavaScript but we don't want to see the focus */
+.Form:focus {
+	outline: none;
+}
+
 /* Lobotomized owl selector doesn't work in this setup due to DOM manipulations */
 .FormPage .FormField {
 	margin-top: 1em;
