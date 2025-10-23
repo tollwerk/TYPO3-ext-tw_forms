@@ -6,22 +6,5 @@ TCEFORM {
         multiselect {
             disabled = 1
         }
-        # Remove unused layout options
-        css {
-            removeItems = layout1,layout2,layout3
-        }
-    }
-
-    # Remove unused layout options
-    tx_powermail_domain_model_form {
-        css {
-            removeItems = layout1,layout2,layout3
-        }
-    }
-
-    tx_powermail_domain_model_page {
-        css {
-            removeItems = layout1,layout2,layout3
-        }
     }
 }
