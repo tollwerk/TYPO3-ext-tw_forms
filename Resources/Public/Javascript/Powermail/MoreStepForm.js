@@ -149,18 +149,21 @@ export default function MoreStepForm() {
     };
 
     /**
-     * Bind handlers for progress bar buttons
+     * Bind handlers for progress bar buttons using event delegation
      */
     let bindProgressBarNavigation = function() {
         let progressNavs = document.querySelectorAll('nav.Progress');
-        for (let pi = 0; pi < progressNavs.length; pi++) {
-            let progressButtons = progressNavs[pi].querySelectorAll('.Progress__button');
-            for (let j = 0; j < progressButtons.length; j++) {
-                progressButtons[j].addEventListener('click', function(event) {
-                    event.preventDefault();
-                    handleProgressNavigation(event.currentTarget, progressButtons);
-                });
-            }
+        for (let i = 0; i < progressNavs.length; i++) {
+            const nav = progressNavs[i];
+            nav.addEventListener('click', function(event) {
+                // Only handle clicks on progress buttons (not divs)
+                const button = event.target.closest('.Progress__button');
+                if (!button || button.tagName !== 'BUTTON') return;
+
+                event.preventDefault();
+                const allButtons = nav.querySelectorAll('.Progress__button');
+                handleProgressNavigation(button, allButtons);
+            });
         }
     };
 
@@ -389,31 +392,71 @@ export default function MoreStepForm() {
      * @returns {Object}
      */
     let determineButtonState = function(buttonIndex, activeIndex, validUntil) {
+        // Current step - should be a button
         if (buttonIndex === activeIndex) {
             return {
                 type: 'active',
                 ariaAttributes: { 'aria-current': 'step' },
                 progressStepClass: 'ProgressStep--active',
-                progressItemClass: 'Progress__item--sibling-active'
+                progressItemClass: 'Progress__item--sibling-active',
+                shouldBeButton: true
             };
         }
 
-        if (buttonIndex <= validUntil) {
+        // Completed steps (before current) - should be buttons, clickable to go back
+        if (buttonIndex < activeIndex) {
             return {
                 type: 'complete',
                 ariaAttributes: {},
                 progressStepClass: 'ProgressStep--complete',
                 progressItemClass: 'Progress__item--sibling-complete',
-                useSuccessLabel: true
+                useSuccessLabel: true,
+                shouldBeButton: true
             };
         }
 
+        // Future steps (after current) - should be divs, not clickable yet
         return {
             type: 'incomplete',
             ariaAttributes: {},
             progressStepClass: 'ProgressStep--incomplete',
-            progressItemClass: 'Progress__item--sibling-incomplete'
+            progressItemClass: 'Progress__item--sibling-incomplete',
+            shouldBeButton: false
         };
+    };
+
+    /**
+     * Convert element between button and div based on state
+     * @param {HTMLElement} element
+     * @param {boolean} shouldBeButton
+     * @returns {HTMLElement} The element (possibly replaced)
+     */
+    let ensureCorrectElementType = function(element, shouldBeButton) {
+        const isButton = element.tagName === 'BUTTON';
+
+        // No conversion needed
+        if ((shouldBeButton && isButton) || (!shouldBeButton && !isButton)) {
+            return element;
+        }
+
+        // Create replacement element
+        const newElement = document.createElement(shouldBeButton ? 'button' : 'div');
+
+        // Copy all attributes except type-specific ones
+        Array.from(element.attributes).forEach(attr => {
+            newElement.setAttribute(attr.name, attr.value);
+        });
+
+        // Copy all classes
+        newElement.className = element.className;
+
+        // Copy content
+        newElement.innerHTML = element.innerHTML;
+
+        // Replace in DOM
+        element.parentNode.replaceChild(newElement, element);
+
+        return newElement;
     };
 
     /**
@@ -422,11 +465,16 @@ export default function MoreStepForm() {
      * - Resets lingering attributes/classes
      * - Sets ARIA attributes and text
      * - Updates ProgressStep + Progress__item classes
+     * - Converts between button and div as needed
      *
      * @param {HTMLElement} button
      * @param {Object} state
      */
     let applyButtonState = function(button, state) {
+        // Convert element type if needed
+        const shouldBeButton = state.shouldBeButton !== false;
+        button = ensureCorrectElementType(button, shouldBeButton);
+
         resetButtonState(button);
 
         // Apply ARIA attributes
@@ -437,6 +485,8 @@ export default function MoreStepForm() {
         updateButtonText(button, state.useSuccessLabel);
         updateProgressStep(button, state.progressStepClass);
         updateProgressItem(button, state.progressItemClass);
+
+        return button;
     };
 
     /**
