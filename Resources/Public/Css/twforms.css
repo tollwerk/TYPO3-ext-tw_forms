@@ -109,18 +109,6 @@ select {
 	}
 }
 
-/* Modern approach to focus styling: Only visible for keyboard users */
-@supports (selector(:focus-visible)) {
-	.FormField__input:focus, .FormField__textarea:focus {
-		outline: none;
-	}
-
-	.FormField__input:focus-visible, .FormField__textarea:focus-visible {
-		outline: 2px solid var(--color-highlight);
-		outline-offset: 2px;
-	}
-}
-
 .FormField__description {
 	margin-block: .5em 0;
 
