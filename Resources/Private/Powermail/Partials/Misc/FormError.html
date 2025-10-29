@@ -27,15 +27,18 @@
                     value="LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.errors"/>
         <f:variable name="headingContent"
                     value="{f:if(condition: '{count} == 1', then: '{f:translate(key: headingKeySingle)}', else: '{f:translate(key: headingKeyMultiple, arguments: \'{0: count}\')}')}"/>
-        <svg width="48" height="48" aria-hidden="true" focusable="false">
-          <use href="#warning-sign"></use>
-        </svg>
-        <h2 class="Form__error-heading"
-            id="{formId}-errors"
-            data-heading-single="{f:translate(key: headingKeySingle)}"
-            data-heading-multiple="{f:translate(key: headingKeyMultiple)}">
-          {headingContent}
-        </h2>
+
+        <div class="Form__error-navigation-heading-wrapper">
+            <svg width="48" height="48" aria-hidden="true" focusable="false" class="Form__error-navigation-icon">
+              <use href="#warning-sign" />
+            </svg>
+            <h2 class="Form__error-heading"
+                id="{formId}-errors"
+                data-heading-single="{f:translate(key: headingKeySingle)}"
+                data-heading-multiple="{f:translate(key: headingKeyMultiple)}">
+              {headingContent}
+            </h2>
+        </div>
 
         <ol class="Form__error-summary">
       <f:if condition="{validationResults.flattenedErrors}">

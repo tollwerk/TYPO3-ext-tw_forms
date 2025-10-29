@@ -392,19 +392,20 @@ export default function MoreStepForm() {
      * @returns {Object}
      */
     let determineButtonState = function(buttonIndex, activeIndex, validUntil) {
-        // Current step - should be a button
-        if (buttonIndex === activeIndex) {
+        // Item directly before current step - gets sibling-active class
+        if (buttonIndex === activeIndex - 1) {
             return {
-                type: 'active',
-                ariaAttributes: { 'aria-current': 'step' },
-                progressStepClass: 'ProgressStep--active',
+                type: 'complete',
+                ariaAttributes: {},
+                progressStepClass: 'ProgressStep--complete',
                 progressItemClass: 'Progress__item--sibling-active',
+                useSuccessLabel: true,
                 shouldBeButton: true
             };
         }
 
-        // Completed steps (before current) - should be buttons, clickable to go back
-        if (buttonIndex < activeIndex) {
+        // Other completed steps (before the item before active)
+        if (buttonIndex < activeIndex - 1) {
             return {
                 type: 'complete',
                 ariaAttributes: {},
@@ -415,7 +416,18 @@ export default function MoreStepForm() {
             };
         }
 
-        // Future steps (after current) - should be divs, not clickable yet
+        // Current step - should be a button, gets sibling-incomplete
+        if (buttonIndex === activeIndex) {
+            return {
+                type: 'active',
+                ariaAttributes: { 'aria-current': 'step' },
+                progressStepClass: 'ProgressStep--active',
+                progressItemClass: 'Progress__item--sibling-incomplete',
+                shouldBeButton: true
+            };
+        }
+
+        // Future steps (after current) - should be divs, get sibling-incomplete
         return {
             type: 'incomplete',
             ariaAttributes: {},
