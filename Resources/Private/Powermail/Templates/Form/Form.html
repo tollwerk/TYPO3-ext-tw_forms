@@ -26,8 +26,8 @@ Render Powermail Form
                         additionalAttributes="{aria-labelledby: '{formId}-heading'}"
                         class="{settings.styles.framework.formClasses} powermail_form powermail_form_{form.uid}{f:if(condition: '{form.css}', then: ' {form.css}')} {vh:misc.morestepClass(activate:settings.main.moresteps)}">
 
-                    <f:comment><!-- Render a form heading if Backend doesn't say 'noLabel' --></f:comment>
-                    <h2 class="{f:if(condition: '{form.css} == \'nolabel\'', then: 'hide-element')}"
+                    <f:comment><!-- Render a form heading and hide it visually if 'noLabel' is set --></f:comment>
+                    <h2 class="Powermail__heading {f:if(condition: '{form.css} == \'nolabel\'', then: ' hide-element')}"
                         id="{formId}-heading">
                         {form.title}
                     </h2>
@@ -51,25 +51,6 @@ Render Powermail Form
 
                     <f:render partial="Misc/HoneyPod" arguments="{form:form}"/>
                 </f:form>
-
-                <svg xmlns="http://www.w3.org/2000/svg"
-             display="none">
-            <symbol id="warning-sign"
-                    viewBox="0 0 50 50">
-                <path fill="#ad0c01"
-                      d="M21.9-.1C9.7-.1-.1 9.8-.1 22S9.8 44.1 22 44.1 44 34.2 44 22C44 9.8 34.1-.1 21.9-.1zM24.1 33h-4.4v-4.4h4.4V33zm0-8.8h-4.4V11h4.4v13.2z"/>
-            </symbol>
-            <symbol id="checkmark"
-                    viewBox="0 0 26.512 23.211">
-                <path fill="000000"
-                      d="M9.131 23.206L0 13.888l2.857-2.8 6.05 6.174L23.452-.006l3.06 2.576z"/>
-            </symbol>
-            <symbol id="circle"
-                    viewBox="0 0 80 80">
-                <circle fill="000000"
-                        cx="40" cy="40" r="40"/>
-            </symbol>
-        </svg>
             </div>
         </f:then>
         <f:else>

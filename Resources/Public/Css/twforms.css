@@ -68,11 +68,13 @@ select {
 }
 
 /* Lobotomized owl selector doesn't work in this setup due to DOM manipulations */
-.FormPage .FormField {
-	margin-top: 1em;
+.FormPage {
+	& .FormField {
+		margin-top: 1em;
 
-	&:first-child {
-		margin-top: 0;
+		&:first-of-type {
+			margin-top: 0;
+		}
 	}
 }
 
@@ -84,7 +86,11 @@ select {
 	font-weight: bold;
 	font-size: 1.5rem;
 
-	& ~ .FormField:first-of-type {
+	& h3, h4 {
+		margin: 0;
+	}
+
+	& + .FormField {
 		margin-top: 0;
 	}
 }
@@ -104,18 +110,6 @@ select {
 	border: 2px solid black;
 
 	&:focus {
-		outline: 2px solid var(--color-highlight);
-		outline-offset: 2px;
-	}
-}
-
-/* Modern approach to focus styling: Only visible for keyboard users */
-@supports (selector(:focus-visible)) {
-	.FormField__input:focus, .FormField__textarea:focus {
-		outline: none;
-	}
-
-	.FormField__input:focus-visible, .FormField__textarea:focus-visible {
 		outline: 2px solid var(--color-highlight);
 		outline-offset: 2px;
 	}
@@ -212,18 +206,6 @@ select {
 	}
 }
 
-/* Modern approach to focus styling: Only visible for keyboard users */
-@supports (selector(:focus-visible)) {
-	.Form__button:focus {
-		outline: none;
-	}
-
-	.Form__button:focus-visible {
-		outline: 2px solid var(--color-highlight);
-		outline-offset: 2px;
-	}
-}
-
 /* Checkboxes and radio buttons
    ========================================================================== */
 
@@ -288,18 +270,6 @@ select {
 	outline-offset: 2px;
 }
 
-/* Modern approach to focus styling: Only visible for keyboard users */
-@supports (selector(:focus-visible)) {
-	.CustomInput .FormField__input:focus + .Icon {
-		outline: none;
-	}
-
-	.CustomInput .FormField__input:focus-visible + .Icon {
-		outline: 2px solid var(--color-highlight);
-		outline-offset: 2px;
-	}
-}
-
 /* Support window high contrast mode */
 @media screen and (forced-colors: active) {
 	.CustomInput .Icon {
@@ -315,12 +285,14 @@ select {
    ========================================================================== */
 
 .Form__error {
-	display: flex;
-	align-items: center;
-	gap: .125em;
-	margin-block: .5em;
+	display: block;
 
-	color: var(--color-error);
+	padding-left: 2rem;
+	margin-block: 0 .5em;
+
+	background: 0 url(../Graphics/Warning.svg) no-repeat;
+	background-size: 1em;
+	color: #c92228;
 
 	font-weight: 700;
 
@@ -328,47 +300,33 @@ select {
 		display: none;
 		margin: 0;
 	}
-
-	& p {
-		margin: 0;
-	}
 }
 
 .Form__error-navigation {
-	border: 5px solid var(--color-error-dark);
 	padding: 1.5rem;
+	border: 5px solid var(--color-error-dark);
 
-	& svg {
-		display: inline-flex;
-	}
-}
-
-.Form__error-navigation-heading-wrapper {
-	display: flex;
-	align-items: center;
-	gap: .5em;
-
-	& .Form__error-navigation-icon {
-		flex-shrink: 0;
+	&.Form__error-navigation--visible {
+		margin-bottom: 1rem;
 	}
 }
 
 .Form__error-heading {
+	padding-left: 2.5em;
 	margin: 0;
-}
 
-.Form__error-icon.Form__error-icon--js {
-	display: none;
+	background: url(../Graphics/Warning.svg) 0 0 no-repeat;
+	background-size: 2em;
+	color: var(--color-error);
+
+	-ms-hyphens: auto;
+	hyphens: auto;
 }
 
 .FormField--has-error {
 	& .FormField__input, & .FormField__textarea, & .CustomInput .Icon {
 		border: 3px solid var(--color-error);
 		box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--color-error);
-	}
-
-	& .Form__error-icon.Form__error-icon--js {
-		display: block;
 	}
 }
 

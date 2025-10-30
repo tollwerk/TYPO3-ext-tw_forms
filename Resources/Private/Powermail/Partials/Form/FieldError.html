@@ -2,14 +2,8 @@
 
 <f:form.validationResults>
   <p class="Form__error" id="error-for-powermail-field-{formId}-{field.marker}"{f:if(condition: validationResults.flattenedErrors, else: ' hidden')}>
-    <svg width="24" height="24" class="Form__error-icon Form__error-icon--js" aria-hidden="true" focusable="false">
-      <use href="#warning-sign"></use>
-    </svg>
     <f:if condition="{validationResults.flattenedErrors}">
       <f:for each="{validationResults.flattenedErrors.mail}" as="error">
-          <svg width="24" height="24" class="Form__error-icon" aria-hidden="true" focusable="false">
-              <use href="#warning-sign"></use>
-          </svg>
           <f:if condition="{field.marker} == {error.arguments.marker}">
               <f:translate key="validationerror_{error.message}">
                   {error.message}
