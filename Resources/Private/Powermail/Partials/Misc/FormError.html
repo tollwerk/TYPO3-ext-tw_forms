@@ -14,7 +14,7 @@
     <f:variable name="title"
                 value="{twforms:form.title(form: form, pattern: pattern, errors: count)}"/>
 
-    <nav class="Form__error-navigation powermail_message powermail_message_error"
+    <nav class="Form__error-navigation powermail_message powermail_message_error{f:if(condition: '{validationResults.flattenedErrors}', then: ' Form__error-navigation--visible', else: '')}"
          aria-label="{f:translate(key: 'LLL:EXT:tw_forms/Resources/Private/Language/locallang.xlf:form.nav.errors')}"
          tabindex="-1"
          data-title="{title.default}"
@@ -28,67 +28,57 @@
         <f:variable name="headingContent"
                     value="{f:if(condition: '{count} == 1', then: '{f:translate(key: headingKeySingle)}', else: '{f:translate(key: headingKeyMultiple, arguments: \'{0: count}\')}')}"/>
 
-        <div class="Form__error-navigation-heading-wrapper">
-            <svg width="48" height="48" aria-hidden="true" focusable="false" class="Form__error-navigation-icon">
-              <use href="#warning-sign" />
-            </svg>
-            <h2 class="Form__error-heading"
-                id="{formId}-errors"
-                data-heading-single="{f:translate(key: headingKeySingle)}"
-                data-heading-multiple="{f:translate(key: headingKeyMultiple)}">
-              {headingContent}
-            </h2>
-        </div>
+        <h2 class="Form__error-heading"
+            id="{formId}-errors"
+            data-heading-single="{f:translate(key: headingKeySingle)}"
+            data-heading-multiple="{f:translate(key: headingKeyMultiple)}">
+          {headingContent}
+        </h2>
 
         <ol class="Form__error-summary">
-      <f:if condition="{validationResults.flattenedErrors}">
-        <f:for each="{validationResults.flattenedErrors}" as="errors">
-          <f:for each="{errors}" as="singleError">
-            <li class="Form__error-description">
-              <f:if condition="{singleError.message} == 'spam_details'">
-                <f:then>
-                  <f:translate key="validationerror_spam" />
-                  {singleError.arguments.spamfactor}
-
-                  <f:translate key="validationerror_{singleError.message}"
-                    >{singleError.message}</f:translate
-                  >
-                </f:then>
-                <f:else>
-                  <f:if condition="{singleError.arguments.marker}">
-                    <f:if condition="{vh:getter.getFieldPropertyFromMarkerAndForm(marker: singleError.arguments.marker, form: form, property: 'type')} == 'check'
-                                            || {vh:getter.getFieldPropertyFromMarkerAndForm(marker: singleError.arguments.marker, form: form, property: 'type')} == 'radio'"
-                    >
-                      <f:then>
-                          <a href="#{formId}-powermail-field-{singleError.arguments.marker}-1"
-                             class="Form__error-link"
-                             data-field-title="{vh:getter.getFieldPropertyFromMarkerAndForm(marker: singleError.arguments.marker, form: form, property: 'title')}">
-                              <vh:getter.getFieldPropertyFromMarkerAndForm
-                                      marker="{singleError.arguments.marker}"
-                                      form="{form}"
-                                      property="title"/>:
-                              <f:translate key="validationerror_{singleError.message}">{singleError.message}</f:translate>
-                          </a>
-                      </f:then>
-                      <f:else>
-                          <a href="#{formId}-powermail-field-{singleError.arguments.marker}"
-                             class="Form__error-link"
-                             data-field-title="{vh:getter.getFieldPropertyFromMarkerAndForm(marker: singleError.arguments.marker, form: form, property: 'title')}">
-                              <vh:getter.getFieldPropertyFromMarkerAndForm
-                                      marker="{singleError.arguments.marker}"
-                                      form="{form}"
-                                      property="title"/>:
-                              <f:translate key="validationerror_{singleError.message}">{singleError.message}</f:translate>
-                          </a>
-                      </f:else>
-                    </f:if>
-                  </f:if>
-                </f:else>
-              </f:if>
-            </li>
-          </f:for>
-        </f:for>
-      </f:if>
-    </ol>
+            <f:if condition="{validationResults.flattenedErrors}">
+                <f:for each="{validationResults.flattenedErrors}" as="errors">
+                    <f:for each="{errors}" as="singleError">
+                        <li class="Form__error-description">
+                            <f:if condition="{singleError.message} == 'spam_details'">
+                                <f:then>
+                                    <f:translate key="validationerror_spam" />
+                                    {singleError.arguments.spamfactor}
+                                    <f:translate key="validationerror_{singleError.message}">{singleError.message}</f:translate>
+                                </f:then>
+                                <f:else>
+                                    <f:if condition="{singleError.arguments.marker}">
+                                        <f:if condition="{vh:getter.getFieldPropertyFromMarkerAndForm(marker: singleError.arguments.marker, form: form, property: 'type')} == 'check'
+                                            || {vh:getter.getFieldPropertyFromMarkerAndForm(marker: singleError.arguments.marker, form: form, property: 'type')} == 'radio'">
+                                            <f:then>
+                                                <a href="#{formId}-powermail-field-{singleError.arguments.marker}-1"
+                                                   class="Form__error-link"
+                                                   data-field-title="{vh:getter.getFieldPropertyFromMarkerAndForm(marker: singleError.arguments.marker, form: form, property: 'title')}">
+                                                    <vh:getter.getFieldPropertyFromMarkerAndForm marker="{singleError.arguments.marker}"
+                                                                                                 form="{form}"
+                                                                                                 property="title"/>:
+                                                    <f:translate key="validationerror_{singleError.message}">{singleError.message}</f:translate>
+                                                </a>
+                                            </f:then>
+                                            <f:else>
+                                                <a href="#{formId}-powermail-field-{singleError.arguments.marker}"
+                                                   class="Form__error-link"
+                                                   data-field-title="{vh:getter.getFieldPropertyFromMarkerAndForm(marker: singleError.arguments.marker, form: form, property: 'title')}">
+                                                    <vh:getter.getFieldPropertyFromMarkerAndForm
+                                                            marker="{singleError.arguments.marker}"
+                                                            form="{form}"
+                                                            property="title"/>:
+                                                    <f:translate key="validationerror_{singleError.message}">{singleError.message}</f:translate>
+                                                </a>
+                                            </f:else>
+                                        </f:if>
+                                    </f:if>
+                                </f:else>
+                            </f:if>
+                        </li>
+                    </f:for>
+                </f:for>
+            </f:if>
+        </ol>
     </nav>
 </f:form.validationResults>

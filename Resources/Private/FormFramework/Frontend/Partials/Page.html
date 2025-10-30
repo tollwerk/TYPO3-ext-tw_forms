@@ -11,7 +11,6 @@
       xmlns:twforms="http://typo3.org/ns/Tollwerk/TwForms/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
-
     <formvh:renderRenderable renderable="{page}">
         <f:if condition="{page.parentRenderable.renderingOptions.enableStatusDisplay}">
             <f:render partial="Form/Status" arguments="{form: form, page: page}"/>
@@ -26,10 +25,18 @@
             <f:if condition="{page.rootForm.pages -> f:count()} > 1">
                 <f:then>
                     <f:variable name="isMultiStep" value="true" />
+                    <f:variable name="pageNumber" value="{page.index + 1}" />
                     <fieldset class="FormPage">
                         <legend class="FormPage__legend"
                                 id="{form.identifier}-{page.identifier}">
-                            <h3>{formvh:translateElementProperty(element: page, property: 'label')}</h3>
+                            <f:if condition="{page.label} != ''">
+                                <f:then>
+                                    <h3>{formvh:translateElementProperty(element: page, property: 'label')}</h3>
+                                </f:then>
+                                <f:else>
+                                    <h3 class="hide-element">{f:translate(key: 'form.page', extensionName: 'TwForms', arguments: '{0: pageNumber}')}</h3>
+                                </f:else>
+                            </f:if>
                         </legend>
                         <f:for each="{page.elements}" as="element">
                             <f:render partial="{element.templateName}"

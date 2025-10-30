@@ -20,6 +20,10 @@
                 <source>Next</source>
                 <target state="translated">Weiter</target>
             </trans-unit>
+            <trans-unit id="form.page" approved="yes">
+                <source>Page %s</source>
+                <target state="translated">Seite %s</target>
+            </trans-unit>
             <trans-unit id="form.required" approved="yes">
                 <source>(required)</source>
                 <target state="translated">(erforderlich)</target>
