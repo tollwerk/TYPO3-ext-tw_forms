@@ -1,0 +1,14 @@
+services:
+  _defaults:
+    autoconfigure: true
+    autowire: true
+    public: false
+
+  Tollwerk\TwForms\:
+    resource: '../Classes/*'
+    exclude:
+        - '../Classes/Controller/*'
+        - '../Classes/Domain/Model/*'
+
+  Tollwerk\TwForms\PageTitle\FormErrorTitleProvider:
+    public: true

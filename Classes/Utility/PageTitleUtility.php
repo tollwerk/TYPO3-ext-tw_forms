@@ -37,11 +37,14 @@
 
 namespace Tollwerk\TwForms\Utility;
 
+use Psr\Http\Message\ServerRequestInterface;
 use Tollwerk\TwForms\PageTitle\FormErrorTitleProvider;
 use TYPO3\CMS\Core\PageTitle\PageTitleProviderInterface;
+use TYPO3\CMS\Core\PageTitle\PageTitleProviderManager;
 use TYPO3\CMS\Core\TypoScript\TypoScriptService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use \Exception;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /**
  * Page title utility
@@ -84,26 +87,15 @@ class PageTitleUtility
      *
      * @return string Page title
      */
-    public static function getPageTitle(): string
+    public static function getPageTitle(?ServerRequestInterface $request): string
     {
-        $pageTitle     = '';
-
-        /**
-         * PageTitleProviderInterface
-         *
-         * @var PageTitleProviderInterface $titleProvider
-        */
-        foreach (static::getTitleProviders() as $titleProviderClass) {
-            $titleProvider     = GeneralUtility::makeInstance($titleProviderClass);
-            $providerPageTitle = trim($titleProvider->getTitle());
-            if (strlen($providerPageTitle)) {
-                $pageTitle = $providerPageTitle;
-                continue;
-            }
-            break;
+        if (!$request) {
+            return '';
         }
 
-        return $pageTitle;
+        /** @var PageTitleProviderManager $pageTitleProviderManager */
+        $pageTitleProviderManager = GeneralUtility::makeInstance(PageTitleProviderManager::class);
+        return $pageTitleProviderManager->getTitle($request);
     }
 
     /**
