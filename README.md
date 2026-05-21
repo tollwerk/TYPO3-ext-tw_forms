@@ -1,6 +1,6 @@
 # tw-forms — Tollwerk Enhanced TYPO3 Forms
 
-[![TYPO3](https://img.shields.io/badge/TYPO3-12.4-orange.svg)](https://get.typo3.org/version/12)
+[![TYPO3](https://img.shields.io/badge/TYPO3-13.4-green.svg)](https://get.typo3.org/version/12)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 A TYPO3 extension that enhances the native TYPO3 Form Framework with improved validation, better accessibility, and an enhanced user experience.
