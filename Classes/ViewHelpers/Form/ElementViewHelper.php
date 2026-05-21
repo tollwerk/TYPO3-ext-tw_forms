@@ -58,35 +58,23 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 class ElementViewHelper extends AbstractViewHelper
 {
     /**
-     * Enable static rendering
-     */
-    use CompileWithRenderStatic;
-
-    /**
      * Render
-     *
-     * @param array                     $arguments             rguments
-     * @param Closure                   $renderChildrenClosure Children rendering closure
-     * @param RenderingContextInterface $renderingContext      Rendering context
      *
      * @return FormElementInterface|null Form element
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @codingStandardsIgnoreStart
      */
-    public static function renderStatic(
-        array $arguments,
-        Closure $renderChildrenClosure,
-        RenderingContextInterface $renderingContext
-    ): ?FormElementInterface {
+    public function render(): ?FormElementInterface
+    {
         /**
          * FormDefinition
          *
          * @var FormDefinition $formDefinition
          */
-        $formDefinition   = $arguments['form']->getFormDefinition();
+        $formDefinition   = $this->arguments['form']->getFormDefinition();
         $formIdentifier   = $formDefinition->getIdentifier();
-        $elementIdentfier = $arguments['element'];
+        $elementIdentfier = $this->arguments['element'];
         if (str_starts_with($elementIdentfier, $formIdentifier . '.')) {
             $elementIdentfier = substr($elementIdentfier, strlen($formIdentifier) + 1);
         }

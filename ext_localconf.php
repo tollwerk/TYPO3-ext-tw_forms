@@ -40,9 +40,5 @@ call_user_func(
     function () {
         // Register fluid namespace
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces']['twforms'] = ['Tollwerk\\TwForms\\ViewHelpers'];
-        // Register page tsconfig
-        \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig(
-            '@import "EXT:tw_forms/Configuration/TSConfig/Page/basic.tsconfig"'
-        );
     }
 );

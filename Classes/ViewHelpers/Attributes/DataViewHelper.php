@@ -55,39 +55,27 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 class DataViewHelper extends ListViewHelper
 {
     /**
-     * Enable static rendering
-     */
-    use CompileWithRenderStatic;
-
-    /**
      * Render
-     *
-     * @param array                     $arguments             Arguments
-     * @param Closure                   $renderChildrenClosure Children rendering closure
-     * @param RenderingContextInterface $renderingContext      Rendering context
      *
      * @return mixed|string Output
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @codingStandardsIgnoreStart
      */
-    public static function renderStatic(
-        array $arguments,
-        Closure $renderChildrenClosure,
-        RenderingContextInterface $renderingContext
-    ): mixed {
+    public function render(): mixed
+    {
         $dataAttributes    = self::renderAttributes(
-            $arguments['attributes'] ?? [],
-            $arguments['nonEmptyAttributes'] ?? [],
+            $this->arguments['attributes'] ?? [],
+            $this->arguments['nonEmptyAttributes'] ?? [],
             true
         );
-        $excludeAttributes = is_array($arguments['exclude']) ?
-            $arguments['exclude'] : GeneralUtility::trimExplode(',', $arguments['exclude'], true);
+        $excludeAttributes = is_array($this->arguments['exclude']) ?
+            $this->arguments['exclude'] : GeneralUtility::trimExplode(',', $this->arguments['exclude'], true);
         if (count($excludeAttributes)) {
             $dataAttributes = array_diff_key($dataAttributes, array_flip($excludeAttributes));
         }
         $attributes  = [];
-        $returnArray = $arguments['returnArray'];
+        $returnArray = $this->arguments['returnArray'];
         foreach ($dataAttributes as $name => $value) {
             $attributes["data-$name"] = $returnArray ?
                 (strlen(trim($value)) ? trim($value) : null) :
@@ -106,7 +94,7 @@ class DataViewHelper extends ListViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->overrideArgument(
+        $this->registerArgument(
             'attributes',
             'array',
             'Arbitrary number of values to be rendered as HTML data attributes',

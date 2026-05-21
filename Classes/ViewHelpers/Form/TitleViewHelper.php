@@ -17,10 +17,11 @@ namespace Tollwerk\TwForms\ViewHelpers\Form;
 use Closure;
 use Exception;
 use In2code\Powermail\Domain\Model\Form as PowermailForm;
+use Psr\Http\Message\ServerRequestInterface;
 use Tollwerk\TwForms\Utility\PageTitleUtility;
 use TYPO3\CMS\Core\Configuration\SiteConfiguration;
 use TYPO3\CMS\Core\Http\Request;
-use TYPO3\CMS\Core\PageTitle\PageTitleProviderManager;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\PageTitle\RecordPageTitleProvider;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
@@ -67,10 +68,9 @@ class TitleViewHelper extends AbstractViewHelper
      *
      * @return string
      */
-    public static function getWebsiteName(RenderingContextInterface $renderingContext): string
+    public  function getWebsiteName(RenderingContextInterface $renderingContext): string
     {
-        /** @var Request $request */
-        $request = $renderingContext->getRequest();
+        $request = $this->getRequest();
         /** @var Site $site */
         $site = $request->getAttribute('site');
         /** @var SiteLanguage $siteLanguage */
@@ -88,6 +88,23 @@ class TitleViewHelper extends AbstractViewHelper
     }
 
     /**
+     * Get Request object
+     *
+     * @return ServerRequestInterface|null
+     */
+    protected function getRequest(): ServerRequestInterface|null
+    {
+        if ((new (Typo3Version::class))->getMajorVersion() <= 12) {
+            // Todo: remove on dropping TYPO3 v12 support
+            return $this->renderingContext->getRequest();
+        }
+        if ($this->renderingContext->hasAttribute(ServerRequestInterface::class)) {
+            return $this->renderingContext->getAttribute(ServerRequestInterface::class);
+        }
+        return null;
+    }
+
+    /**
      * Default implementation of static rendering; useful API method if your ViewHelper
      * when compiled is able to render itself statically to increase performance. This
      * default implementation will simply delegate to the ViewHelperInvoker.
@@ -101,19 +118,18 @@ class TitleViewHelper extends AbstractViewHelper
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public static function renderStatic(
-        array $arguments,
-        Closure $renderChildrenClosure,
-        RenderingContextInterface $renderingContext
-    ): array {
+    public function render(): array
+    {
         /**
          * TODO: This functionality should be split into two distinct ViewHelpers for FormFramework and Powermail.
          * Get the form argument, which can be either a TYPO3 FormRuntime or a Powermail Form
          *
          * @var FormRuntime|PowermailForm $form
          */
-        $form = $arguments['form'];
-        $defaultTitle = PageTitleUtility::getPageTitle();
+        $form = $this->arguments['form'];
+        $defaultTitle = PageTitleUtility::getPageTitle($this->getRequest());
+
+
 
         // TODO: Remove if not necessary.
         // TYPO3 Form Framework: Handle status display and page steps
@@ -148,8 +164,8 @@ class TitleViewHelper extends AbstractViewHelper
 
         // Get pattern for page title with form errors.
         $count = 0;
-        if ($arguments['errors']) {
-            $errorTitle = sprintf($arguments['pattern'], $arguments['errors'], '%s')
+        if ($this->arguments['errors']) {
+            $errorTitle = sprintf($this->arguments['pattern'], $this->arguments['errors'], '%s')
                 . ' '
                 . GeneralUtility::makeInstance(RecordPageTitleProvider::class)->getTitle();
             PageTitleUtility::setPageTitle($errorTitle, ['flex', 'record']);
@@ -159,14 +175,14 @@ class TitleViewHelper extends AbstractViewHelper
             function ($matches) use (&$count) {
                 return '{' . ($count++) . '}';
             },
-            $arguments['pattern']
+            $this->arguments['pattern']
         );
 
         // Return the pattern with placeholders and the default title
         $return = [
             'pattern' => $pattern,
             'default' => $defaultTitle,
-            'websiteName' => self::getWebsiteName($renderingContext),
+            'websiteName' => $this->getWebsiteName($this->renderingContext),
         ];
         return $return;
     }

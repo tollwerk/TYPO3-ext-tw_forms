@@ -10,6 +10,7 @@
 --></f:comment>
 <html xmlns:f="https://xsd.helhum.io/ns/typo3/cms-fluid/master/ViewHelpers"
       xmlns:twforms="http://typo3.org/ns/Tollwerk/TwForms/ViewHelpers"
+      xmlns:v="http://typo3.org/ns/FluidTypo3/Vhs/ViewHelpers"
       data-namespace-typo3-fluid="true">
     <f:variable name="label" value="{formvh:translateElementProperty(element: element, property: 'label')}"/>
 
@@ -112,7 +113,7 @@
                       contentAs="content"
                       arguments="{element: element, label: element.properties.elementDescription}">
                 <f:variable name="description"
-                            value="{twforms:content.get(contentUids: '{0: element.properties.elementDescription}')}"/>
+                            value="{v:content.get(contentUids: '{0: element.properties.elementDescription}')}"/>
                 {description.0.bodytext -> f:format.raw()}
             </f:render>
         </f:if>
