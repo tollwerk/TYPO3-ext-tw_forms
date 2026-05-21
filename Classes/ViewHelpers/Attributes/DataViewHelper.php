@@ -94,7 +94,7 @@ class DataViewHelper extends ListViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->overrideArgument(
+        $this->registerArgument(
             'attributes',
             'array',
             'Arbitrary number of values to be rendered as HTML data attributes',

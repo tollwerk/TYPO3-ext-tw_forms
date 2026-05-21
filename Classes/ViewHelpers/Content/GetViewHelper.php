@@ -57,7 +57,7 @@ class GetViewHelper extends \Tollwerk\TwForms\ViewHelpers\Content\AbstractConten
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->overrideArgument('render', 'boolean', 'Return rendered result', false, false);
+        $this->registerArgument('render', 'boolean', 'Return rendered result', false, false);
     }
 
     /**
