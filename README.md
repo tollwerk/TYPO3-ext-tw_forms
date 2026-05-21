@@ -266,6 +266,6 @@ This extension is licensed under the MIT License. See the LICENSE file for detai
 
 ---
 
-**Version**: 1.0.x
-**TYPO3 Compatibility**: 12.4+
-**Last Updated**: 2025-10-07
+**Version**: 2.0.x
+**TYPO3 Compatibility**: 13.4
+**Last Updated**: 2026-05-21
