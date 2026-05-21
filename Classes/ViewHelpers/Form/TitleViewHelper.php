@@ -26,6 +26,7 @@ use TYPO3\CMS\Core\PageTitle\RecordPageTitleProvider;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Form\Domain\Runtime\FormRuntime;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
@@ -67,10 +68,9 @@ class TitleViewHelper extends AbstractViewHelper
      *
      * @return string
      */
-    public static function getWebsiteName(RenderingContextInterface $renderingContext): string
+    public  function getWebsiteName(RenderingContextInterface $renderingContext): string
     {
-        /** @var Request $request */
-        $request = $renderingContext->getRequest();
+        $request = $this->getRequest();
         /** @var Site $site */
         $site = $request->getAttribute('site');
         /** @var SiteLanguage $siteLanguage */
@@ -182,7 +182,7 @@ class TitleViewHelper extends AbstractViewHelper
         $return = [
             'pattern' => $pattern,
             'default' => $defaultTitle,
-            'websiteName' => self::getWebsiteName($this->renderingContext),
+            'websiteName' => $this->getWebsiteName($this->renderingContext),
         ];
         return $return;
     }
