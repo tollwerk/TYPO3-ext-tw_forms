@@ -55,8 +55,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithContentArgumentAndRenderS
  */
 class TrimViewHelper extends AbstractViewHelper
 {
-    use CompileWithContentArgumentAndRenderStatic;
-
     /**
      * Initialize Arguments
      *
@@ -71,19 +69,15 @@ class TrimViewHelper extends AbstractViewHelper
     /**
      * Trims content by stripping off $characters
      *
-     * @param array                          $arguments             Arguments
-     * @param ClosureAlias                   $renderChildrenClosure RenderChildrenClosure
-     * @param RenderingContextInterfaceAlias $renderingContext      RenderingContext
-     *
      * @return mixed
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @codingStandardsIgnoreStart
      */
-    public static function renderStatic(array $arguments, ClosureAlias $renderChildrenClosure, RenderingContextInterfaceAlias $renderingContext)
+    public function render()
     {
-        $characters = $arguments['characters'];
-        $content = $renderChildrenClosure();
+        $characters = $this->arguments['characters'];
+        $content = $this->renderChildren();
 
         $content = trim($content);
         if (false === empty($characters)) {

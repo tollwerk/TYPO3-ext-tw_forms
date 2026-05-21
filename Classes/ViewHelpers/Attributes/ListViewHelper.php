@@ -55,11 +55,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 class ListViewHelper extends AbstractViewHelper
 {
     /**
-     * Enable static rendering
-     */
-    use CompileWithRenderStatic;
-
-    /**
      * Don't escape the output
      *
      * @var boolean
@@ -69,24 +64,17 @@ class ListViewHelper extends AbstractViewHelper
     /**
      * Render
      *
-     * @param array                     $arguments             Arguments
-     * @param Closure                   $renderChildrenClosure Children rendering closure
-     * @param RenderingContextInterface $renderingContext      Rendering context
-     *
      * @return array|string Output
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @codingStandardsIgnoreStart
      */
-    public static function renderStatic(
-        array $arguments,
-        Closure $renderChildrenClosure,
-        RenderingContextInterface $renderingContext
-    ) {
+    public function render()
+    {
         return self::renderAttributes(
-            (array)$arguments['attributes'],
-            (array)$arguments['nonEmptyAttributes'],
-            $arguments['returnArray']
+            (array)$this->arguments['attributes'],
+            (array)$this->arguments['nonEmptyAttributes'],
+            $this->arguments['returnArray']
         );
     }
 
