@@ -13,7 +13,8 @@
     "typo3/cms-core": "^13",
     "typo3/cms-fluid-styled-content": "^13",
     "typo3/cms-form": "^13",
-    "wyrihaximus/html-compress": "4.2"
+    "wyrihaximus/html-compress": "^4",
+    "fluidtypo3/vhs": "^7"
   },
   "homepage": "https://tollwerk.de",
   "license": "MIT",
