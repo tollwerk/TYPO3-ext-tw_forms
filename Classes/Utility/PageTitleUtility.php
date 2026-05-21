@@ -76,9 +76,6 @@ class PageTitleUtility
      */
     public static function setPageTitle(string $title, array $replacementProvider = [])
     {
-        $replacement = self::getReplacement($replacementProvider);
-        $title       = $replacement ? sprintf($title, $replacement) : $title;
-
         return GeneralUtility::makeInstance(FormErrorTitleProvider::class)->setTitle($title);
     }
 
@@ -93,59 +90,7 @@ class PageTitleUtility
             return '';
         }
 
-        /** @var PageTitleProviderManager $pageTitleProviderManager */
         $pageTitleProviderManager = GeneralUtility::makeInstance(PageTitleProviderManager::class);
         return $pageTitleProviderManager->getTitle($request);
-    }
-
-    /**
-     * Return the first non-empty page title provider title
-     *
-     * @param array $replacementProviders Ordered list of page title providers
-     *
-     * @return string|null Replacement title
-     * @throws Exception
-     */
-    protected static function getReplacement(array $replacementProviders): ?string
-    {
-        $providers     = static::getTitleProviders();
-        foreach ($replacementProviders as $replacementProviderKey) {
-            if (!empty($providers[$replacementProviderKey])) {
-                $replacementProvider = GeneralUtility::makeInstance($providers[$replacementProviderKey]);
-                if (is_a($replacementProvider, PageTitleProviderInterface::class)) {
-                    $replacementProviderTitle = trim($replacementProvider->getTitle());
-                    if (strlen($replacementProviderTitle)) {
-                        return $replacementProviderTitle;
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Read and return all registered page title providers
-     *
-     * @return                               array Page title providers
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
-    public static function getTitleProviders(): array
-    {
-        if (static::$titleProviders === null) {
-            $typoscriptService = GeneralUtility::makeInstance(TypoScriptService::class);
-            $config            = $typoscriptService->convertTypoScriptArrayToPlainArray(
-                $GLOBALS['TSFE']->config['config'] ?? []
-            );
-
-            static::$titleProviders = [];
-            foreach ($config['pageTitleProviders'] ?? [] as $key => $properties) {
-                if (!empty($properties['provider']) && class_exists($properties['provider'])) {
-                    static::$titleProviders[$key] = $properties['provider'];
-                }
-            }
-        }
-
-        return static::$titleProviders;
     }
 }
