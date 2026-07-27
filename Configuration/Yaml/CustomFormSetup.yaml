@@ -12,7 +12,7 @@ TYPO3:
             CountrySelect:
               formEditor:
                 group: null
-            Date: null
+            #Date: null
             DatePicker: null
             Form:
               persistenceManager:
