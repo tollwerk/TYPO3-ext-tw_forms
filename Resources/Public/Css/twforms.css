@@ -324,7 +324,7 @@ select {
 }
 
 .FormField--has-error {
-	& .FormField__input, & .FormField__textarea, & .CustomInput .Icon {
+	& .FormField__date, & .FormField__input, & .FormField__textarea, & .CustomInput .Icon {
 		border: 3px solid var(--color-error);
 		box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--color-error);
 	}
