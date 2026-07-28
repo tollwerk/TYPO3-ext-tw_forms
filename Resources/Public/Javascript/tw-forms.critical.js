@@ -709,5 +709,5 @@ const PowermailValidators = {
     };
 
     // Register FormField enhancer with the Observer
-    tw_forms.Observer.register('.FormField__input, .FormField__textarea', (field) => new FormField(field));
+    tw_forms.Observer.register('.FormField__input, .FormField__textarea, .FormField__date', (field) => new FormField(field));
 })(typeof global !== "undefined" ? global : window, document);

@@ -12,7 +12,9 @@ TYPO3:
             CountrySelect:
               formEditor:
                 group: null
-            #Date: null
+            Date:
+              properties:
+                elementClassAttribute: 'FormText FormField__date'
             DatePicker: null
             Form:
               persistenceManager:
