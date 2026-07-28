@@ -71,8 +71,6 @@
  * @type {Object}
  */
 
-alert("hier");
-
 // eslint-disable-next-line no-unused-vars
 const tw_forms = window.tw_forms || { has: {} };
 window.tw_forms = tw_forms;
