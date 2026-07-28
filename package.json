@@ -1,0 +1,14 @@
+{
+    "name": "tw-forms",
+    "version": "1.0.0",
+    "description": "Build tooling for the tw_forms TYPO3 extension",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "node Build/minify.mjs",
+        "watch": "node Build/minify.mjs --watch"
+    },
+    "devDependencies": {
+        "esbuild": "^0.25.0"
+    }
+}
