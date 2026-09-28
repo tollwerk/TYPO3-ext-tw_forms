@@ -58,7 +58,7 @@ class MergeViewHelper extends AbstractCollectionViewHelper
      * @return void
      * @api
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('a', 'mixed', 'The base argument to merge over values', true);

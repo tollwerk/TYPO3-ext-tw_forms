@@ -59,7 +59,7 @@ abstract class AbstractCollectionViewHelper extends AbstractViewHelper
      * @return void
      * @api
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('zero', 'bool', 'Allow numeric zero values', false, false);

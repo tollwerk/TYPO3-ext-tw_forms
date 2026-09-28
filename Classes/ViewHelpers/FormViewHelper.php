@@ -59,7 +59,7 @@ class FormViewHelper extends FluidFormViewHelper
      *
      * @return void
      */
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
 

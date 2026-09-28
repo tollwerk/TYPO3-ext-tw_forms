@@ -60,7 +60,7 @@ trait UnprefixedNameTrait
      * @throws Exception
      * @api
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('dontPrefixName', 'boolean', 'Suppress the name prefex', false, false);
