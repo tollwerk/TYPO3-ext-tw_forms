@@ -10,9 +10,9 @@
     }
   ],
   "require": {
-    "typo3/cms-core": "^13",
-    "typo3/cms-fluid-styled-content": "^13",
-    "typo3/cms-form": "^13",
+    "typo3/cms-core": "^14",
+    "typo3/cms-fluid-styled-content": "^14",
+    "typo3/cms-form": "^14",
     "wyrihaximus/html-compress": "^4",
     "fluidtypo3/vhs": "^8"
   },
@@ -36,7 +36,7 @@
       "extension-key": "tw_forms"
     },
     "branch-alias": {
-      "dev-master": "13.x.x-dev"
+      "dev-master": "14.x.x-dev"
     }
   }
 }
