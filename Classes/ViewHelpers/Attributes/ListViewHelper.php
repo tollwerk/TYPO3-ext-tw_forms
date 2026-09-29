@@ -158,7 +158,7 @@ class ListViewHelper extends AbstractViewHelper
      *
      * @return void
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('attributes', 'mixed', 'Arbitrary number of HTML tag attributes', false, []);

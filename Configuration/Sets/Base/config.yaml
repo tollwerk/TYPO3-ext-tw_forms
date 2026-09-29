@@ -1,0 +1,5 @@
+name: tollwerk/tw-forms-base
+label: 'tollwerk Enhanced TYPO3 forms'
+dependencies:
+  - typo3/fluid-styled-content
+  - typo3/form

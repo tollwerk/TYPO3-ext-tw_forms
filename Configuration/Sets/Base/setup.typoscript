@@ -1,0 +1,37 @@
+# Global configuration
+config {
+    pageTitleProviders {
+        twforms {
+            provider = Tollwerk\TwForms\PageTitle\FormErrorTitleProvider
+            before = record
+        }
+    }
+}
+
+# Page configuration
+page = PAGE
+page {
+    includeJSLibs {
+        # tw_forms critical javascript and polyfills. Must be included inside <head> of the document!
+        tw_forms_critical = EXT:tw_forms/Resources/Public/Javascript/tw-forms.critical.js
+
+        # tw_forms default javascript. Depends on tw-forms.critical.min.js
+        tw_forms_default = EXT:tw_forms/Resources/Public/Javascript/tw-forms.default.js
+    }
+}
+
+# TYPO3 Form Framework
+plugin.tx_form {
+    settings {
+        yamlConfigurations {
+            100 = EXT:tw_forms/Configuration/Yaml/CustomFormSetup.yaml
+        }
+    }
+}
+module.tx_form {
+    settings {
+        yamlConfigurations {
+            100 = EXT:tw_forms/Configuration/Yaml/CustomFormSetup.yaml
+        }
+    }
+}

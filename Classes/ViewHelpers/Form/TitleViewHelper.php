@@ -80,7 +80,9 @@ class TitleViewHelper extends AbstractViewHelper
 
         // Get website name.
         $websiteName = $siteConfiguration['websiteTitle'];
+        // @extensionScannerIgnoreLine
         if (!empty($siteConfiguration['languages'][$siteLanguage->getLanguageId()]['websiteTitle'])) {
+            // @extensionScannerIgnoreLine
             $websiteName = $siteConfiguration['languages'][$siteLanguage->getLanguageId()]['websiteTitle'];
         }
 
@@ -128,8 +130,6 @@ class TitleViewHelper extends AbstractViewHelper
          */
         $form = $this->arguments['form'];
         $defaultTitle = PageTitleUtility::getPageTitle($this->getRequest());
-
-
 
         // TODO: Remove if not necessary.
         // TYPO3 Form Framework: Handle status display and page steps

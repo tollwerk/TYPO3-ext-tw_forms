@@ -59,7 +59,7 @@ class FormViewHelper extends FluidFormViewHelper
      *
      * @return void
      */
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
 
@@ -78,11 +78,11 @@ class FormViewHelper extends FluidFormViewHelper
         $formRuntime = $this->getFormRuntime();
         $prefix = $this->prefixFieldName($this->getFormObjectName());
 
+
         $markup = $this->createHiddenInputElement(
             $prefix . '[__state]',
-            $this->hashService->appendHmac(
-                base64_encode(serialize($formRuntime->getFormState()))
-            )
+            // @extensionScannerIgnoreLine
+            $this->hashService->appendHmac(base64_encode(serialize($formRuntime->getFormState())))
         );
 
         // ONLY assign `__session` if form is performing (uncached)

@@ -1,0 +1,4 @@
+name: tollwerk/tw-forms-styles
+label: 'tollwerk Enhanced TYPO3 forms: Styles'
+dependencies:
+  - tollwerk/tw-forms-base

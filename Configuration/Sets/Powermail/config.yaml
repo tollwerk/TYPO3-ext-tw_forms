@@ -1,0 +1,6 @@
+name: tollwerk/tw-forms-powermail
+label: 'tollwerk Enhanced TYPO3 forms: Powermail'
+dependencies:
+  - typo3/fluid-styled-content
+  - typo3/form
+  - tollwerk/tw-forms-base

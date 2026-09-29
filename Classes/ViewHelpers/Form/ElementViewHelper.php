@@ -87,7 +87,7 @@ class ElementViewHelper extends AbstractViewHelper
      *
      * @return void
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('form', FormRuntime::class, 'Form framework form', true);

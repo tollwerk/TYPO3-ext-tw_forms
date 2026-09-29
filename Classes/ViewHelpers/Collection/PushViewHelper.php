@@ -58,7 +58,7 @@ class PushViewHelper extends AbstractCollectionViewHelper
      * @return void
      * @api
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('a', 'mixed', 'The base argument to push new value to', true);
