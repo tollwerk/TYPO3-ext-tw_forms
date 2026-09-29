@@ -4,6 +4,7 @@
  */
 (function formValidation(window, document) {
 
+
     // Store the original page title to restore it when errors are cleared
     const originalPageTitle = document.title;
 
@@ -57,6 +58,9 @@
      */
     FormValidation.prototype.initializeErrorSummary = function initializeErrorSummary(summary) {
         this.errorSummary = summary;
+
+
+
         if (this.errorSummary) {
             // Find the parent navigation container
             this.errorNavigation = this.errorSummary.closest('.Form__error-navigation');
@@ -78,9 +82,13 @@
      * @param {Event} e Submit event (null when called for updates)
      */
     FormValidation.prototype.validate = function validate(e) {
+
+
+
         if (!this.errorNavigation) {
             return;
         }
+
 
         // Check if validation should be skipped (formnovalidate attribute)
         const novalidate = e && e.submitter && e.submitter.hasAttribute('formnovalidate');
@@ -94,7 +102,7 @@
             for (const f in this.fields) {
                 if (Object.prototype.hasOwnProperty.call(this.fields, f)) {
                     // Only validate fields that are currently visible
-                    if (window.isFieldVisible(this.fields[f].element)) {
+                    if ((this.fields[f].element).checkVisibility()) {
                         const fieldErrors = this.fields[f].validate(true, null);
                         if (Object.keys(fieldErrors).length > 0) {
                             errorMessages[f] = fieldErrors;

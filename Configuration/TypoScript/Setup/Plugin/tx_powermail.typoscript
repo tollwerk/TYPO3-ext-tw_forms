@@ -48,7 +48,7 @@ plugin.tx_powermail {
     # Overwrite language keys (has to be explicit, not only in language file)
     _LOCAL_LANG.default {
         validationerror_container_label = Problematic form fields
-        validationerror_mandatory = Please fill out this field.
+        validationerror_mandatory = bbbbbbbbbbbbbbbbbbbbb Please fill out this field.
         validationerror_mandatory_multi = Please fill out one of these fields.
         validationerror_validation = Your input is not allowed.
         validationerror_validation.1 = Please enter a valid e-mail address.

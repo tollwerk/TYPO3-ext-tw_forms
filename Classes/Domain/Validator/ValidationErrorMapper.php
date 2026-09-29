@@ -68,7 +68,7 @@ class ValidationErrorMapper
      *
      * @var string[]
      */
-    const array ERROR_MAP = [
+    const ERROR_MAP = [
         AlphanumericValidator::class => [
             1221551320 => Constraint::PATTERN_MISMATCH,
         ],

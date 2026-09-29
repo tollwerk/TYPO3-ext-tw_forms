@@ -42,14 +42,14 @@ use TYPO3\CMS\Extbase\Error\Error;
 
 class Constraint extends Error
 {
-    public const string TYPE_MISMATCH     = 'typeMismatch';
-    public const string VALUE_MISSING     = 'valueMissing';
-    public const string TOO_SHORT         = 'tooShort';
-    public const string TOO_LONG          = 'tooLong';
-    public const string RANGE_UNDERFLOW   = 'rangeUnderflow';
-    public const string RANGE_OVERFLOW    = 'rangeOverflow';
-    public const string PATTERN_MISMATCH  = 'patternMismatch';
-    public const string TOO_FEW_ITEMS = 'tooFewItems';
+    const TYPE_MISMATCH     = 'typeMismatch';
+    const VALUE_MISSING     = 'valueMissing';
+    const TOO_SHORT         = 'tooShort';
+    const TOO_LONG          = 'tooLong';
+    const RANGE_UNDERFLOW   = 'rangeUnderflow';
+    const RANGE_OVERFLOW    = 'rangeOverflow';
+    const PATTERN_MISMATCH  = 'patternMismatch';
+    const TOO_FEW_ITEMS = 'tooFewItems';
 
     /**
      * JavaScript constraint name
