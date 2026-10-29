@@ -11,12 +11,10 @@
         <div class="Form__field FormField FormField--static-text"
              id="{element.uniqueIdentifier}">
             <f:if condition="{element.label}">
-                <twvhs:heading content="{formvh:translateElementProperty(element: element, property: 'label')}"
-                               level="2"/>
+                <h2>{formvh:translateElementProperty(element: element, property: 'label')}</h2>
             </f:if>
             <f:if condition="{element.properties.text}">
-                <p>{formvh:translateElementProperty(element: element,
-                    property: 'text') -> f:format.nl2br()}</p>
+                {formvh:translateElementProperty(element: element, property: 'text') -> f:sanitize.html() -> f:transform.html()}
             </f:if>
         </div>
     </formvh:renderRenderable>
