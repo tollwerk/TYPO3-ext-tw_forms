@@ -24,7 +24,7 @@
                         value: element.properties.value
                         }"/>
                     <f:render section="InlineLabel" contentAs="label">
-                        {formvh:translateElementProperty(element: element, property: 'label')}
+                        {formvh:translateElementProperty(element: element, property: 'label') -> f:sanitize.html() -> f:transform.html() -> f:format.stripTags(allowedTags: '<a><br><i><strong>')}
                         <f:if condition="{element.required}">
                             <f:render partial="Field/Required"/>
                         </f:if>

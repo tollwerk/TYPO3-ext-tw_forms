@@ -33,7 +33,7 @@
 </formvh:renderRenderable>
 
 <f:section name="definitionTerm">
-    <dt>{formvh:translateElementProperty(element: formValue.element, property: 'label')}</dt>
+    <dt>{formvh:translateElementProperty(element: formValue.element, property: 'label')  -> f:sanitize.html() -> f:transform.html()}</dt>
 </f:section>
 
 <f:section name="definitionDescription">
