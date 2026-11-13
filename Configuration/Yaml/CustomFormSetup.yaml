@@ -32,9 +32,7 @@ TYPO3:
             Email:
               properties:
                 elementClassAttribute: 'FormEmail FormField__input'
-            FileUpload: null
             Hidden: null
-            ImageUpload: null
             MultiCheckbox:
               properties:
                 containerClassAttribute: 'CustomInput CustomInput--check'
